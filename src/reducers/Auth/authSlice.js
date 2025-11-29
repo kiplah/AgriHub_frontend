@@ -149,7 +149,7 @@ export const updateUser = createAsyncThunk(
   "auth/updateUser",
   async ({ userId, userData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`/users/${userId}`, userData);
+      const response = await axios.put(`/users/${userId}/`, userData);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || { message: "Failed to update user." });
@@ -161,10 +161,47 @@ export const deleteUser = createAsyncThunk(
   "auth/deleteUser",
   async (userId, { rejectWithValue }) => {
     try {
-      await axios.delete(`/users/${userId}`);
+      await axios.delete(`/users/${userId}/`);
       return userId;
     } catch (err) {
       return rejectWithValue(err.response?.data || { message: "Failed to delete user." });
+    }
+  }
+);
+
+export const resendVerificationCode = createAsyncThunk(
+  "auth/resendVerification",
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/users/resend_verification/", { email });
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || { message: "Failed to resend verification code." });
+    }
+  }
+);
+
+export const forgotPassword = createAsyncThunk(
+  "auth/forgotPassword",
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/users/forgot_password/", { email });
+      return response.data;
+    } catch (err) {
+      console.error("Forgot Password Failed:", err.response?.data || err.message || err);
+      return rejectWithValue(err.response?.data || { message: "Failed to send password reset email." });
+    }
+  }
+);
+
+export const resetPassword = createAsyncThunk(
+  "auth/resetPassword",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/users/reset_password/", data);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || { message: "Failed to reset password." });
     }
   }
 );
@@ -303,6 +340,46 @@ const authSlice = createSlice({
         state.users = state.users.filter((user) => user.id !== action.payload);
       })
       .addCase(deleteUser.rejected, (state, action) => {
+        state.error = action.payload.message;
+      })
+
+      // **Handle Resend Verification**
+      .addCase(resendVerificationCode.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(resendVerificationCode.fulfilled, (state) => {
+        state.loading = false;
+        // Maybe set a success message state if needed
+      })
+      .addCase(resendVerificationCode.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.message;
+      })
+
+      // **Handle Forgot Password**
+      .addCase(forgotPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(forgotPassword.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.message;
+      })
+
+      // **Handle Reset Password**
+      .addCase(resetPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(resetPassword.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload.message;
       })
 

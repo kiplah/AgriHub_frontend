@@ -154,7 +154,7 @@ export default function LoginPage() {
           </form>
 
           <div className="flex justify-between items-center text-sm text-white">
-            <Link href="#" className="hover:text-green-500">
+            <Link href="/forgot-password" className="hover:text-green-500">
               Forgot Password?
             </Link>
             <Link href="/signup" className="hover:text-green-500">

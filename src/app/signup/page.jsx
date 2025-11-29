@@ -7,7 +7,7 @@ import { FaEye, FaEyeSlash, FaShoppingCart, FaStore, FaCheckCircle } from "react
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { registerUser, verifyEmail } from "../../reducers/Auth/authSlice";
+import { registerUser, verifyEmail, resendVerificationCode } from "../../reducers/Auth/authSlice";
 
 export default function SignupPage() {
   const [activeForm, setActiveForm] = useState("buyer");
@@ -51,7 +51,7 @@ export default function SignupPage() {
     }
 
     const userData = {
-      email: formData.email,
+      email: formData.email.trim(),
       password: formData.password,
       username: formData.username || null,
       role,
@@ -100,6 +100,22 @@ export default function SignupPage() {
     }
   };
 
+  const handleResendCode = async () => {
+    try {
+      await dispatch(resendVerificationCode(formData.email)).unwrap();
+      toast.success("Verification code resent! Check your email.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } catch (err) {
+      console.error("Resend Failed:", err);
+      toast.error(err?.message || "Failed to resend code.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+  };
+
   const formVariants = {
     initial: { opacity: 0, y: -50 },
     animate: { opacity: 1, y: 0 },
@@ -127,11 +143,10 @@ export default function SignupPage() {
               <div className="flex mb-4 bg-gradient-to-r from-white/10 to-transparent backdrop-blur-sm rounded-full p-1 shadow-md relative">
                 <button
                   onClick={() => setActiveForm("buyer")}
-                  className={`relative flex-1 px-4 py-2 rounded-full text-center font-semibold text-sm transition-all duration-300 ease-in-out transform flex items-center justify-center gap-2 ${
-                    activeForm === "buyer"
-                      ? "bg-green-700 text-white shadow-lg scale-105"
-                      : "bg-transparent text-white hover:bg-white/20"
-                  }`}
+                  className={`relative flex-1 px-4 py-2 rounded-full text-center font-semibold text-sm transition-all duration-300 ease-in-out transform flex items-center justify-center gap-2 ${activeForm === "buyer"
+                    ? "bg-green-700 text-white shadow-lg scale-105"
+                    : "bg-transparent text-white hover:bg-white/20"
+                    }`}
                 >
                   <FaShoppingCart size={20} />
                   <span>Buyer</span>
@@ -139,11 +154,10 @@ export default function SignupPage() {
 
                 <button
                   onClick={() => setActiveForm("seller")}
-                  className={`relative flex-1 px-4 py-2 rounded-full text-center text-sm transition-all font-bold duration-300 ease-in-out transform flex items-center justify-center gap-2 ${
-                    activeForm === "seller"
-                      ? "bg-green-700 text-white shadow-lg scale-105"
-                      : "bg-transparent text-white hover:bg-white/20"
-                  }`}
+                  className={`relative flex-1 px-4 py-2 rounded-full text-center text-sm transition-all font-bold duration-300 ease-in-out transform flex items-center justify-center gap-2 ${activeForm === "seller"
+                    ? "bg-green-700 text-white shadow-lg scale-105"
+                    : "bg-transparent text-white hover:bg-white/20"
+                    }`}
                 >
                   <FaStore size={20} />
                   <span>Seller</span>
@@ -151,95 +165,95 @@ export default function SignupPage() {
               </div>
 
               <motion.div
-            className="bg-gradient-to-r from-white/10 to-transparent backdrop-blur-sm border border-white/18 rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] space-y-4 p-8 max-w-[500px] w-full text-center space-y-2 transform hover:shadow-xl transition-shadow"
-            key={activeForm}
-            variants={formVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-          >
-            <h2 className="text-4xl font-extrabold text-green-400">
-              {activeForm === "buyer" ? "Join as a Buyer" : "Join as a Seller"}
-            </h2>
-                <form className="space-y-3" onSubmit={handleSubmit}>
-              <div>
-                <label className="block text-left text-white font-semibold mb-1">
-                  User Name
-                </label>
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  className="w-full text-gray-800 bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-left text-blue-100 font-semibold mb-1">
-                  Email Address
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full text-gray-800 bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
-                />
-              </div>
-              <div className="relative">
-                <label className="block text-left text-white font-semibold mb-1">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="w-full text-gray-800 bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute top-4 right-3 text-white hover:text-green-700 focus:outline-none"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? (
-                    <FaEyeSlash size={24} />
-                  ) : (
-                    <FaEye size={24} />
-                  )}
-                </button>
-              </div>
-              <div>
-                <label className="block text-left text-white font-semibold mb-1">
-                  Confirm Password
-                </label>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showPassword ? "text" : "password"}
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  className="w-full text-gray-800 bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full mt-10 py-3 bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-700 transition-transform transform hover:scale-105"
+                className="bg-gradient-to-r from-white/10 to-transparent backdrop-blur-sm border border-white/18 rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] space-y-4 p-8 max-w-[500px] w-full text-center space-y-2 transform hover:shadow-xl transition-shadow"
+                key={activeForm}
+                variants={formVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
               >
-                {activeForm === "buyer"
-                  ? "Sign Up as Buyer"
-                  : "Sign Up as Seller"}
-              </button>
-            </form>
-            <div className="flex justify-end items-center text-sm text-blue-200">
-              <Link href="/login" className="hover:text-blue-100">
-                Already have an account? Log in
-              </Link>
-            </div>
+                <h2 className="text-4xl font-extrabold text-green-400">
+                  {activeForm === "buyer" ? "Join as a Buyer" : "Join as a Seller"}
+                </h2>
+                <form className="space-y-3" onSubmit={handleSubmit}>
+                  <div>
+                    <label className="block text-left text-white font-semibold mb-1">
+                      User Name
+                    </label>
+                    <input
+                      type="text"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                      className="w-full text-gray-800 bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-left text-blue-100 font-semibold mb-1">
+                      Email Address
+                    </label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className="w-full text-gray-800 bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
+                    />
+                  </div>
+                  <div className="relative">
+                    <label className="block text-left text-white font-semibold mb-1">
+                      Password
+                    </label>
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      className="w-full text-gray-800 bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={togglePasswordVisibility}
+                      className="absolute top-4 right-3 text-white hover:text-green-700 focus:outline-none"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? (
+                        <FaEyeSlash size={24} />
+                      ) : (
+                        <FaEye size={24} />
+                      )}
+                    </button>
+                  </div>
+                  <div>
+                    <label className="block text-left text-white font-semibold mb-1">
+                      Confirm Password
+                    </label>
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showPassword ? "text" : "password"}
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
+                      className="w-full text-gray-800 bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full mt-10 py-3 bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-700 transition-transform transform hover:scale-105"
+                  >
+                    {activeForm === "buyer"
+                      ? "Sign Up as Buyer"
+                      : "Sign Up as Seller"}
+                  </button>
+                </form>
+                <div className="flex justify-end items-center text-sm text-blue-200">
+                  <Link href="/login" className="hover:text-blue-100">
+                    Already have an account? Log in
+                  </Link>
+                </div>
               </motion.div>
             </>
           ) : (
@@ -256,6 +270,9 @@ export default function SignupPage() {
               />
               <button onClick={handleVerifyEmail} className="w-full mt-3 py-2 bg-green-500 text-white rounded-md">
                 Verify Email
+              </button>
+              <button onClick={handleResendCode} className="w-full mt-2 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">
+                Resend Code
               </button>
             </motion.div>
           )}
