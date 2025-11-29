@@ -53,22 +53,24 @@ export const loginUser = createAsyncThunk(
   "auth/login",
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/login", { email, password });
+      const response = await axios.post("/login/", { email, password });
       if (response.status === 200) {
-        const { accessToken } = response.data;
+        const { access, user } = response.data;
+        const accessToken = access;
         const decodedToken = jwtDecode(accessToken);
         const expirationTime = new Date().getTime() + TOKEN_EXPIRATION_TIME;
 
         localStorage.setItem("access_token", accessToken);
-        localStorage.setItem("user_role", decodedToken.role);
-        localStorage.setItem("userId", decodedToken.Id);
+        localStorage.setItem("user_role", user.role);
+        localStorage.setItem("userId", user.id);
         localStorage.setItem("token_expiration", expirationTime);
 
-        return { token: accessToken, role: decodedToken.role, user: decodedToken };
+        return { token: accessToken, role: user.role, user: user };
       } else {
         return rejectWithValue({ message: "Unexpected response status." });
       }
     } catch (err) {
+      console.error("Login Failed:", err.response?.data || err.message || err);
       return rejectWithValue(err.response?.data || { message: "Login failed. Please try again." });
     }
   }
@@ -79,7 +81,7 @@ export const registerUser = createAsyncThunk(
   "auth/register",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/signup", userData);
+      const response = await axios.post("/signup/", userData);
       console.log("Backend Response:", response.data);
 
       if (response.status === 200 || response.status === 201) {
@@ -99,7 +101,7 @@ export const verifyEmail = createAsyncThunk(
   "auth/verify",
   async ({ email, code }, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/verify", { email, code });
+      const response = await axios.post("/verify/", { email, code });
 
       if (response.status === 200) {
         const { event } = response.data;

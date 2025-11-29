@@ -38,7 +38,7 @@ export default function LoginPage() {
 
     const loginData = {
       email: formData.email.trim(),
-      password: formData.password.trim(),
+      password: formData.password,
     };
 
     try {
@@ -67,7 +67,7 @@ export default function LoginPage() {
     } catch (err) {
       console.error("Login failed:", err);
       // Extract error message from backend response
-      const errorMessage = err?.response?.data?.message || err?.message || "Login failed. Please check your credentials.";
+      const errorMessage = err?.message || "Login failed. Please check your credentials.";
       toast.error(errorMessage, {
         position: "top-right",
         autoClose: 3000,
