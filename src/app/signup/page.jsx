@@ -53,7 +53,7 @@ export default function SignupPage() {
     const userData = {
       email: formData.email.trim(),
       password: formData.password,
-      username: formData.username || null,
+      username: formData.username || formData.email.split('@')[0],
       role,
     };
 
@@ -70,7 +70,27 @@ export default function SignupPage() {
       setVerificationStep(true);
     } catch (err) {
       console.error("Registration Failed:", err);
-      toast.error(err?.message || "Registration failed. Please try again.", {
+      let errorMessage = "Registration failed. Please try again.";
+
+      if (err?.username) {
+        errorMessage = `Username: ${err.username[0]}`;
+      } else if (err?.email) {
+        errorMessage = `Email: ${err.email[0]}`;
+      } else if (err?.password) {
+        errorMessage = `Password: ${err.password[0]}`;
+      } else if (err?.message) {
+        errorMessage = err.message;
+      } else if (typeof err === 'object') {
+        // If it's a generic object, try to grab the first value
+        const values = Object.values(err);
+        if (values.length > 0 && Array.isArray(values[0])) {
+          errorMessage = values[0][0];
+        } else {
+          errorMessage = JSON.stringify(err);
+        }
+      }
+
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 3000,
       });
@@ -186,6 +206,7 @@ export default function SignupPage() {
                       value={formData.username}
                       onChange={handleInputChange}
                       className="w-full text-gray-800 bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
+                      required
                     />
                   </div>
                   <div>

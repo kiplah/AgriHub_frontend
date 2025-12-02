@@ -90,7 +90,9 @@ export const registerUser = createAsyncThunk(
         return rejectWithValue({ message: "Unexpected response status." });
       }
     } catch (err) {
-      console.error("Error:", err.response?.data || err.message);
+      console.error("Register Error Full Object:", err);
+      console.error("Register Error Response:", err.response);
+      console.error("Register Error Data:", err.response?.data);
       return rejectWithValue(err.response?.data || { message: "Registration failed. Please try again." });
     }
   }
