@@ -214,18 +214,24 @@ export const resetPassword = createAsyncThunk(
 export const logout = createAsyncThunk("/logout", async (_, { dispatch, rejectWithValue }) => {
   try {
     await axios.post("/logout/");
+  } catch (error) {
+    console.error("Server logout failed (ignoring):", error);
+    // We continue to clear client state even if server fails
+  }
 
+  try {
     localStorage.removeItem("access_token");
     localStorage.removeItem("user_role");
     localStorage.removeItem("userId");
     localStorage.removeItem("token_expiration");
+    localStorage.removeItem("user_email");
 
     dispatch(authSlice.actions.clearState());
 
     return { success: true, message: "Logout successful" };
   } catch (error) {
-    console.error("Error during logout:", error);
-    return rejectWithValue(error.response?.data || "Logout failed");
+    console.error("Client logout failed:", error);
+    return rejectWithValue("Logout failed");
   }
 });
 
