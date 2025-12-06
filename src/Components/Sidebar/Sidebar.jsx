@@ -3,30 +3,34 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  FaBox,
-  FaMoneyBill,
-  FaChartLine,
-  FaTruck,
-  FaTools,
-  FaSignOutAlt,
-  FaTractor,
-  FaHome,
-  FaShippingFast,
-  FaHistory,
-  FaAddressBook,
-  FaCog,
-  FaComments,
-
-} from "react-icons/fa";
+  LayoutDashboard,
+  Store,
+  ShoppingBag,
+  Tractor,
+  Sprout,
+  Truck,
+  Activity,
+  TrendingUp,
+  FlaskConical,
+  CloudSun,
+  LogOut,
+  Menu,
+  Settings,
+  User,
+  Box as BoxIcon
+} from "lucide-react";
 
 import Logo from "../../assets/images/logo.png";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 import { logout } from "@/reducers/Auth/authSlice";
+import { useRouter } from "next/navigation";
+
 const Sidebar = ({ role }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -34,7 +38,7 @@ const Sidebar = ({ role }) => {
   const handleLogout = async () => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
-  
+
     try {
       const result = await dispatch(logout()).unwrap();
       if (result) {
@@ -54,56 +58,72 @@ const Sidebar = ({ role }) => {
       setIsLoggingOut(false);
     }
   };
-  
 
-  const menuLists = {
-    seller: [
-      {
-        label: "My Products",
-        icon: <FaBox />,
-        path: "/seller-profile/my-products",
-      },
-      { label: "Orders", icon: <FaTruck />, path: "/seller-profile/orders" },
-      {
-        label: "Earnings",
-        icon: <FaMoneyBill />,
-        path: "/seller-profile/earnings",
-      },
-      {
-        label: "Analytics",
-        icon: <FaChartLine />,
-        path: "/seller-profile/analytics",
-      },
-      
-      {
-        label: "Support",
-        icon: <FaTools />,
-        path: "/seller-profile/support",
-      },
-    ],
-    buyer: [
-      { label: "Orders", icon: <FaTractor />, path: "/buyer/orders" },
-      {
-        label: "Order Tracking",
-        icon: <FaShippingFast />,
-        path: "/buyer/track-order",
-      },
-      {
-        label: "Purchase History",
-        icon: <FaHistory />,
-        path: "/buyer/purchase-history",
-      },
-      {
-        label: "Saved Addresses",
-        icon: <FaAddressBook />,
-        path: "/buyer/saved-addresses",
-      },
-      { label: "Support", icon: <FaCog />, path: "/buyer/support" },
-    ],
-
+  // Define menu structure based on role
+  const getMenuStructure = (role) => {
+    if (role === 'seller') {
+      return [
+        {
+          title: "OVERVIEW",
+          items: [
+            { label: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/seller-profile" },
+            { label: "My Products", icon: <BoxIcon size={20} />, path: "/seller-profile/my-products" },
+            { label: "Marketplace", icon: <Store size={20} />, path: "/marketplace" },
+            { label: "Orders", icon: <ShoppingBag size={20} />, path: "/orders" },
+          ]
+        },
+        {
+          title: "FARM MANAGEMENT",
+          items: [
+            { label: "Livestock", icon: <Tractor size={20} />, path: "/livestock" }, // Using Tractor as proxy for Livestock if Cow not available in this version
+            { label: "Crops", icon: <Sprout size={20} />, path: "/crops" },
+            { label: "Logistics", icon: <Truck size={20} />, path: "/logistics" },
+          ]
+        },
+        {
+          title: "AI FEATURES",
+          items: [
+            { label: "Disease Detection", icon: <Activity size={20} />, path: "/disease-detection" },
+            { label: "Growth Prediction", icon: <TrendingUp size={20} />, path: "/growth-prediction" },
+            { label: "Soil Analysis", icon: <FlaskConical size={20} />, path: "/soil-analysis" },
+            { label: "Yield Forecast", icon: <CloudSun size={20} />, path: "/yield-forecast" },
+          ]
+        }
+      ];
+    } else if (role === 'buyer') {
+      return [
+        {
+          title: "OVERVIEW",
+          items: [
+            { label: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/buyer" },
+            { label: "Marketplace", icon: <Store size={20} />, path: "/marketplace" },
+            { label: "My Orders", icon: <ShoppingBag size={20} />, path: "/buyer/orders" },
+          ]
+        },
+        {
+          title: "ACCOUNT",
+          items: [
+            { label: "Track Order", icon: <Truck size={20} />, path: "/buyer/track-order" },
+            { label: "Saved Addresses", icon: <User size={20} />, path: "/buyer/saved-addresses" },
+          ]
+        }
+      ];
+    } else if (role === 'admin') {
+      return [
+        {
+          title: "ADMINISTRATION",
+          items: [
+            { label: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/admin" },
+            { label: "Users", icon: <User size={20} />, path: "/admin/users" },
+            { label: "Products", icon: <Store size={20} />, path: "/admin/products" },
+          ]
+        }
+      ]
+    }
+    return [];
   };
 
-  const menuItems = menuLists[role] || [];
+  const menuGroups = getMenuStructure(role);
 
   useEffect(() => {
     const closeSidebarOnOutsideClick = (event) => {
@@ -123,14 +143,14 @@ const Sidebar = ({ role }) => {
   const backgroundImages = {
     seller: `
       linear-gradient(
-        rgba(0, 0, 0, 0.8), 
-        rgba(34, 49, 63, 0.7)
+        rgba(0, 0, 0, 0.85), 
+        rgba(20, 40, 30, 0.9)
       ),
       url('https://img.freepik.com/premium-photo/modern-agricultural-machine-with-data-connections-field-showcase-use-modern-technology-data-connections-agriculture_38013-10447.jpg')`,
     default: `
       linear-gradient(
-        rgba(0, 0, 0, 0.8), 
-        rgba(34, 49, 63, 0.7)
+        rgba(0, 0, 0, 0.85), 
+        rgba(20, 40, 30, 0.9)
       ),
       url('https://media.gettyimages.com/id/1557452514/video/a-time-lapse-of-a-fern-plant-growing-concept-with-alpha-map-on-black-background.jpg?s=640x640&k=20&c=QZztVYhiYdHf7_JwyqwuOnNLuIdfuueXI0k-uvdCC_o=')`,
   };
@@ -143,30 +163,17 @@ const Sidebar = ({ role }) => {
       <button
         aria-controls="sidebar"
         type="button"
-        className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+        className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-500"
         onClick={toggleSidebar}
       >
         <span className="sr-only">Open sidebar</span>
-        <svg
-          className="w-6 h-6"
-          aria-hidden="true"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            clipRule="evenodd"
-            fillRule="evenodd"
-            d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
-          ></path>
-        </svg>
+        <Menu className="w-6 h-6" />
       </button>
 
       <aside
         id="sidebar"
-        className={`fixed top-0 left-0 z-40 h-screen flex flex-col transition-transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 w-[300px] py-6 px-4  text-white shadow-lg border-r border-green-700 backdrop-blur-xl`}
+        className={`fixed top-0 left-0 z-40 h-screen flex flex-col transition-transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } md:translate-x-0 w-[280px] py-6 px-4 text-white shadow-2xl border-r border-white/10 backdrop-blur-xl`}
         aria-label="Sidebar"
         style={{
           backgroundImage,
@@ -175,67 +182,55 @@ const Sidebar = ({ role }) => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="flex items-center justify-center mb-8">
+        <div className="flex items-center justify-center mb-10">
           <Image
             src={Logo}
-            height={60}
-            width={200}
+            height={50}
+            width={180}
             alt="Agro Mart Logo"
-            className="hover:scale-110 transition-transform duration-300"
+            className="hover:scale-105 transition-transform duration-300 drop-shadow-lg"
           />
         </div>
 
-        <Link href="/" passHref>
-          <div className="rounded-lg text-lg font-semibold py-4 px-4 flex items-center gap-4 bg-gradient-to-br from-green-600 via-yellow-500 to-brown-500 text-white hover:bg-gradient-to-tl hover:from-brown-500 hover:via-yellow-600 hover:to-green-700 transition-all duration-300 shadow-xl transform hover:scale-105">
-            <FaHome className="text-2xl" />
-            Dashboard
-          </div>
-        </Link>
-
-        <ul className="space-y-4 mt-16">
-          {menuItems.map((item, index) => (
-            <li key={index}>
-              <Link href={item.path}>
-                <div
-                  className={`flex items-center gap-4 p-4 rounded-lg transition-all duration-300 ${
-                    typeof window !== "undefined" &&
-                    window.location.pathname === item.path
-                      ? "bg-green-500 text-yellow-200 shadow-lg"
-                      : "bg-green-500 hover:bg-green-800 text-white"
-                  }`}
-                >
-                  <div className="text-2xl">{item.icon}</div>
-                  <span className="text-lg font-medium">{item.label}</span>
-                  
-                </div>
-              </Link>
-            </li>
+        <div className="flex-1 overflow-y-auto space-y-8 custom-scrollbar">
+          {menuGroups.map((group, groupIndex) => (
+            <div key={groupIndex}>
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">
+                {group.title}
+              </h3>
+              <ul className="space-y-1">
+                {group.items.map((item, index) => (
+                  <li key={index}>
+                    <Link href={item.path}>
+                      <div
+                        className={`flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200 group ${typeof window !== "undefined" &&
+                          window.location.pathname === item.path
+                          ? "bg-emerald-600 text-white shadow-md"
+                          : "text-gray-300 hover:bg-white/10 hover:text-white"
+                          }`}
+                      >
+                        <div className={`${typeof window !== "undefined" && window.location.pathname === item.path ? "text-white" : "text-emerald-400 group-hover:text-emerald-300"
+                          }`}>
+                          {item.icon}
+                        </div>
+                        <span className="text-sm font-medium">{item.label}</span>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
 
-        <div className="border-t border-green-700 my-4"></div>
-
-        <div className="mt-auto">
+        <div className="border-t border-white/10 pt-4 mt-4">
           <button
-           onClick={handleLogout}
-           disabled={isLoggingOut}
-            className="flex items-center justify-center gap-4 p-4 w-full rounded-lg bg-red-500 text-white hover:bg-red-700 transition-all duration-300 shadow-lg"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="flex items-center justify-center gap-3 p-3 w-full rounded-lg bg-red-500/20 text-red-200 hover:bg-red-500 hover:text-white transition-all duration-300 border border-red-500/30 hover:border-red-500"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
-              />
-            </svg>
-            <span className="text-lg font-medium">Sign Out</span>
+            <LogOut size={20} />
+            <span className="text-sm font-medium">Sign Out</span>
           </button>
         </div>
       </aside>

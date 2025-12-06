@@ -62,37 +62,38 @@ const Authentication = ({ children }) => {
   /**
    * Show loading screen during initial authentication
    */
-  if (loading) {
-    return (
-      <div
-        className="relative flex items-center justify-center h-screen bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('https://media.istockphoto.com/id/1296882154/vector/green-abstract-layers-background.jpg?s=612x612&w=0&k=20&c=GdVbshVWQXddCpjLdjMTpHvDK2s1C4p7BfhGtpqObEY=')",
-        }}
-      >
-        <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-        <div className="relative z-10 flex flex-col items-center text-center p-8 rounded-lg">
-          <div className="relative flex items-center flex-col gap-12 justify-center h-32 w-32 mb-6">
-            <h1 className="text-3xl font-extrabold text-green-200">
-              Authenticating AgroMart...
-            </h1>
-            <div className="flex space-x-2">
-              <div className="w-4 h-4 bg-green-400 rounded-full animate-bounce"></div>
-              <div
-                className="w-4 h-4 bg-green-400 rounded-full animate-bounce"
-                style={{ animationDelay: "0.1s" }}
-              ></div>
-              <div
-                className="w-4 h-4 bg-green-400 rounded-full animate-bounce"
-                style={{ animationDelay: "0.2s" }}
-              ></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Loading screen disabled for debugging
+  // if (loading) {
+  //   return (
+  //     <div
+  //       className="relative flex items-center justify-center h-screen bg-cover bg-center"
+  //       style={{
+  //         backgroundImage:
+  //           "url('https://media.istockphoto.com/id/1296882154/vector/green-abstract-layers-background.jpg?s=612x612&w=0&k=20&c=GdVbshVWQXddCpjLdjMTpHvDK2s1C4p7BfhGtpqObEY=')",
+  //       }}
+  //     >
+  //       <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+  //       <div className="relative z-10 flex flex-col items-center text-center p-8 rounded-lg">
+  //         <div className="relative flex items-center flex-col gap-12 justify-center h-32 w-32 mb-6">
+  //           <h1 className="text-3xl font-extrabold text-green-200">
+  //             Authenticating AgroMart...
+  //           </h1>
+  //           <div className="flex space-x-2">
+  //             <div className="w-4 h-4 bg-green-400 rounded-full animate-bounce"></div>
+  //             <div
+  //               className="w-4 h-4 bg-green-400 rounded-full animate-bounce"
+  //               style={{ animationDelay: "0.1s" }}
+  //             ></div>
+  //             <div
+  //               className="w-4 h-4 bg-green-400 rounded-full animate-bounce"
+  //               style={{ animationDelay: "0.2s" }}
+  //             ></div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return <>{children}</>;
 };

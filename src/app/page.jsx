@@ -121,7 +121,7 @@ export default function Page() {
                   <CategoryCard
                     key={category.id}
                     name={category.name}
-                    src={`http://localhost:8080/${category.imagepath}`}
+                    src={`http://127.0.0.1:8000/${category.imagepath}`}
                     description={category.description}
                   />
                 ))
@@ -131,9 +131,9 @@ export default function Page() {
             </div>
           )}
           <div className="mt-16">
-            <button 
+            <button
               onClick={() => window.location.href = '/categories'}
-            className="bg-[#47b881] hover:bg-[#3a9149] text-white font-bold py-4 px-14 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 hover:shadow-[#66bb6a]/50">
+              className="bg-[#47b881] hover:bg-[#3a9149] text-white font-bold py-4 px-14 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 hover:shadow-[#66bb6a]/50">
               View All Categories
             </button>
           </div>
@@ -160,36 +160,36 @@ export default function Page() {
             <div className="w-16 h-1 bg-[#47b881] rounded-full"></div>
           </div>
           <div className="flex flex-wrap gap-10 justify-center">
-          {productsLoading ? (
-          <p>Loading products...</p>
-        ) :  productsError ? (
-          <p className="text-red-500">{ productsError}</p>
-        ) : (
-          <div className="flex flex-wrap gap-10 justify-center">
-            {products && products.length > 0 ? (
-              products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  id={product.id}
-                  src={`http://localhost:8080/${product.imagepath}`}
-                  title={product.name}
-                  cat={product.category}
-                  price={product.price}
-                  description={product.description}
-                  rating={product.rating}
-                  sellerId={product.userId}
-                />
-              ))
+            {productsLoading ? (
+              <p>Loading products...</p>
+            ) : productsError ? (
+              <p className="text-red-500">{productsError}</p>
             ) : (
-              <p className="text-gray-500">No products found</p>
+              <div className="flex flex-wrap gap-10 justify-center">
+                {products && products.length > 0 ? (
+                  products.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      id={product.id}
+                      src={`http://127.0.0.1:8000/${product.imagepath}`}
+                      title={product.name}
+                      cat={product.category}
+                      price={product.price}
+                      description={product.description}
+                      rating={product.rating}
+                      sellerId={product.userId}
+                    />
+                  ))
+                ) : (
+                  <p className="text-gray-500">No products found</p>
+                )}
+              </div>
             )}
           </div>
-        )}
-          </div>
           <div className="mt-16">
-            <button 
-            onClick={() => window.location.href = '/products'}
-            className="bg-[#47b881] hover:bg-[#3a9149] text-white font-bold py-4 px-8 md:px-14 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 hover:shadow-[#66bb6a]/50">
+            <button
+              onClick={() => window.location.href = '/products'}
+              className="bg-[#47b881] hover:bg-[#3a9149] text-white font-bold py-4 px-8 md:px-14 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 hover:shadow-[#66bb6a]/50">
               View All Products
             </button>
           </div>
