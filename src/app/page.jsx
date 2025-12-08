@@ -12,8 +12,20 @@ import CategoryCard from "@/Components/CategoryCard/CategoryCard";
 import Benifits from "@/Components/Benifites/Benifits";
 import Testimonial from "@/Components/Testimonial/Testimonial";
 import { GiBarbedSpear } from "react-icons/gi";
+import { FaSearch } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 export default function Page() {
   const dispatch = useDispatch();
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
+    }
+  };
   const { categories, loading: categoriesLoading, error: categoriesError } = useSelector(
     (state) => state.category
   );
@@ -49,6 +61,26 @@ export default function Page() {
         <div className="relative mt-[160px] md:mt-[230px] z-20 flex flex-col items-center justify-center h-full text-center px-6 space-y-8 md:space-y-12">
           <div className="absolute top-10 left-10 w-12 h-12 bg-green-400 rounded-full blur-lg opacity-50 animate-ping"></div>
           <div className="absolute bottom-20 right-20 w-16 h-16 bg-green-500 rounded-full blur-lg opacity-30 animate-pulse"></div>
+
+          {/* Search Bar */}
+          <form onSubmit={handleSearch} className="relative w-full max-w-xl mb-4 animate-fade-in-down z-50">
+            <div className="relative group">
+              <input
+                type="text"
+                placeholder="🔍 Search crops, animals, fertilizers, tools..."
+                className="w-full py-4 pl-6 pr-14 bg-white/20 backdrop-blur-md border border-white/30 rounded-full text-white placeholder-green-100 focus:outline-none focus:ring-4 focus:ring-green-400/50 shadow-2xl text-lg transition-all duration-300 group-hover:bg-white/30"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-all duration-300 shadow-lg hover:scale-110"
+              >
+                <FaSearch />
+              </button>
+            </div>
+          </form>
+
           <div className="flex items-center justify-center space-x-6">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-green-400 animate-fade-in">
               Revolutionizing Agriculture 🌱
@@ -111,22 +143,36 @@ export default function Page() {
             <div className="w-16 h-1 bg-[#47b881] rounded-full"></div>
           </div>
           {categoriesLoading ? (
-            <p>Loading categories...</p>
+            <p className="text-xl text-[#3a9149] animate-pulse">Loading categories...</p>
           ) : categoriesError ? (
-            <p className="text-red-500">{categoriesError}</p>
+            <p className="text-red-500 font-bold">{categoriesError}</p>
           ) : (
-            <div className="flex flex-wrap gap-10 justify-center">
+            <div className="space-y-16">
               {categories && categories.length > 0 ? (
-                categories.map((category) => (
-                  <CategoryCard
-                    key={category.id}
-                    name={category.name}
-                    src={`http://127.0.0.1:8000/${category.imagepath}`}
-                    description={category.description}
-                  />
+                categories.map((mainCategory) => (
+                  <div key={mainCategory.id} className="w-full">
+                    <h3 className="text-3xl font-bold text-[#2c6e49] mb-8 border-b-2 border-[#47b881] inline-block pb-2">
+                      {mainCategory.name}
+                    </h3>
+                    <div className="flex flex-wrap gap-10 justify-center">
+                      {mainCategory.subcategories && mainCategory.subcategories.length > 0 ? (
+                        mainCategory.subcategories.map((sub) => (
+                          <CategoryCard
+                            key={sub.id}
+                            name={sub.name}
+                            src={sub.imagepath ? `http://127.0.0.1:8000/${sub.imagepath}` : "/placeholder.jpg"} // improved fallback if needed, or just keep as is if confident
+                            description={sub.description}
+                            link={`/products?category=${sub.id}`}
+                          />
+                        ))
+                      ) : (
+                        <p className="text-gray-500 italic">No subcategories available for {mainCategory.name}</p>
+                      )}
+                    </div>
+                  </div>
                 ))
               ) : (
-                <p className="text-gray-500">No categories found</p>
+                <p className="text-gray-500 text-xl">No categories found.</p>
               )}
             </div>
           )}

@@ -1,7 +1,7 @@
-"use client";
+import Link from "next/link";
 import React from "react";
 
-const CategoryCard = ({ name, src, description }) => {
+const CategoryCard = ({ name, src, description, link }) => {
   return (
     <div className="relative bg-gradient-to-b from-green-100 to-white p-6 rounded-3xl shadow-lg hover:shadow-xl hover:scale-105 transform transition-transform duration-300 w-full sm:w-[280px]">
       <div className="relative w-[150px] h-[150px] mx-auto rounded-full overflow-hidden shadow-md border-4 border-green-500">
@@ -16,7 +16,7 @@ const CategoryCard = ({ name, src, description }) => {
         <h3 className="text-2xl font-bold text-green-700">
           {name || "Category"}
         </h3>
-        <p className="text-sm text-gray-600 mt-2">
+        <p className="text-sm text-gray-600 mt-2 line-clamp-2">
           {description || "Description goes here."}
         </p>
       </div>
@@ -43,9 +43,11 @@ const CategoryCard = ({ name, src, description }) => {
       </div>
 
       <div className="mt-6">
-        <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-8 rounded-full shadow-md transition-all duration-300 transform hover:scale-105">
-          Explore More
-        </button>
+        <Link href={link || "#"}>
+          <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-8 rounded-full shadow-md transition-all duration-300 transform hover:scale-105">
+            Explore More
+          </button>
+        </Link>
       </div>
     </div>
   );
