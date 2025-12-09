@@ -9,6 +9,8 @@ export const addAccessToken = async (config) => {
     '/getallcategories',
     '/getallproducts',
     '/Product/',
+    '/category/',
+    '/products/',
     '/search-bar',
     '/login/',
     '/signup/',
