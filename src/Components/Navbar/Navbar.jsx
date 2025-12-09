@@ -31,6 +31,11 @@ const Navbar = () => {
     }
   }, [dispatch, categories]);
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const cartRef = useRef(null);
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -89,18 +94,7 @@ const Navbar = () => {
     };
   }, [showDropdown]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setBg(true);
-      } else {
-        setBg(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // Removed duplicate scroll effect
 
   const handleLogout = async () => {
     try {
@@ -109,6 +103,7 @@ const Navbar = () => {
         position: "top-right",
         autoClose: 3000,
       });
+      // Force refresh or redirect might be needed here to clear state cleanly if sticky
     } catch (error) {
       toast.error("Failed to log out. Please try again.", {
         position: "top-right",
@@ -208,7 +203,7 @@ const Navbar = () => {
             />
           </div>
 
-          {!token && (
+          {(!mounted || !token) && (
             <div className="hidden md:flex flex-col md:flex-row gap-3 text-base pt-4 items-center">
               {[
                 { label: "Become a Buyer", href: "/login" },
@@ -226,7 +221,7 @@ const Navbar = () => {
             </div>
           )}
           <div className="flex items-center gap-4 md:gap-6">
-            {token && (
+            {(mounted && token) && (
               <div className="relative group flex items-center gap-4">
                 <button
                   onClick={() => setShowDropdown((prev) => !prev)}
@@ -261,7 +256,7 @@ const Navbar = () => {
 
 
 
-            {token && (
+            {(mounted && token) && (
               <div className="relative" ref={cartRef}>
                 <FaShoppingCart
                   onClick={toggleCart}
@@ -427,7 +422,7 @@ const Navbar = () => {
           >
             <ImCross style={{ color: "#017d29", fontSize: "20px" }} />
           </div>
-          {!token && (
+          {(!mounted || !token) && (
             <div
               className={`${showNav ? "flex" : "hidden"
                 }  flex-wrap flex-rows mb-6  gap-3 text-base pt-4 items-center justify-center`}
