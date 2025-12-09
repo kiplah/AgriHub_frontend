@@ -211,6 +211,42 @@ export const resetPassword = createAsyncThunk(
 );
 
 
+// ... (previous imports)
+
+export const fetchSellerProfile = createAsyncThunk(
+  "auth/fetchSellerProfile",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`/users/seller-about/?user_id=${userId}`);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || { message: "Failed to fetch profile." });
+    }
+  }
+);
+
+export const updateSellerProfile = createAsyncThunk(
+  "auth/updateSellerProfile",
+  async ({ id, formData }, { rejectWithValue }) => {
+    try {
+      let response;
+      if (id) {
+        response = await axios.put(`/users/seller-about/${id}/`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+      } else {
+        response = await axios.post(`/users/seller-about/`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+      }
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || { message: "Failed to update profile." });
+    }
+  }
+);
+
+
 export const logout = createAsyncThunk("/logout", async (_, { dispatch, rejectWithValue }) => {
   try {
     await axios.post("/logout/");
@@ -242,6 +278,7 @@ const authSlice = createSlice({
   initialState: {
     ...initialState,
     ...persistedState,
+    sellerProfile: null,
   },
 
   reducers: {
@@ -270,6 +307,7 @@ const authSlice = createSlice({
       state.error = null;
       state.verificationSent = false;
       state.verified = false;
+      state.sellerProfile = null;
     },
   },
   extraReducers: (builder) => {
@@ -391,6 +429,14 @@ const authSlice = createSlice({
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload.message;
+      })
+
+      // **Handle Seller Profile**
+      .addCase(fetchSellerProfile.fulfilled, (state, action) => {
+        state.sellerProfile = action.payload?.[0] || null;
+      })
+      .addCase(updateSellerProfile.fulfilled, (state, action) => {
+        state.sellerProfile = action.payload;
       })
 
       // **Handle logout**

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Profile from "@/Components/ProfileCard/ProfileCard";
-import { FaArrowUp, FaArrowDown, FaMoneyBillAlt } from "react-icons/fa";
+import { FaArrowUp, FaArrowDown, FaMoneyBillAlt, FaWallet, FaHistory } from "react-icons/fa";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -15,6 +15,9 @@ import {
 } from "chart.js";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSellerMonthlyStats } from "@/reducers/Order/orderSlice";
+import { fetchWallet } from "@/reducers/Wallet/walletSlice";
+import { toast } from 'react-toastify';
+import { Loader2 } from "lucide-react";
 
 ChartJS.register(
   CategoryScale,
@@ -29,65 +32,31 @@ ChartJS.register(
 const Earnings = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { sellerMonthlyStats, loading, error } = useSelector((state) => state.orders);
+  const { sellerMonthlyStats, loading: statsLoading } = useSelector((state) => state.orders);
+  const { wallet, loading: walletLoading } = useSelector((state) => state.wallet);
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
 
   useEffect(() => {
     if (user?.userId) {
       dispatch(fetchSellerMonthlyStats(user.userId));
+      dispatch(fetchWallet());
     }
   }, [dispatch, user?.userId]);
 
+  const handleWithdraw = () => {
+    setIsWithdrawing(true);
+    // Simulate payout request
+    setTimeout(() => {
+      toast.success("Payout request submitted successfully!");
+      setIsWithdrawing(false);
+    }, 2000);
+  };
+
   const stats = sellerMonthlyStats || {};
   const monthlyStats = Array.isArray(stats.monthly_stats) ? stats.monthly_stats : [];
-  const yearlyStats = Array.isArray(stats.yearly_stats) ? stats.yearly_stats : [];
-
-  const currentMonthRevenue = stats.current_month_revenue || 0;
-  const currentYearRevenue = stats.current_year_revenue || 0;
 
   const labels = monthlyStats.map(stat => `${stat.month}-${stat.year}`);
   const earningsDataPoints = monthlyStats.map(stat => stat.total_revenue);
-
-  const lastMonthStats = monthlyStats.length > 0 ? monthlyStats[monthlyStats.length - 1] : {};
-  const prevMonthStats = monthlyStats.length > 1 ? monthlyStats[monthlyStats.length - 2] : {};
-
-  const lastYearStats = yearlyStats.length > 0 ? yearlyStats[yearlyStats.length - 1] : {};
-  const prevYearStats = yearlyStats.length > 1 ? yearlyStats[yearlyStats.length - 2] : {};
-
-  const calculateGrowth = (current, previous) => {
-    if (previous === 0 && current > 0) return 100;
-    if (previous === 0) return 0;
-    return ((current - previous) / previous) * 100;
-  };
-
-  const monthlyGrowth = calculateGrowth(currentMonthRevenue, prevMonthStats.total_revenue || 0);
-  const yearlyGrowth = calculateGrowth(currentYearRevenue, prevYearStats.total_revenue || 0);
-
-  const salesBreakdown = lastMonthStats.sales_breakdown || {
-    Fruits: 0,
-    Vegetables: 0,
-    Grains: 0,
-  };
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: "Months",
-        },
-      },
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "Revenue ($)",
-        },
-      },
-    },
-  };
-  
-  const recentTransactions = lastMonthStats.recent_transactions || [];
 
   const earningsData = {
     labels,
@@ -102,74 +71,112 @@ const Earnings = () => {
     ],
   };
 
-  if (loading) return <p>Loading earnings data...</p>;
-  if (error) return <p className="text-red-500">Error: {error}</p>;
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: { beginAtZero: true }
+    }
+  };
 
   return (
-    <div
-      className="relative h-screen overflow-auto p-4 md:px-8 lg:px-6 xl:px-8 2xl:px-12 py-4 md:py-5 lg:py-7 xl:py-10 2xl:py-12"
-      style={{
-        backgroundImage:
-          "url('https://png.pngtree.com/thumb_back/fh260/background/20241115/pngtree-happy-vietnamese-farmers-planting-rice-paddy-in-lush-green-field-image_16603887.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="absolute inset-0 bg-black/50"></div>
+    <div className="min-h-screen bg-gray-50 p-6 space-y-6">
+      <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Wallet & Payouts</h1>
+          <p className="text-gray-500">Manage your earnings and transactions.</p>
+        </div>
+        <div className="bg-emerald-50 px-4 py-2 rounded-lg text-emerald-700 font-medium flex items-center gap-2">
+          <FaWallet />
+          <span>Wallet Active</span>
+        </div>
+      </div>
 
-      <div className="relative z-10">
-        <Profile />
-        <div className="py-8 px-6 bg-gradient-to-r from-green-700 via-green-600 to-emerald-500 text-white rounded-3xl shadow-lg my-4">
-          <h2 className="text-3xl font-extrabold mb-2">Earnings Overview</h2>
-          <p className="text-lg font-medium">
-            See how your earnings and sales are growing.
-          </p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Wallet Balance Card */}
+        <div className="lg:col-span-1 bg-gradient-to-br from-emerald-600 to-green-700 rounded-2xl p-6 text-white shadow-lg flex flex-col justify-between relative overflow-hidden">
+          <div className="relative z-10">
+            <p className="text-emerald-100 font-medium mb-1">Total Balance</p>
+            <h2 className="text-4xl font-bold mb-6">KES {wallet?.balance?.toLocaleString() || "0.00"}</h2>
+
+            <button
+              onClick={handleWithdraw}
+              disabled={isWithdrawing || !wallet?.balance || wallet?.balance <= 0}
+              className="w-full bg-white text-emerald-700 font-bold py-3 rounded-xl shadow-md hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {isWithdrawing && <Loader2 className="animate-spin" size={20} />}
+              {isWithdrawing ? "Processing..." : "Withdraw Funds"}
+            </button>
+            <p className="text-xs text-emerald-200 mt-3 text-center">Payouts processed within 24 hours.</p>
+          </div>
+          {/* Decorative Circles */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full translate-x-10 -translate-y-10"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full -translate-x-5 translate-y-5"></div>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-          <div className="bg-gradient-to-br from-emerald-500 to-green-700 px-6 py-8 rounded-3xl hover:scale-105 shadow-2xl transition-transform">
-            <FaMoneyBillAlt className="text-4xl text-white mb-3" />
-            <h4 className="text-2xl font-semibold text-white">
-              Monthly Earnings
-            </h4>
-            <p className="text-3xl mt-3 font-bold text-white">${currentMonthRevenue.toLocaleString()}</p>
-            <div className="flex items-center mt-4 text-white">
-              {monthlyGrowth >= 0 ? <FaArrowUp className="mr-2" /> : <FaArrowDown className="mr-2" />}
-              <span>{monthlyGrowth.toFixed(2)}% {monthlyGrowth >= 0 ? "Increase" : "Decrease"}</span>
+        {/* Monthly Earnings Card */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-center">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-3 bg-blue-50 text-blue-600 rounded-full">
+              <FaMoneyBillAlt size={24} />
+            </div>
+            <div>
+              <p className="text-gray-500 text-sm">This Month</p>
+              <h3 className="text-2xl font-bold text-gray-900">KES {stats.current_month_revenue?.toLocaleString() || "0"}</h3>
             </div>
           </div>
-
-          <div className="bg-gradient-to-br from-green-700 to-emerald-500 px-6 py-8 rounded-3xl hover:scale-105 shadow-2xl transition-transform">
-            <FaMoneyBillAlt className="text-4xl text-white mb-3" />
-            <h4 className="text-2xl font-semibold text-white">
-              Yearly Earnings
-            </h4>
-            <p className="text-3xl mt-3 font-bold text-white">${currentYearRevenue.toLocaleString()}</p>
-            <div className="flex items-center mt-4 text-white">
-              {yearlyGrowth >= 0 ? <FaArrowUp className="mr-2" /> : <FaArrowDown className="mr-2" />}
-              <span>{yearlyGrowth.toFixed(2)}% {yearlyGrowth >= 0 ? "Increase" : "Decrease"}</span>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-emerald-500 to-green-700 px-6 py-8 rounded-3xl hover:scale-105 shadow-2xl transition-transform">
-  <FaMoneyBillAlt className="text-4xl text-white mb-3" />
-  <h4 className="text-2xl font-semibold text-white">
-    Completed Orders
-  </h4>
-  <p className="text-3xl mt-3 font-bold text-white">
-    {lastMonthStats.completed_orders || 0}
-  </p>
-</div>
-
+          {/* Growth Indicator could go here */}
         </div>
 
-        <div className="mt-10 bg-white p-8 rounded-3xl shadow-lg">
-          <h3 className="text-2xl font-semibold text-green-800 mb-6">
-            Earnings Over Time
-          </h3>
-          <Line data={earningsData} options={options} />
+        {/* Pending Orders Card */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-center">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-3 bg-amber-50 text-amber-600 rounded-full">
+              <FaHistory size={24} />
+            </div>
+            <div>
+              <p className="text-gray-500 text-sm">Pending Clearance</p>
+              <h3 className="text-2xl font-bold text-gray-900">KES 0</h3> {/* Mock for now */}
+            </div>
+          </div>
+          <p className="text-xs text-gray-400">Funds from orders not yet delivered.</p>
+        </div>
+      </div>
 
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Chart */}
+        <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <h3 className="text-lg font-bold text-gray-900 mb-6">Earnings History</h3>
+          <div className="h-80">
+            <Line data={earningsData} options={options} />
+          </div>
+        </div>
+
+        {/* Recent Transactions */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Transactions</h3>
+          <div className="space-y-4">
+            {wallet?.transactions && wallet.transactions.length > 0 ? (
+              wallet.transactions.slice(0, 5).map((tx) => (
+                <div key={tx.id} className="flex justify-between items-center p-3 hover:bg-gray-50 rounded-lg transition-colors border-b border-gray-50 last:border-0">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${tx.transaction_type === 'credit' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                      {tx.transaction_type === 'credit' ? <FaArrowUp /> : <FaArrowDown />}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">{tx.description || "Transaction"}</p>
+                      <p className="text-xs text-gray-500">{new Date(tx.timestamp).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  <span className={`font-bold ${tx.transaction_type === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
+                    {tx.transaction_type === 'credit' ? '+' : '-'} {Number(tx.amount).toLocaleString()}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-center py-4">No recent transactions.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

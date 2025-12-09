@@ -93,10 +93,12 @@ export default function MyProducts() {
                 <p className="text-gray-500 text-sm mb-4 line-clamp-2">{product.description}</p>
 
                 <div className="flex gap-2 pt-3 border-t border-gray-100">
-                  <button className="flex-1 flex items-center justify-center gap-2 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 text-sm font-medium transition-colors">
-                    <Edit size={16} />
-                    Edit
-                  </button>
+                  <Link href={`/seller-profile/edit-product/${product.id}`} className="flex-1">
+                    <button className="w-full flex items-center justify-center gap-2 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 text-sm font-medium transition-colors">
+                      <Edit size={16} />
+                      Edit
+                    </button>
+                  </Link>
                   <button
                     onClick={() => handleDelete(product.id)}
                     className="flex-1 flex items-center justify-center gap-2 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 text-sm font-medium transition-colors"

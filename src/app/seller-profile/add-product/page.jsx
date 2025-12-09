@@ -18,7 +18,10 @@ export default function AddProduct() {
         description: '',
         price: '',
         category_name: 'Crops', // Default category
-        image: null
+        image: null,
+        stock_quantity: '',
+        location: '',
+        delivery_options: 'Pickup'
     });
 
     const [preview, setPreview] = useState(null);
@@ -39,7 +42,7 @@ export default function AddProduct() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.name || !formData.price || !formData.image) {
+        if (!formData.name || !formData.price || !formData.image || !formData.stock_quantity) {
             toast.error("Please fill in all required fields and upload an image.");
             return;
         }
@@ -50,23 +53,11 @@ export default function AddProduct() {
         data.append('price', formData.price);
         data.append('category_name', formData.category_name);
         data.append('imagepath', formData.image);
-        // Note: Backend expects 'imagepath' for the file based on models.py? 
-        // Wait, models.py says imagepath is CharField. 
-        // Usually with Django REST Framework and FileUpload, it handles it. 
-        // But if models.py has CharField, it might expect a string path or the serializer handles the file upload and saves the path.
-        // Let's assume the backend handles file upload if we send it as 'imagepath' or 'image'.
-        // Looking at models.py: imagepath = models.CharField(max_length=255, blank=True, null=True)
-        // This suggests the backend might not be using ImageField.
-        // If it's a CharField, we might need to upload the image separately or the backend logic is custom.
-        // However, usually 'imagepath' implies a path string.
-        // Let's check serializers.py to be sure.
-        // For now, I'll send it as 'imagepath' and see.
-
-        // Actually, let's check serializers.py first to be safe.
-        // But I'll write this file assuming standard multipart upload for now.
+        data.append('stock_quantity', formData.stock_quantity);
+        data.append('location', formData.location);
+        data.append('delivery_options', formData.delivery_options);
 
         try {
-            // We need to wrap the dispatch in a promise check or use unwrap()
             const resultAction = await dispatch(createProduct(data));
             if (createProduct.fulfilled.match(resultAction)) {
                 toast.success("Product created successfully!");
@@ -158,6 +149,45 @@ export default function AddProduct() {
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Stock Quantity *</label>
+                            <input
+                                type="number"
+                                name="stock_quantity"
+                                value={formData.stock_quantity}
+                                onChange={handleChange}
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                                placeholder="Available quantity"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                            <input
+                                type="text"
+                                name="location"
+                                value={formData.location}
+                                onChange={handleChange}
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                                placeholder="e.g. Nairobi, Kiambu"
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Option</label>
+                        <select
+                            name="delivery_options"
+                            value={formData.delivery_options}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                        >
+                            <option value="Pickup">Pickup</option>
+                            <option value="Delivery">Delivery</option>
+                            <option value="Both">Both</option>
+                        </select>
                     </div>
 
                     <div>

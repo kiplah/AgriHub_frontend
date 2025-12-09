@@ -6,6 +6,7 @@ import orderSlice from "@/reducers/Order/orderSlice.js";
 import { reviewsReducer } from "@/reducers/Review/reviewSlice.js";
 import chatReducer from "@/reducers/Chat/chatSlice";
 import ContactReducter from "@/reducers/Contact/contactSlice"
+import walletReducer from "@/reducers/Wallet/walletSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   reviews: reviewsReducer,
   chat: chatReducer,
   contact: ContactReducter,
+  wallet: walletReducer,
 });
 
 

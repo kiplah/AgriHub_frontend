@@ -1,28 +1,24 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios"; 
+import axios from "../../axios/config";
 
-const API_BASE_URL = "http://localhost:8081/message"; 
+export const fetchConversations = createAsyncThunk(
+  "chat/fetchConversations",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get("/chat/messages/conversations/");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch conversations.");
+    }
+  }
+);
 
 export const fetchMessages = createAsyncThunk(
   "chat/fetchMessages",
-  async ({ senderId, receiverId, limit = 20, offset = 0 }, { rejectWithValue, getState }) => {
+  async (receiverId, { rejectWithValue }) => {
     try {
-      const token = getState().auth.token;
-
-      if (!token) {
-        throw new Error("Authorization token is missing. Please log in again.");
-      }
-
-      const response = await axios.get(
-        `${API_BASE_URL}/messages?receiverId=${receiverId}&limit=${limit}&offset=${offset}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      return response.data.messages;
+      const response = await axios.get(`/chat/messages/thread/?user_id=${receiverId}`);
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch messages.");
     }
@@ -31,53 +27,27 @@ export const fetchMessages = createAsyncThunk(
 
 export const sendMessage = createAsyncThunk(
   "chat/sendMessage",
-  async ({ senderId, receiverId, content }, { rejectWithValue, getState }) => {
+  async ({ receiver, content }, { rejectWithValue }) => {
     try {
-      const token = getState().auth.token;
-
-      if (!token) {
-        throw new Error("Authorization token is missing. Please log in again.");
-      }
-
-      const response = await axios.post(
-        `${API_BASE_URL}/new`,
-        { senderId, receiverId, content },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      return response.data.message;
+      const response = await axios.post("/chat/messages/", { receiver, content });
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to send message.");
     }
   }
 );
 
-  
-
 const chatSlice = createSlice({
   name: "chat",
   initialState: {
+    conversations: [],
     messages: [],
     loading: false,
     error: null,
   },
   reducers: {
     addMessage: (state, action) => {
-      const exists = state.messages.some(
-        (msg) =>
-          msg.senderId === action.payload.senderId &&
-          msg.content === action.payload.content &&
-          msg.timestamp === action.payload.timestamp
-      );
-
-      if (!exists) {
-        state.messages.push(action.payload);
-      }
+      state.messages.push(action.payload);
     },
     clearChat: (state) => {
       state.messages = [];
@@ -85,34 +55,35 @@ const chatSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-    .addCase(fetchMessages.pending, (state) => {
+      // Fetch Conversations
+      .addCase(fetchConversations.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchConversations.fulfilled, (state, action) => {
+        state.loading = false;
+        state.conversations = action.payload;
+      })
+      .addCase(fetchConversations.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Fetch Messages
+      .addCase(fetchMessages.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchMessages.fulfilled, (state, action) => {
-        console.log("✅ Messages in Redux after Fetch:", action.payload);
         state.loading = false;
-        state.messages = action.payload || [];
+        state.messages = action.payload;
       })
-      
-      
       .addCase(fetchMessages.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.messages = [];
       })
-  
-      
-      .addCase(sendMessage.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      // Send Message
       .addCase(sendMessage.fulfilled, (state, action) => {
         state.messages.push(action.payload);
-      })
-      .addCase(sendMessage.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
       });
   },
 });

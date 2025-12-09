@@ -17,12 +17,18 @@ import {
   Menu,
   Settings,
   User,
-  Box as BoxIcon
+  Box as BoxIcon,
+  MessageSquare,
+  Wallet,
+  Star,
+  BarChart,
+  ClipboardList,
+  HelpCircle
 } from "lucide-react";
 
 import Logo from "../../assets/images/logo.png";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 import { logout } from "@/reducers/Auth/authSlice";
 import { useRouter } from "next/navigation";
@@ -68,16 +74,28 @@ const Sidebar = ({ role }) => {
           items: [
             { label: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/seller-profile" },
             { label: "My Products", icon: <BoxIcon size={20} />, path: "/seller-profile/my-products" },
-            { label: "Marketplace", icon: <Store size={20} />, path: "/marketplace" },
+            { label: "Inventory", icon: <ClipboardList size={20} />, path: "/seller-profile/inventory" },
             { label: "Orders", icon: <ShoppingBag size={20} />, path: "/orders" },
+            { label: "Messages", icon: <MessageSquare size={20} />, path: "/seller-profile/chats" },
+            { label: "Wallet & Payouts", icon: <Wallet size={20} />, path: "/seller-profile/earnings" },
+            { label: "Reviews", icon: <Star size={20} />, path: "/seller-profile/reviews" },
+            { label: "Analytics", icon: <BarChart size={20} />, path: "/seller-profile/analytics" },
           ]
         },
         {
           title: "FARM MANAGEMENT",
           items: [
-            { label: "Livestock", icon: <Tractor size={20} />, path: "/livestock" }, // Using Tractor as proxy for Livestock if Cow not available in this version
+            { label: "Livestock", icon: <Tractor size={20} />, path: "/livestock" },
             { label: "Crops", icon: <Sprout size={20} />, path: "/crops" },
             { label: "Logistics", icon: <Truck size={20} />, path: "/logistics" },
+          ]
+        },
+        {
+          title: "SETTINGS & SUPPORT",
+          items: [
+            { label: "Store Profile", icon: <Store size={20} />, path: "/seller-profile/profile" },
+            { label: "Settings", icon: <Settings size={20} />, path: "/seller-profile/settings" },
+            { label: "Support", icon: <HelpCircle size={20} />, path: "/seller-profile/support" },
           ]
         },
         {

@@ -1,138 +1,145 @@
-import React from 'react';
+"use client";
+import React, { useEffect } from 'react';
 import { StatCard } from '../../Components/ui/StatCard';
 import { Card } from '../../Components/ui/Card';
-import { ShoppingBagIcon, SproutIcon, TrendingUpIcon, PackageIcon, AlertCircleIcon, BoxIcon } from 'lucide-react';
+import { ShoppingBagIcon, SproutIcon, TrendingUpIcon, PackageIcon, AlertCircleIcon, BoxIcon, MessageSquare, DollarSign } from 'lucide-react';
 import Link from 'next/link';
-import { mockOrders, mockLivestock, mockCrops } from '../../utils/mockData';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchSellerStats } from '@/reducers/Order/orderSlice';
 
 export default function Dashboard() {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const { sellerStats, loading } = useSelector((state) => state.orders);
+
+  useEffect(() => {
+    if (user?.userId) {
+      dispatch(fetchSellerStats(user.userId));
+    }
+  }, [dispatch, user?.userId]);
+
+  const totalOrders = sellerStats?.TotalOrders || 0;
+  const revenue = sellerStats?.Revenue || 0;
+  const activeOrders = sellerStats?.ActiveOrders || 0;
+  const lowStock = sellerStats?.LowStockAlerts || 0;
+  const unreadMessages = sellerStats?.UnreadMessages || 0;
+
   return (
     <div className="space-y-6 p-6 bg-gray-50 min-h-screen">
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-1">
-          Welcome back! Here's what's happening on your farm.
-        </p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">Dashboard Overview</h1>
+          <p className="text-gray-600 mt-1">
+            Welcome back, {user?.username || 'Seller'}! Here's your store's performance.
+          </p>
+        </div>
+        <Link href="/seller-profile/settings" className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors">
+          Store Settings
+        </Link>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
-          title="Total Livestock"
-          value={mockLivestock.length}
-          icon={BoxIcon}
-          trend={{ value: 12, isPositive: true }}
+          title="Total Revenue"
+          value={`KES ${revenue.toLocaleString()}`}
+          icon={DollarSign}
+          trend={{ value: 12, isPositive: true }} // Trend is mock for now
         />
         <StatCard
-          title="Active Crops"
-          value={mockCrops.length}
-          icon={SproutIcon}
-          trend={{ value: 8, isPositive: true }}
+          title="Total Orders"
+          value={totalOrders}
+          icon={ShoppingBagIcon}
         />
         <StatCard
-          title="Pending Orders"
-          value={mockOrders.filter(o => o.status === 'pending').length}
+          title="Active Orders"
+          value={activeOrders}
           icon={PackageIcon}
+          className="bg-blue-50 border-blue-200"
         />
-        <StatCard
-          title="Revenue (KES)"
-          value="125,400"
-          icon={TrendingUpIcon}
-          trend={{ value: 23, isPositive: true }}
-        />
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-gray-500">Unread Messages</p>
+            <h3 className="text-2xl font-bold text-gray-900 mt-1">{unreadMessages}</h3>
+          </div>
+          <div className={`p-3 rounded-full ${unreadMessages > 0 ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600'}`}>
+            <MessageSquare size={24} />
+          </div>
+        </div>
       </div>
 
-      {/* Quick Actions */}
-      <Card>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Quick Actions
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href="/livestock/add" className="p-4 border border-gray-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 transition-colors group">
-            <div className="w-8 h-8 text-emerald-600 mb-2 group-hover:scale-110 transition-transform">
-              <BoxIcon />
-            </div>
-            <h3 className="font-medium text-gray-900">Add Livestock</h3>
-            <p className="text-sm text-gray-600 mt-1">Register new animals</p>
-          </Link>
-
-          <Link href="/crops/add" className="p-4 border border-gray-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 transition-colors group">
-            <div className="w-8 h-8 text-emerald-600 mb-2 group-hover:scale-110 transition-transform">
-              <SproutIcon />
-            </div>
-            <h3 className="font-medium text-gray-900">Add Crop</h3>
-            <p className="text-sm text-gray-600 mt-1">Track new plantings</p>
-          </Link>
-
-          <Link href="/marketplace" className="p-4 border border-gray-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 transition-colors group">
-            <div className="w-8 h-8 text-emerald-600 mb-2 group-hover:scale-110 transition-transform">
-              <ShoppingBagIcon />
-            </div>
-            <h3 className="font-medium text-gray-900">Browse Market</h3>
-            <p className="text-sm text-gray-600 mt-1">Shop for supplies</p>
-          </Link>
-        </div>
-      </Card>
-
-      {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+      {/* Quick Actions & Alerts */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Recent Orders
+            Quick Actions
           </h2>
-          <div className="space-y-3">
-            {mockOrders.slice(0, 3).map(order => (
-              <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div>
-                  <p className="font-medium text-gray-900">Order #{order.id}</p>
-                  <p className="text-sm text-gray-600">
-                    {order.items.length} items
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="font-medium text-gray-900">KES {order.total}</p>
-                  <span className={`text-xs px-2 py-1 rounded-full ${order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                      order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
-                    }`}>
-                    {order.status}
-                  </span>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link href="/seller-profile/add-product" className="p-4 border border-gray-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 transition-colors group">
+              <div className="w-8 h-8 text-emerald-600 mb-2 group-hover:scale-110 transition-transform">
+                <BoxIcon />
               </div>
-            ))}
+              <h3 className="font-medium text-gray-900">Add Product</h3>
+              <p className="text-sm text-gray-600 mt-1">List new item</p>
+            </Link>
+
+            <Link href="/seller-profile/earnings" className="p-4 border border-gray-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 transition-colors group">
+              <div className="w-8 h-8 text-emerald-600 mb-2 group-hover:scale-110 transition-transform">
+                <TrendingUpIcon />
+              </div>
+              <h3 className="font-medium text-gray-900">View Earnings</h3>
+              <p className="text-sm text-gray-600 mt-1">Check Payouts</p>
+            </Link>
+
+            <Link href="/seller-profile/orders" className="p-4 border border-gray-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 transition-colors group">
+              <div className="w-8 h-8 text-emerald-600 mb-2 group-hover:scale-110 transition-transform">
+                <ShoppingBagIcon />
+              </div>
+              <h3 className="font-medium text-gray-900">Manage Orders</h3>
+              <p className="text-sm text-gray-600 mt-1">Process shipments</p>
+            </Link>
           </div>
-          <Link href="/orders" className="block mt-4 text-center text-sm text-emerald-600 hover:text-emerald-700 font-medium">
-            View all orders →
-          </Link>
         </Card>
 
         <Card>
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Health Alerts
+            Alerts
           </h2>
-          <div className="space-y-3">
-            <div className="flex items-start p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <AlertCircleIcon className="w-5 h-5 text-yellow-600 mr-3 mt-0.5" />
-              <div>
-                <p className="font-medium text-gray-900">
-                  Livestock Checkup Due
-                </p>
-                <p className="text-sm text-gray-600">
-                  3 animals need health inspection
-                </p>
+          <div className="space-y-4">
+            {lowStock > 0 ? (
+              <div className="flex items-start p-3 bg-red-50 border border-red-200 rounded-lg">
+                <AlertCircleIcon className="w-5 h-5 text-red-600 mr-3 mt-0.5" />
+                <div>
+                  <p className="font-medium text-gray-900">Low Stock Alert</p>
+                  <p className="text-sm text-gray-600">{lowStock} products are running low.</p>
+                  <Link href="/seller-profile/inventory" className="text-xs font-semibold text-red-700 hover:underline mt-1 block">
+                    View Inventory
+                  </Link>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <AlertCircleIcon className="w-5 h-5 text-blue-600 mr-3 mt-0.5" />
-              <div>
-                <p className="font-medium text-gray-900">
-                  Crop Watering Schedule
-                </p>
-                <p className="text-sm text-gray-600">
-                  Tomato field needs watering today
-                </p>
+            ) : (
+              <div className="flex items-start p-3 bg-green-50 border border-green-200 rounded-lg">
+                <BoxIcon className="w-5 h-5 text-green-600 mr-3 mt-0.5" />
+                <div>
+                  <p className="font-medium text-gray-900">Inventory Healthy</p>
+                  <p className="text-sm text-gray-600">No low stock alerts.</p>
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* Additional alerts can be added here */}
+            {unreadMessages > 0 && (
+              <div className="flex items-start p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <MessageSquare className="w-5 h-5 text-blue-600 mr-3 mt-0.5" />
+                <div>
+                  <p className="font-medium text-gray-900">New Messages</p>
+                  <p className="text-sm text-gray-600">You have {unreadMessages} unread messages.</p>
+                  <Link href="/seller-profile/chats" className="text-xs font-semibold text-blue-700 hover:underline mt-1 block">
+                    Go to Inbox
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </Card>
       </div>
