@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSellerProfile, updateSellerProfile } from '@/reducers/Auth/authSlice';
 import { Card } from '@/Components/ui/Card';
-import { Button } from '@/Components/ui/Button'; // Assuming we have this or use native
+// import { Button } from '@/Components/ui/Button'; // Removed as it does not exist
 import { Loader2, Upload, Camera, Store } from 'lucide-react';
 import { toast } from 'react-toastify';
 
