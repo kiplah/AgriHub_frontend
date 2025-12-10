@@ -1,186 +1,165 @@
 "use client";
-import Profile from "@/Components/ProfileCard/ProfileCard";
 import React, { useState } from "react";
-import {
-  FaUser,
-  FaMapMarkerAlt,
-  FaCheckCircle,
-  FaClipboard,
-  FaTags,
-  FaEdit,
-  FaSave,
-  FaCamera,
-} from "react-icons/fa";
+import Link from "next/link";
+import { User, Lock, Bell, ChevronRight, Store, ShieldCheck } from "lucide-react";
+import { Card } from "@/Components/ui/Card";
 
-export default function CombinedDashboard() {
-  const [isEditing, setIsEditing] = useState(false);
+export default function SettingsPage() {
+  const [activeTab, setActiveTab] = useState('general');
 
-  const [sellerInfo, setSellerInfo] = useState({
-    profilePicture: "https://via.placeholder.com/100",
-    store_name: "Agro Mart",
-    location: "Lahore",
-    availible: "Available in Lahore",
-    description: "We provide high-quality agricultural products.",
-    category: ["Machines", "Crops", "Seeds", "Pesticides"],
-  });
-
-  const [editableInfo, setEditableInfo] = useState({ ...sellerInfo });
-
-  // Icon Mapping
-  const fieldIcons = {
-    store_name: FaUser,
-    location: FaMapMarkerAlt,
-    availible: FaCheckCircle,
-    description: FaClipboard,
-    categories: FaTags,
-  };
-
-  const handleEditToggle = () => {
-    if (isEditing) {
-      setSellerInfo(editableInfo);
+  const sections = [
+    {
+      id: 'general',
+      title: 'General Settings',
+      icon: Store,
+      description: 'Manage store profile and branding',
+      link: '/seller-profile/profile' // Direct link to the profile page we made
+    },
+    {
+      id: 'security',
+      title: 'Security',
+      icon: ShieldCheck,
+      description: 'Password and authentication',
+      action: 'change_password'
+    },
+    {
+      id: 'notifications',
+      title: 'Notifications',
+      icon: Bell,
+      description: 'Email and SMS preferences',
+      action: 'notifications'
     }
-    setIsEditing(!isEditing);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditableInfo({ ...editableInfo, [name]: value });
-  };
-
-  const handleProfilePictureChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setEditableInfo({ ...editableInfo, profilePicture: e.target.result });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  ];
 
   return (
-    <div className="bg-gradient-to-br from-green-900 via-emerald-700 to-lime-500 text-white min-h-screen p-6">
-      <Profile />
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+        <p className="text-gray-500">Manage your store preferences and account security.</p>
+      </div>
 
-      <div className="flex justify-center">
-        <main className="w-full bg-gradient-to-br from-green-700 via-green-600 to-lime-600 shadow-xl rounded-xl p-8 mt-10 text-gray-100">
-          <div className="text-center mb-8 relative">
-            <img
-              src={editableInfo.profilePicture}
-              alt="Profile"
-              className="w-28 h-28 mx-auto rounded-full border-4 border-emerald-400 shadow-lg"
-            />
-            {isEditing && (
-              <label className="absolute top-2 right-1/2 transform translate-x-1/2 bg-emerald-500 p-2 rounded-full shadow-lg cursor-pointer hover:bg-emerald-600">
-                <FaCamera className="text-white" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleProfilePictureChange}
-                />
-              </label>
-            )}
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Settings Navigation */}
+        <Card className="col-span-1 h-fit">
+          <nav className="space-y-1">
+            {sections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => setActiveTab(section.id)}
+                className={`w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === section.id
+                    ? 'bg-emerald-50 text-emerald-700'
+                    : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+              >
+                <div className="flex items-center gap-3">
+                  <section.icon size={18} />
+                  {section.title}
+                </div>
+                <ChevronRight size={16} className={`text-gray-400 ${activeTab === section.id ? 'text-emerald-500' : ''}`} />
+              </button>
+            ))}
+          </nav>
+        </Card>
 
-          <section className="mb-8">
-            <h3 className="text-2xl font-bold text-lime-200 mb-6">Store Information</h3>
-            <div className="space-y-4">
-              {["store_name", "location", "availible", "description"].map((field) => {
-                const Icon = fieldIcons[field]; 
-                return (
-                  <div key={field}>
-                    {isEditing ? (
-                      <>
-                        <label
-                          htmlFor={field}
-                          className="block text-lime-100 font-medium mb-1 capitalize flex items-center space-x-2"
-                        >
-                          <Icon className="text-emerald-400" />
-                          <span>{field.replace("_", " ")}</span>
-                        </label>
-                        <input
-                          type="text"
-                          name={field}
-                          value={editableInfo[field]}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-2 rounded-lg text-gray-800 border border-lime-300 focus:ring-2 focus:ring-lime-500"
-                        />
-                      </>
-                    ) : (
-                      <div className="flex items-center space-x-4">
-                        <Icon className="text-emerald-400 text-xl" />
-                        <div>
-                          <p className="text-lime-200 font-medium capitalize">
-                            {field.replace("_", " ")}
-                          </p>
-                          <p className="text-lime-100">{sellerInfo[field]}</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-
-              <div>
-                <label
-                  htmlFor="categories"
-                  className="block text-lime-100 font-medium mb-1 capitalize flex items-center space-x-2"
-                >
-                  <FaTags className="text-emerald-400" />
-                  <span>Categories</span>
-                </label>
-                {isEditing ? (
-                  <textarea
-                    name="categories"
-                    value={editableInfo.category.join(", ")}
-                    onChange={(e) =>
-                      setEditableInfo({
-                        ...editableInfo,
-                        category: e.target.value.split(",").map((cat) => cat.trim()),
-                      })
-                    }
-                    className="w-full px-4 py-2 rounded-lg text-gray-800 border border-lime-300 focus:ring-2 focus:ring-lime-500"
-                    rows="3"
-                  />
-                ) : (
-                  <div className="flex items-center space-x-4">
-                    <FaTags className="text-emerald-400 text-xl" />
-                    <div>
-                      <ul className="list-disc list-inside text-lime-100">
-                        {sellerInfo.category.map((cat, index) => (
-                          <li key={index}>{cat}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                )}
+        {/* Content Area */}
+        <div className="md:col-span-2 space-y-6">
+          {activeTab === 'general' && (
+            <Card>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-3 bg-emerald-100 text-emerald-600 rounded-full">
+                  <Store size={24} />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Store Profile</h2>
+                  <p className="text-sm text-gray-500">Update your store name, logo, and contact info.</p>
+                </div>
               </div>
-            </div>
-          </section>
+              <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between border border-gray-100">
+                <div>
+                  <p className="font-medium text-gray-900">Store Information</p>
+                  <p className="text-sm text-gray-500">Visible to all customers on the marketplace.</p>
+                </div>
+                <Link
+                  href="/seller-profile/profile"
+                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium text-sm transition-colors"
+                >
+                  Edit Profile
+                </Link>
+              </div>
+            </Card>
+          )}
 
-          <div className="flex justify-end mt-6">
-            <button
-              className={`px-6 py-3 rounded-lg shadow-md font-medium flex items-center space-x-2 ${isEditing
-                ? "bg-lime-500 hover:bg-lime-600 text-white"
-                : "bg-emerald-500 hover:bg-emerald-600 text-white"
-                }`}
-              onClick={handleEditToggle}
-            >
-              {isEditing ? (
-                <>
-                  <FaSave />
-                  <span>Save</span>
-                </>
-              ) : (
-                <>
-                  <FaEdit />
-                  <span>Edit</span>
-                </>
-              )}
-            </button>
-          </div>
-        </main>
+          {activeTab === 'security' && (
+            <Card>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-3 bg-blue-100 text-blue-600 rounded-full">
+                  <ShieldCheck size={24} />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Security</h2>
+                  <p className="text-sm text-gray-500">Manage your password and account access.</p>
+                </div>
+              </div>
+
+              <form className="space-y-4 max-w-md">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                  <input type="password" className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                  <input type="password" className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                  <input type="password" className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" />
+                </div>
+                <div className="pt-2">
+                  <button type="button" className="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
+                    Update Password
+                  </button>
+                </div>
+              </form>
+            </Card>
+          )}
+
+          {activeTab === 'notifications' && (
+            <Card>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-3 bg-amber-100 text-amber-600 rounded-full">
+                  <Bell size={24} />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Notifications</h2>
+                  <p className="text-sm text-gray-500">Choose how you want to be notified.</p>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-gray-900">Email Notifications</p>
+                    <p className="text-sm text-gray-500">Receive daily summaries and critical alerts via email.</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" className="sr-only peer" defaultChecked />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                  </label>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-gray-900">Marketplace Updates</p>
+                    <p className="text-sm text-gray-500">Get notified about new features and tips.</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" className="sr-only peer" />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                  </label>
+                </div>
+              </div>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   );
