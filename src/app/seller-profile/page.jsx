@@ -156,10 +156,8 @@ export default function SellerDashboardPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Link href="/seller-profile/add-product">
-              <a className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg shadow-sm text-sm">
-                + Add Product
-              </a>
+            <Link href="/seller-profile/add-product" className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg shadow-sm text-sm">
+              + Add Product
             </Link>
             <button className="px-3 py-2 border rounded-lg text-sm">Share Store</button>
             <button className="px-3 py-2 border rounded-lg text-sm">Settings</button>
@@ -197,7 +195,7 @@ export default function SellerDashboardPage() {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-gray-900">Top Selling Products</h3>
-                <Link href="/seller-profile/my-products"><a className="text-sm text-emerald-600">Manage</a></Link>
+                <Link href="/seller-profile/my-products" className="text-sm text-emerald-600">Manage</Link>
               </div>
 
               <ul className="space-y-3">
@@ -226,7 +224,7 @@ export default function SellerDashboardPage() {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="px-6 py-5 border-b flex items-center justify-between">
                 <h3 className="font-semibold text-gray-900">Recent Orders</h3>
-                <Link href="/seller-profile/orders"><a className="text-sm text-emerald-600">View All</a></Link>
+                <Link href="/seller-profile/orders" className="text-sm text-emerald-600">View All</Link>
               </div>
 
               <div className="overflow-x-auto">
@@ -271,7 +269,7 @@ export default function SellerDashboardPage() {
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-3">
-                <Link href="/seller-profile/add-product"><a className="py-2 px-3 rounded-lg bg-emerald-600 text-white text-sm text-center">Add Product</a></Link>
+                <Link href="/seller-profile/add-product" className="py-2 px-3 rounded-lg bg-emerald-600 text-white text-sm text-center">Add Product</Link>
                 <button className="py-2 px-3 rounded-lg border text-sm">Bulk Upload</button>
                 <button className="py-2 px-3 rounded-lg border text-sm">Payout Request</button>
                 <button className="py-2 px-3 rounded-lg border text-sm">Promote Listing</button>

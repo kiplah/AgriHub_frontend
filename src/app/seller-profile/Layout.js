@@ -25,7 +25,7 @@ export default function Layout({ children, initialCollapsed = false }) {
           <div className="flex items-center gap-2">
             <div className={`text-green-600 font-bold text-lg ${collapsed ? "hidden" : "block"}`}>AGRO MART</div>
             <div className={`w-8 h-8 rounded-full bg-green-100 flex items-center justify-center ${collapsed ? "mx-auto" : ""}`}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L12 22" stroke="#16a34a" strokeWidth="2"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L12 22" stroke="#16a34a" strokeWidth="2" /></svg>
             </div>
           </div>
 
@@ -40,11 +40,13 @@ export default function Layout({ children, initialCollapsed = false }) {
 
         <nav className="flex-1 overflow-y-auto px-2 py-4 space-y-1">
           {menu.map((m) => (
-            <Link href={m.href} key={m.key}>
-              <a className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors ${collapsed ? "justify-center" : ""}`}>
-                <span className="text-gray-600">{m.icon}</span>
-                <span className={`text-sm text-gray-700 ${collapsed ? "hidden" : "block"}`}>{m.label}</span>
-              </a>
+            <Link
+              href={m.href}
+              key={m.key}
+              className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors ${collapsed ? "justify-center" : ""}`}
+            >
+              <span className="text-gray-600">{m.icon}</span>
+              <span className={`text-sm text-gray-700 ${collapsed ? "hidden" : "block"}`}>{m.label}</span>
             </Link>
           ))}
         </nav>
@@ -92,7 +94,7 @@ export default function Layout({ children, initialCollapsed = false }) {
 
             <div className="flex items-center gap-3">
               <div className="hidden sm:flex items-center gap-2 border rounded px-3 py-1 bg-gray-50">
-                <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"><path d="M21 21L15 15" stroke="#9CA3AF" strokeWidth="2"/></svg>
+                <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"><path d="M21 21L15 15" stroke="#9CA3AF" strokeWidth="2" /></svg>
                 <input placeholder="Search orders, products..." className="bg-transparent outline-none text-sm" />
               </div>
 
