@@ -269,10 +269,18 @@ export default function SellerDashboardPage() {
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-3">
-                <Link href="/seller-profile/add-product" className="py-2 px-3 rounded-lg bg-emerald-600 text-white text-sm text-center">Add Product</Link>
-                <button className="py-2 px-3 rounded-lg border text-sm">Bulk Upload</button>
-                <button className="py-2 px-3 rounded-lg border text-sm">Payout Request</button>
-                <button className="py-2 px-3 rounded-lg border text-sm">Promote Listing</button>
+                <Link href="/seller-profile/add-product" className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium text-center transition-colors shadow-sm shadow-emerald-200">
+                  Add Product
+                </Link>
+                <button className="py-2.5 px-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors">
+                  Bulk Upload
+                </button>
+                <button className="py-2.5 px-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors">
+                  Payout Request
+                </button>
+                <button className="py-2.5 px-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors">
+                  Promote Listing
+                </button>
               </div>
             </div>
 

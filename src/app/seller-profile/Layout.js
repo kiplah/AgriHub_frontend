@@ -84,30 +84,35 @@ export default function Layout({ children, initialCollapsed = false }) {
       {/* Main content */}
       <div className="flex-1 min-h-screen">
         {/* Topbar */}
-        <header className="bg-white border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="hidden md:block text-sm text-gray-500">Welcome back,</div>
-              <div className="text-lg font-semibold text-gray-900">Victor Kiplangat</div>
-              <div className="rounded-md border px-3 py-1 text-xs text-gray-500 hidden sm:inline">Seller Dashboard</div>
+        <header className="bg-white border-b px-8 h-16 flex items-center justify-between sticky top-0 z-10">
+          <div className="flex items-center gap-4">
+            <div className="hidden md:block text-sm text-gray-500">Welcome back,</div>
+            <div className="text-lg font-semibold text-gray-900">Victor Kiplangat</div>
+            <div className="rounded-md border px-3 py-1 text-xs text-gray-500 hidden sm:inline">Seller Dashboard</div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2 border rounded-full px-4 py-1.5 bg-gray-50/50 focus-within:bg-white focus-within:ring-2 ring-emerald-100 transition-all w-64">
+              <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"><path d="M21 21L15 15" stroke="#9CA3AF" strokeWidth="2" /></svg>
+              <input placeholder="Search orders..." className="bg-transparent outline-none text-sm w-full" />
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:flex items-center gap-2 border rounded px-3 py-1 bg-gray-50">
-                <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"><path d="M21 21L15 15" stroke="#9CA3AF" strokeWidth="2" /></svg>
-                <input placeholder="Search orders, products..." className="bg-transparent outline-none text-sm" />
+            <button className="p-2 rounded-full hover:bg-gray-100 relative">
+              <MessageSquare className="w-5 h-5 text-gray-600" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+            </button>
+            <div className="h-8 w-[1px] bg-gray-200 mx-1"></div>
+            <div className="flex items-center gap-2">
+              <div className="text-right hidden sm:block">
+                <div className="text-sm font-medium text-gray-900">KES 24,000</div>
+                <div className="text-xs text-emerald-600 font-medium">Verified Seller</div>
               </div>
-
-              <button className="p-2 rounded hover:bg-gray-100"><MessageSquare className="w-5 h-5 text-gray-600" /></button>
-              <div className="flex items-center gap-2">
-                <div className="text-sm text-gray-500">KES 24,000</div>
-                <div className="w-8 h-8 rounded-full bg-gray-100" />
-              </div>
+              <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold border border-emerald-200">Vk</div>
             </div>
           </div>
         </header>
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <main className="p-6 md:p-8 w-full">
           {children}
         </main>
       </div>
