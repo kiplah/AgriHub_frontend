@@ -23,7 +23,8 @@ import {
   Star,
   BarChart,
   ClipboardList,
-  HelpCircle
+  HelpCircle,
+  Megaphone // Added for Marketing
 } from "lucide-react";
 
 import Logo from "../../assets/images/logo.png";
@@ -70,45 +71,23 @@ const Sidebar = ({ role }) => {
     if (role === 'seller') {
       return [
         {
-          title: "OVERVIEW",
           items: [
             { label: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/seller-profile" },
-            { label: "My Products", icon: <BoxIcon size={20} />, path: "/seller-profile/my-products" },
-            { label: "Inventory", icon: <ClipboardList size={20} />, path: "/seller-profile/inventory" },
-            { label: "Orders", icon: <ShoppingBag size={20} />, path: "/orders" },
+            { label: "Products", icon: <BoxIcon size={20} />, path: "/seller-profile/my-products" },
+            { label: "Orders", icon: <ShoppingBag size={20} />, path: "/seller-profile/orders" },
+            { label: "Inventory", icon: <ClipboardList size={20} />, path: "/seller-profile/inventory" }, // "Inventory" in mockup
             { label: "Messages", icon: <MessageSquare size={20} />, path: "/seller-profile/chats" },
-            { label: "Wallet & Payouts", icon: <Wallet size={20} />, path: "/seller-profile/earnings" },
-            { label: "Reviews", icon: <Star size={20} />, path: "/seller-profile/reviews" },
             { label: "Analytics", icon: <BarChart size={20} />, path: "/seller-profile/analytics" },
-          ]
-        },
-        {
-          title: "FARM MANAGEMENT",
-          items: [
-            { label: "Livestock", icon: <Tractor size={20} />, path: "/livestock" },
-            { label: "Crops", icon: <Sprout size={20} />, path: "/crops" },
-            { label: "Logistics", icon: <Truck size={20} />, path: "/logistics" },
-          ]
-        },
-        {
-          title: "SETTINGS & SUPPORT",
-          items: [
-            { label: "Store Profile", icon: <Store size={20} />, path: "/seller-profile/profile" },
+            { label: "Payouts", icon: <Wallet size={20} />, path: "/seller-profile/earnings" },
+            { label: "Marketing", icon: <Megaphone size={20} />, path: "/seller-profile/marketing" }, // Mockup item
+            { label: "Profile", icon: <User size={20} />, path: "/seller-profile/profile" },
             { label: "Settings", icon: <Settings size={20} />, path: "/seller-profile/settings" },
-            { label: "Support", icon: <HelpCircle size={20} />, path: "/seller-profile/support" },
-          ]
-        },
-        {
-          title: "AI FEATURES",
-          items: [
-            { label: "Disease Detection", icon: <Activity size={20} />, path: "/disease-detection" },
-            { label: "Growth Prediction", icon: <TrendingUp size={20} />, path: "/growth-prediction" },
-            { label: "Soil Analysis", icon: <FlaskConical size={20} />, path: "/soil-analysis" },
-            { label: "Yield Forecast", icon: <CloudSun size={20} />, path: "/yield-forecast" },
           ]
         }
       ];
     } else if (role === 'buyer') {
+      // Keep buyer/admin styling simple or adapt later if requested. For now focusing on seller match.
+      // Reverting to grouped structure for others or simplifying. Let's keep existing logic but styled light.
       return [
         {
           title: "OVERVIEW",
@@ -152,36 +131,17 @@ const Sidebar = ({ role }) => {
     };
 
     document.addEventListener("click", closeSidebarOnOutsideClick);
-
     return () => {
       document.removeEventListener("click", closeSidebarOnOutsideClick);
     };
   }, [isSidebarOpen]);
-
-  const backgroundImages = {
-    seller: `
-      linear-gradient(
-        rgba(0, 0, 0, 0.85), 
-        rgba(20, 40, 30, 0.9)
-      ),
-      url('https://img.freepik.com/premium-photo/modern-agricultural-machine-with-data-connections-field-showcase-use-modern-technology-data-connections-agriculture_38013-10447.jpg')`,
-    default: `
-      linear-gradient(
-        rgba(0, 0, 0, 0.85), 
-        rgba(20, 40, 30, 0.9)
-      ),
-      url('https://media.gettyimages.com/id/1557452514/video/a-time-lapse-of-a-fern-plant-growing-concept-with-alpha-map-on-black-background.jpg?s=640x640&k=20&c=QZztVYhiYdHf7_JwyqwuOnNLuIdfuueXI0k-uvdCC_o=')`,
-  };
-
-  const backgroundImage =
-    role === "seller" ? backgroundImages.seller : backgroundImages.default;
 
   return (
     <>
       <button
         aria-controls="sidebar"
         type="button"
-        className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+        className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         onClick={toggleSidebar}
       >
         <span className="sr-only">Open sidebar</span>
@@ -191,47 +151,42 @@ const Sidebar = ({ role }) => {
       <aside
         id="sidebar"
         className={`fixed top-0 left-0 z-40 h-screen flex flex-col transition-transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } md:translate-x-0 w-[280px] py-6 px-4 text-white shadow-2xl border-r border-white/10 backdrop-blur-xl`}
+          } md:translate-x-0 w-[280px] py-6 px-4 bg-white border-r border-gray-100 shadow-sm`}
         aria-label="Sidebar"
-        style={{
-          backgroundImage,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
       >
-        <div className="flex items-center justify-center mb-10">
-          <Image
-            src={Logo}
-            height={50}
-            width={180}
-            alt="Agro Mart Logo"
-            className="hover:scale-105 transition-transform duration-300 drop-shadow-lg"
-          />
+        <div className="flex items-center justify-start px-4 mb-10">
+          {/* Logo - assuming transparent png or adjusting styling */}
+          <div className="flex items-center gap-2 font-bold text-2xl text-emerald-700">
+            {/* Using text fallback if image doesn't fit white bg well, or assuming logo is improved */}
+            {/* <Image src={Logo} height={40} width={40} alt="Logo" /> */}
+            {/* User mockup shows text 'AGRO MART' with a leaf icon */}
+            <Sprout className="text-emerald-600" size={28} />
+            <span>AGRO MART</span>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-8 custom-scrollbar">
           {menuGroups.map((group, groupIndex) => (
             <div key={groupIndex}>
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">
-                {group.title}
-              </h3>
+              {group.title && (
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-4">
+                  {group.title}
+                </h3>
+              )}
               <ul className="space-y-1">
                 {group.items.map((item, index) => (
                   <li key={index}>
                     <Link href={item.path}>
                       <div
-                        className={`flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200 group ${typeof window !== "undefined" &&
-                          window.location.pathname === item.path
-                          ? "bg-emerald-600 text-white shadow-md"
-                          : "text-gray-300 hover:bg-white/10 hover:text-white"
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${typeof window !== "undefined" && window.location.pathname === item.path
+                            ? "bg-emerald-600 text-white shadow-md font-medium"
+                            : "text-gray-500 hover:bg-gray-50 hover:text-emerald-600"
                           }`}
                       >
-                        <div className={`${typeof window !== "undefined" && window.location.pathname === item.path ? "text-white" : "text-emerald-400 group-hover:text-emerald-300"
-                          }`}>
+                        <div className={typeof window !== "undefined" && window.location.pathname === item.path ? "text-white" : "text-gray-400 group-hover:text-emerald-600"}>
                           {item.icon}
                         </div>
-                        <span className="text-sm font-medium">{item.label}</span>
+                        <span className="text-sm">{item.label}</span>
                       </div>
                     </Link>
                   </li>
@@ -239,17 +194,6 @@ const Sidebar = ({ role }) => {
               </ul>
             </div>
           ))}
-        </div>
-
-        <div className="border-t border-white/10 pt-4 mt-4">
-          <button
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className="flex items-center justify-center gap-3 p-3 w-full rounded-lg bg-red-500/20 text-red-200 hover:bg-red-500 hover:text-white transition-all duration-300 border border-red-500/30 hover:border-red-500"
-          >
-            <LogOut size={20} />
-            <span className="text-sm font-medium">Sign Out</span>
-          </button>
         </div>
       </aside>
     </>
