@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
+import { Menu, Home, Box, ShoppingCart, FileText, BarChart2, Wallet, MessageSquare, Settings, LogOut } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux"; // Added useDispatch
 import { logout } from "@/reducers/Auth/authSlice"; // Import logout action
 import { useRouter } from "next/navigation"; // Import useRouter
