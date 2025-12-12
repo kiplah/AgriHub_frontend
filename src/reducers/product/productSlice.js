@@ -11,12 +11,7 @@ export const createProduct = createAsyncThunk(
         throw new Error("Authorization token is missing. Please log in again.");
       }
 
-      const response = await axios.post("/products/", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post("/products/", formData);
 
       return response.data;
     } catch (error) {
@@ -38,12 +33,7 @@ export const updateProduct = createAsyncThunk(
         throw new Error("Authorization token is missing.");
       }
 
-      const response = await axios.put(`/products/${id}/`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.put(`/products/${id}/`, formData);
 
       return response.data;
     } catch (error) {
@@ -91,11 +81,7 @@ export const deleteProduct = createAsyncThunk(
         throw new Error("Authorization token is missing. Please log in again.");
       }
 
-      const response = await axios.delete(`/products/${productId}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.delete(`/products/${productId}/`);
 
       return { productId };
     } catch (error) {
@@ -116,11 +102,7 @@ export const getProductByUserId = createAsyncThunk(
         throw new Error("Authorization token is missing. Please log in again.");
       }
 
-      const response = await axios.get(`/products/?user_id=${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(`/products/?user_id=${userId}`);
 
       return response.data;
     } catch (error) {

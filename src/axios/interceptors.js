@@ -13,18 +13,12 @@ export const addAccessToken = async (config) => {
     accessToken = getCookie("access_token");
   }
 
-  // Only add token for protected routes
+  // Only omit token for strictly public auth/utility routes
   const publicRoutes = [
-    '/getallcategories',
-    '/getallproducts',
-    '/Product/',
-    '/category/',
-    '/products/',
-    '/search-bar',
     '/login/',
     '/signup/',
     '/verify/',
-    '/contact-us',
+    '/contact-us/',
     '/users/forgot_password/',
     '/users/reset_password/',
     '/users/resend_verification/'

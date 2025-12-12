@@ -89,7 +89,7 @@ export default function AddProduct() {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all text-gray-900 bg-white"
                                     placeholder="e.g. Fresh Tomatoes"
                                     required
                                 />
@@ -101,7 +101,7 @@ export default function AddProduct() {
                                     name="category_name"
                                     value={formData.category_name}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all text-gray-900 bg-white"
                                 >
                                     <option value="Crops">Crops</option>
                                     <option value="Livestock">Livestock</option>
@@ -121,7 +121,7 @@ export default function AddProduct() {
                                     name="price"
                                     value={formData.price}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all text-gray-900 bg-white"
                                     placeholder="0.00"
                                     min="0"
                                     required
@@ -159,7 +159,7 @@ export default function AddProduct() {
                                 name="stock_quantity"
                                 value={formData.stock_quantity}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-gray-900 bg-white"
                                 placeholder="Available quantity"
                                 required
                             />
@@ -171,7 +171,7 @@ export default function AddProduct() {
                                 name="location"
                                 value={formData.location}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-gray-900 bg-white"
                                 placeholder="e.g. Nairobi, Kiambu"
                             />
                         </div>
@@ -182,7 +182,7 @@ export default function AddProduct() {
                             name="delivery_options"
                             value={formData.delivery_options}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-gray-900 bg-white"
                         >
                             <option value="Pickup">Pickup</option>
                             <option value="Delivery">Delivery</option>
@@ -197,7 +197,7 @@ export default function AddProduct() {
                             value={formData.description}
                             onChange={handleChange}
                             rows={4}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all text-gray-900 bg-white"
                             placeholder="Describe your product..."
                         />
                     </div>
