@@ -1,13 +1,20 @@
 "use client";
-import React, { useState } from "react";
-import Link from "next/link";
-import { Menu, Home, Box, ShoppingCart, FileText, BarChart2, Wallet, MessageSquare, Settings, LogOut } from "lucide-react";
-
-import { useSelector } from "react-redux";
+import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux"; // Added useDispatch
+import { logout } from "@/reducers/Auth/authSlice"; // Import logout action
+import { useRouter } from "next/navigation"; // Import useRouter
 
 export default function Layout({ children, initialCollapsed = false }) {
   const [collapsed, setCollapsed] = useState(initialCollapsed);
+  const [profileOpen, setProfileOpen] = useState(false); // Dropdown state
   const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await dispatch(logout());
+    router.push("/login");
+  };
 
   const userName = user?.username || user?.name || user?.email?.split('@')[0] || "Seller";
   // Create initials safely
@@ -115,11 +122,25 @@ export default function Layout({ children, initialCollapsed = false }) {
             </div>
             <div className="flex items-center gap-3">
               <MessageSquare className="w-5 h-5 text-gray-600" />
-              <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 border">
-                {userInitials}
-              </div>
+              <button onClick={() => setProfileOpen(!profileOpen)} className="relative">
+                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 border">
+                  {userInitials}
+                </div>
+              </button>
             </div>
           </div>
+          {/* Mobile Profile Dropdown - simplified for mobile */}
+          {profileOpen && (
+            <div className="absolute right-2 top-14 w-48 bg-white border rounded-lg shadow-lg py-1 z-50">
+              <div className="px-4 py-2 border-b">
+                <p className="text-sm font-medium text-gray-900 truncate">{userName}</p>
+                <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+              </div>
+              <Link href="/seller-profile/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onClick={() => setProfileOpen(false)}>My Profile</Link>
+              <Link href="/seller-profile/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onClick={() => setProfileOpen(false)}>Settings</Link>
+              <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">Sign out</button>
+            </div>
+          )}
         </div>
 
         {/* Desktop Topbar */}
@@ -141,14 +162,59 @@ export default function Layout({ children, initialCollapsed = false }) {
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
             </button>
             <div className="h-8 w-[1px] bg-gray-200 mx-1"></div>
-            <div className="flex items-center gap-2">
-              <div className="text-right hidden sm:block">
-                <div className="text-sm font-medium text-gray-900">KES 24,000</div>
-                <div className="text-xs text-emerald-600 font-medium">Verified Seller</div>
-              </div>
-              <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold border border-emerald-200">
-                {userInitials}
-              </div>
+
+            {/* Desktop User Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="flex items-center gap-2 hover:bg-gray-50 rounded-full p-1 pr-2 transition-colors"
+              >
+                <div className="text-right hidden sm:block">
+                  <div className="text-sm font-medium text-gray-900">KES 24,000</div>
+                  <div className="text-xs text-emerald-600 font-medium">Verified Seller</div>
+                </div>
+                <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold border border-emerald-200">
+                  {userInitials}
+                </div>
+              </button>
+
+              {profileOpen && (
+                <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-100 rounded-xl shadow-lg py-2 z-50 animate-in fade-in zoom-in-95 duration-200">
+                  <div className="px-4 py-3 border-b border-gray-100 mb-1">
+                    <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
+                    <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                  </div>
+
+                  <div className="px-2 space-y-1">
+                    <Link
+                      href="/seller-profile/settings"
+                      className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      <Settings className="w-4 h-4 text-gray-400" />
+                      Settings
+                    </Link>
+                    <Link
+                      href="/seller-profile/settings"
+                      className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                      Profile
+                    </Link>
+                  </div>
+
+                  <div className="border-t border-gray-100 mt-2 hover:bg-red-50">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 px-5 py-3 text-sm text-red-600 font-medium transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </header>

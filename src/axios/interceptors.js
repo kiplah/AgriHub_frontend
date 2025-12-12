@@ -1,8 +1,17 @@
-import store from "../store/store";
 import { getCookie } from "../utilities/utils";
 
 export const addAccessToken = async (config) => {
-  const accessToken = store.getState().auth.token || getCookie("access_token");
+  let accessToken = null;
+
+  // Try getting token from localStorage if on client side
+  if (typeof window !== "undefined") {
+    accessToken = localStorage.getItem("access_token");
+  }
+
+  // Fallback to cookie if needed (existing logic)
+  if (!accessToken) {
+    accessToken = getCookie("access_token");
+  }
 
   // Only add token for protected routes
   const publicRoutes = [
@@ -21,11 +30,11 @@ export const addAccessToken = async (config) => {
     '/users/resend_verification/'
   ];
 
-  const isPublicRoute = publicRoutes.some(route => config.url.includes(route));
+  const isPublicRoute = publicRoutes.some(route => config.url && config.url.includes(route));
 
   if (accessToken && !isPublicRoute) {
     config.headers.Authorization = `Bearer ${accessToken}`;
-    console.log("Interceptor added token:", accessToken);
+    // console.log("Interceptor added token"); // Reduced noise
   }
   return config;
 };
