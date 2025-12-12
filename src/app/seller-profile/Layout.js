@@ -30,9 +30,9 @@ export default function Layout({ children, initialCollapsed = false }) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed md:sticky top-0 left-0 z-50 h-screen bg-white border-r transition-all duration-300 ease-in-out 
-          ${collapsed ? "-translate-x-full md:translate-x-0 md:w-20" : "translate-x-0 w-64"} 
-          flex flex-col
+          flex flex-col bg-white border-r transition-all duration-300 ease-in-out z-50 h-screen whitespace-nowrap
+          fixed md:sticky top-0 left-0
+          ${collapsed ? "-translate-x-full w-64 md:translate-x-0 md:w-20" : "translate-x-0 w-64"}
         `}
       >
         <div className="flex items-center justify-between px-4 py-4 border-b h-16">
@@ -59,15 +59,15 @@ export default function Layout({ children, initialCollapsed = false }) {
           </button>
         </div>
 
-        <nav className="overflow-y-auto px-2 py-4 space-y-1 flex-1">
+        <nav className="overflow-y-auto overflow-x-hidden px-2 py-4 space-y-1 flex-1">
           {menu.map((m) => (
             <Link
               href={m.href}
               key={m.key}
               className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors ${collapsed ? "md:justify-center" : ""}`}
             >
-              <span className="text-gray-600">{m.icon}</span>
-              <span className={`text-sm text-gray-700 ${collapsed ? "md:hidden" : "block"}`}>{m.label}</span>
+              <span className="text-gray-600 shrink-0">{m.icon}</span>
+              <span className={`text-sm text-gray-700 transition-opacity duration-200 ${collapsed ? "md:hidden opacity-0 w-0" : "block opacity-100"}`}>{m.label}</span>
             </Link>
           ))}
         </nav>
