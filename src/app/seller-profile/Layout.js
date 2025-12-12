@@ -19,12 +19,26 @@ export default function Layout({ children, initialCollapsed = false }) {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      {/* Mobile Sidebar Overlay */}
+      {collapsed === false && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setCollapsed(true)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`bg-white border-r transition-all duration-200 ease-in-out ${collapsed ? "w-20" : "w-64"} hidden md:flex flex-col`}>
-        <div className="flex items-center justify-between px-4 py-4 border-b">
+      <aside
+        className={`
+          fixed md:sticky top-0 left-0 z-50 h-screen bg-white border-r transition-all duration-300 ease-in-out 
+          ${collapsed ? "-translate-x-full md:translate-x-0 md:w-20" : "translate-x-0 w-64"} 
+          flex flex-col
+        `}
+      >
+        <div className="flex items-center justify-between px-4 py-4 border-b h-16">
           <div className="flex items-center gap-2">
-            <div className={`text-green-600 font-bold text-lg ${collapsed ? "hidden" : "block"}`}>AGRO MART</div>
-            <div className={`w-8 h-8 rounded-full bg-green-100 flex items-center justify-center ${collapsed ? "mx-auto" : ""}`}>
+            <div className={`text-green-600 font-bold text-lg ${collapsed ? "md:hidden" : "block"}`}>AGRO MART</div>
+            <div className={`w-8 h-8 rounded-full bg-green-100 flex items-center justify-center ${collapsed ? "md:mx-auto" : ""}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L12 22" stroke="#16a34a" strokeWidth="2" /></svg>
             </div>
           </div>
@@ -32,35 +46,42 @@ export default function Layout({ children, initialCollapsed = false }) {
           <button
             onClick={() => setCollapsed(!collapsed)}
             aria-label="Toggle sidebar"
-            className="p-1 rounded hover:bg-gray-100"
+            className="p-1 rounded hover:bg-gray-100 hidden md:block"
           >
             <Menu className="w-5 h-5 text-gray-600" />
           </button>
+
+          <button
+            onClick={() => setCollapsed(true)}
+            className="p-1 rounded hover:bg-gray-100 md:hidden"
+          >
+            <svg className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
         </div>
 
-        <nav className="overflow-y-auto px-2 py-4 space-y-1">
+        <nav className="overflow-y-auto px-2 py-4 space-y-1 flex-1">
           {menu.map((m) => (
             <Link
               href={m.href}
               key={m.key}
-              className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors ${collapsed ? "justify-center" : ""}`}
+              className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors ${collapsed ? "md:justify-center" : ""}`}
             >
               <span className="text-gray-600">{m.icon}</span>
-              <span className={`text-sm text-gray-700 ${collapsed ? "hidden" : "block"}`}>{m.label}</span>
+              <span className={`text-sm text-gray-700 ${collapsed ? "md:hidden" : "block"}`}>{m.label}</span>
             </Link>
           ))}
         </nav>
 
         <div className="px-3 py-4 border-t">
-          <div className={`flex items-center gap-3 ${collapsed ? "justify-center" : ""}`}>
-            <div className="w-10 h-10 rounded-full bg-gray-100" />
-            <div className={`${collapsed ? "hidden" : "block"}`}>
+          <div className={`flex items-center gap-3 ${collapsed ? "md:justify-center" : ""}`}>
+            <div className="w-10 h-10 rounded-full bg-gray-100 shrink-0" />
+            <div className={`${collapsed ? "md:hidden" : "block"}`}>
               <div className="text-sm font-semibold">Victor K.</div>
               <div className="text-xs text-gray-500">Seller</div>
             </div>
           </div>
 
-          <div className={`mt-4 ${collapsed ? "hidden" : "block"}`}>
+          <div className={`mt-4 ${collapsed ? "md:hidden" : "block"}`}>
             <button className="w-full py-2 px-3 rounded-md bg-green-600 text-white text-sm">Add Product</button>
             <button className="w-full mt-2 py-2 px-3 rounded-md border text-sm">Upgrade</button>
           </div>
@@ -68,10 +89,10 @@ export default function Layout({ children, initialCollapsed = false }) {
       </aside>
 
       {/* Mobile header */}
-      <div className="md:hidden w-full bg-white border-b">
+      <div className="md:hidden w-full bg-white border-b sticky top-0 z-30">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
-            <button onClick={() => setCollapsed(!collapsed)} className="p-2 rounded hover:bg-gray-100"><Menu className="w-5 h-5" /></button>
+            <button onClick={() => setCollapsed(false)} className="p-2 rounded hover:bg-gray-100"><Menu className="w-5 h-5" /></button>
             <div className="font-bold text-green-600">AGRO MART</div>
           </div>
           <div className="flex items-center gap-3">
@@ -84,7 +105,7 @@ export default function Layout({ children, initialCollapsed = false }) {
       {/* Main content */}
       <div className="flex-1 min-h-screen">
         {/* Topbar */}
-        <header className="bg-white border-b px-8 h-16 flex items-center justify-between sticky top-0 z-10">
+        <header className="bg-white border-b px-8 h-16 hidden md:flex items-center justify-between sticky top-0 z-10">
           <div className="flex items-center gap-4">
             <div className="hidden md:block text-sm text-gray-500">Welcome back,</div>
             <div className="text-lg font-semibold text-gray-900">Victor Kiplangat</div>
