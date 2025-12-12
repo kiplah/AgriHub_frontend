@@ -26,9 +26,14 @@ export const addAccessToken = async (config) => {
 
   const isPublicRoute = publicRoutes.some(route => config.url && config.url.includes(route));
 
+  // Debugging 401 errors
+  console.log(`[Interceptor] URL: ${config.url}, TokenFound: ${!!accessToken}, IsPublic: ${isPublicRoute}`);
+
   if (accessToken && !isPublicRoute) {
     config.headers.Authorization = `Bearer ${accessToken}`;
-    // console.log("Interceptor added token"); // Reduced noise
+    console.log("[Interceptor] Token attached to header");
+  } else {
+    console.log("[Interceptor] Token NOT attached");
   }
   return config;
 };
@@ -49,6 +54,19 @@ export const handleResponseError = (error) => {
     console.error("Data:", error.response.data);
     console.error("Status:", error.response.status);
     console.error("Headers:", error.response.headers);
+
+    // Auto-logout if token is invalid or expired
+    if (error.response.status === 401) {
+      if (typeof window !== "undefined") {
+        console.log("Session expired. logging out...");
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user_role");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("token_expiration");
+        localStorage.removeItem("user_email");
+        window.location.href = "/login";
+      }
+    }
   } else if (error.request) {
     // The request was made but no response was received
     console.error("Request:", error.request);
