@@ -9,8 +9,14 @@ export default function Layout({ children, initialCollapsed = false }) {
   const [collapsed, setCollapsed] = useState(initialCollapsed);
   const { user } = useSelector((state) => state.auth);
 
-  const userName = user?.name || "Seller";
-  const userInitials = userName.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+  const userName = user?.username || user?.name || user?.email?.split('@')[0] || "Seller";
+  // Create initials safely
+  const userInitials = (userName || "Seller")
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   const menu = [
     { key: "overview", label: "Overview", href: "/seller-profile", icon: <Home className="w-5 h-5" /> },
