@@ -156,7 +156,7 @@ export default function Orders() {
                     <div>{order.email}</div>
                     <div className="text-xs text-gray-400">{order.shippingAddress}</div>
                   </td>
-                  <td className="px-6 py-4 font-medium text-gray-900">${order.checkoutPrice}</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">KES {order.checkoutPrice}</td>
                   <td className="px-6 py-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${order.orderStatus === "Pending" ? "bg-yellow-50 text-yellow-700" :
                       order.orderStatus === "Completed" ? "bg-emerald-50 text-emerald-700" :

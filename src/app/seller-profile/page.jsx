@@ -64,21 +64,17 @@ export default function SellerDashboardPage() {
 
   // Chart Data Preparation
   const monthlyStats = Array.isArray(sellerMonthlyStats?.monthly_stats) ? sellerMonthlyStats.monthly_stats : [];
-  const recentMonths = monthlyStats.length ? monthlyStats.slice(-6) : [
-    { month: "Jan", total_revenue: 1200 },
-    { month: "Feb", total_revenue: 1900 },
-    { month: "Mar", total_revenue: 3000 },
-    { month: "Apr", total_revenue: 5000 },
-    { month: "May", total_revenue: 4500 },
-    { month: "Jun", total_revenue: 6000 },
-  ];
+
+  // Dynamic Chart Data
+  const chartLabels = monthlyStats.length > 0 ? monthlyStats.map((s) => s.month) : ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+  const chartRevenue = monthlyStats.length > 0 ? monthlyStats.map((s) => s.total_revenue) : [0, 0, 0, 0, 0, 0];
 
   const chartData = {
-    labels: recentMonths.map((s) => s.month),
+    labels: chartLabels,
     datasets: [
       {
         label: "Revenue",
-        data: recentMonths.map((s) => s.total_revenue),
+        data: chartRevenue,
         borderColor: "#16a34a",
         backgroundColor: (context) => {
           const ctx = context.chart.ctx;
@@ -127,7 +123,7 @@ export default function SellerDashboardPage() {
     },
   };
 
-  // Recent Orders (Top 4)
+  // Recent Orders (Top 6)
   const recentOrders = Array.isArray(orders) ? orders.slice(0, 6) : [];
 
   const getStatusBadge = (status) => {
@@ -145,6 +141,11 @@ export default function SellerDashboardPage() {
     );
   };
 
+  const handleShareStore = () => {
+    navigator.clipboard.writeText(`https://agromart.com/store/${user?.userId}`);
+    alert("Store link copied to clipboard!");
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -155,20 +156,20 @@ export default function SellerDashboardPage() {
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-          <Link href="/seller-profile/add-product" className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg shadow-sm text-sm whitespace-nowrap">
+          <Link href="/seller-profile/add-product" className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg shadow-sm text-sm whitespace-nowrap hover:bg-emerald-700 transition">
             + Add Product
           </Link>
-          <button className="px-3 py-2 border rounded-lg text-sm whitespace-nowrap">Share Store</button>
-          <button className="px-3 py-2 border rounded-lg text-sm whitespace-nowrap">Settings</button>
+          <button onClick={handleShareStore} className="px-3 py-2 border rounded-lg text-sm whitespace-nowrap hover:bg-gray-50 transition">Share Store</button>
+          <Link href="/seller-profile/settings" className="px-3 py-2 border rounded-lg text-sm whitespace-nowrap hover:bg-gray-50 transition">Settings</Link>
         </div>
       </div>
 
       {/* KPI cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <MetricCard title="Total Earnings" value={`KES ${Number(revenue).toLocaleString()}`} subtext="Last 30 days" />
-        <MetricCard title="Pending Payout" value={`KES ${sellerStats?.PendingPayout?.toLocaleString ? sellerStats.PendingPayout.toLocaleString() : "24,000"}`} />
+        <MetricCard title="Pending Payout" value={`KES ${sellerStats?.PendingPayout?.toLocaleString ? sellerStats.PendingPayout.toLocaleString() : "0"}`} />
         <MetricCard title="Orders Today" value={activeOrders} />
-        <MetricCard title="Products Listed" value={productsCount || 23} />
+        <MetricCard title="Products Listed" value={productsCount} />
       </div>
 
       {/* Main grid */}
@@ -182,12 +183,16 @@ export default function SellerDashboardPage() {
                 <p className="text-xs text-gray-500 mt-1">Revenue trend for the last months</p>
               </div>
               <div className="text-sm text-emerald-600 font-semibold flex items-center gap-1">
-                <ArrowUpRight className="w-4 h-4" /> {sellerStats?.GrowthPercent ? `${sellerStats.GrowthPercent}%` : "+12%"}
+                <ArrowUpRight className="w-4 h-4" /> {sellerStats?.GrowthPercent ? `${sellerStats.GrowthPercent}%` : "0%"}
               </div>
             </div>
 
             <div className="mt-4 h-56">
-              <Line data={chartData} options={chartOptions} />
+              {monthlyStats.length > 0 ? (
+                <Line data={chartData} options={chartOptions} />
+              ) : (
+                <div className="h-full flex items-center justify-center text-gray-400 text-sm">No sales data available yet</div>
+              )}
             </div>
           </div>
 
@@ -198,22 +203,24 @@ export default function SellerDashboardPage() {
             </div>
 
             <ul className="space-y-3">
-              {(sellerStats?.top_products || [
-                { name: "Maize - 90kg bag", sold: 120 },
-                { name: "Layer Chicks (20)", sold: 85 },
-                { name: "Organic Fertilizer - 50kg", sold: 60 },
-              ]).map((p, idx) => (
-                <li key={idx} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-md bg-gray-50 flex items-center justify-center text-sm text-gray-600">Img</div>
-                    <div>
-                      <div className="font-medium text-gray-900">{p.name}</div>
-                      <div className="text-xs text-gray-500">Sold: {p.sold}</div>
+              {(sellerStats?.top_products && sellerStats.top_products.length > 0) ? (
+                sellerStats.top_products.map((p, idx) => (
+                  <li key={idx} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-md bg-gray-50 flex items-center justify-center text-sm text-gray-600">
+                        {p.image ? <img src={p.image} alt={p.name} className="w-full h-full object-cover rounded-md" /> : "Img"}
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-900">{p.name}</div>
+                        <div className="text-xs text-gray-500">Sold: {p.sold}</div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-sm text-gray-500">View</div>
-                </li>
-              ))}
+                    <Link href={`/seller-profile/products/${p.id}`} className="text-sm text-gray-500 hover:text-emerald-600">View</Link>
+                  </li>
+                ))
+              ) : (
+                <div className="py-4 text-center text-gray-500 text-sm">No top products yet</div>
+              )}
             </ul>
           </div>
         </div>
@@ -241,20 +248,17 @@ export default function SellerDashboardPage() {
                     recentOrders.map((order) => (
                       <tr key={order.id} className="hover:bg-emerald-50/30 transition-colors">
                         <td className="px-4 py-3 font-medium">#{order.id}</td>
-                        <td className="px-4 py-3">{order.product_name || "Product A"}</td>
-                        <td className="px-4 py-3">{order.user_name || "John Doe"}</td>
+                        <td className="px-4 py-3">{order.product_name || "Product"}</td>
+                        <td className="px-4 py-3">{order.user_name || "Buyer"}</td>
                         <td className="px-4 py-3">{getStatusBadge(order.order_status || "Pending")}</td>
                       </tr>
                     ))
                   ) : (
-                    [1001, 1002, 1003, 1004].map((id, i) => (
-                      <tr key={id} className="hover:bg-emerald-50/30 transition-colors">
-                        <td className="px-4 py-3 font-medium">#{id}</td>
-                        <td className="px-4 py-3">{["Maize", "Chicken Eggs", "Potatoes", "Fertilizer"][i]}</td>
-                        <td className="px-4 py-3">{["John Doe", "Jane Smith", "John Doe", "Sprayer"][i]}</td>
-                        <td className="px-4 py-3">{getStatusBadge(["Completed", "Pending", "Pending", "Pending"][i])}</td>
-                      </tr>
-                    ))
+                    <tr>
+                      <td colSpan="4" className="px-4 py-8 text-center text-gray-500">
+                        No recent orders found.
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>
