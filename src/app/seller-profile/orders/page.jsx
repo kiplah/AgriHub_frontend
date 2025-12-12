@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchSellerOrders, fetchOrderDetail,updateOrderStatus } from "@/reducers/Order/orderSlice";
+import { fetchSellerOrders, fetchOrderDetail, updateOrderStatus } from "@/reducers/Order/orderSlice";
 import Profile from "@/Components/ProfileCard/ProfileCard";
 import { fetchMessages } from "@/reducers/Chat/chatSlice";
 import { AiOutlineClose } from "react-icons/ai";
@@ -16,15 +16,15 @@ export default function Orders() {
   const [input, setInput] = useState("");
   const [ws, setWs] = useState(null);
   const messages = useSelector((state) => state.chat.messages);
-const setMessages = (newMessages) => {
-  console.warn("setMessages is not used. Messages are managed via Redux.");
-}; // Dummy function to avoid errors
+  const setMessages = (newMessages) => {
+    console.warn("setMessages is not used. Messages are managed via Redux.");
+  }; // Dummy function to avoid errors
 
-const loadingMessages = useSelector((state) => state.chat.loading);
+  const loadingMessages = useSelector((state) => state.chat.loading);
 
-    const token = useSelector((state) => state.auth.token);
-    const [isChatVisible, setChatVisible] = useState(false);
-    const [chatMessage, setChatMessage] = useState("");
+  const token = useSelector((state) => state.auth.token);
+  const [isChatVisible, setChatVisible] = useState(false);
+  const [chatMessage, setChatMessage] = useState("");
   const [selectedBuyerId, setSelectedBuyerId] = useState(null);
   useEffect(() => {
     if (userId) {
@@ -63,7 +63,7 @@ const loadingMessages = useSelector((state) => state.chat.loading);
     dispatch(fetchSellerOrders(userId));
     closePopup();
   };
-  
+
   const closePopup = () => {
     setSelectedOrder(null);
     setPopupVisible(false);
@@ -74,33 +74,33 @@ const loadingMessages = useSelector((state) => state.chat.loading);
       alert("Unauthorized! Please log in again.");
       return;
     }
-  
+
     setSelectedBuyerId(buyerId);
     setChatVisible(true);
-  
-    dispatch(fetchMessages({receiverId: buyerId }));
-  
+
+    dispatch(fetchMessages({ receiverId: buyerId }));
+
     const websocket = new WebSocket(
       `ws://localhost:8081/ws?senderID=${userId}&receiverID=${buyerId}`
     );
     setWs(websocket);
-  
+
     websocket.onmessage = (event) => {
       const receivedMessage = JSON.parse(event.data);
       dispatch({ type: "chat/addMessage", payload: receivedMessage });
     };
-  
+
     websocket.onclose = () => setWs(null);
   };
-  
+
   const sendMessage = () => {
     if (!ws || !input.trim()) return;
-  
+
     const messageData = { senderId: userId, receiverId: selectedBuyerId, content: input };
     console.log("🔹 Sending Message:", messageData);
-  
+
     ws.send(JSON.stringify(messageData)); // Send the message as a JSON string
-  
+
     setMessages((prev) => [...prev, messageData]); // Add message directly to state
     setInput(""); // Clear input field
 
@@ -108,201 +108,173 @@ const loadingMessages = useSelector((state) => state.chat.loading);
 
 
   return (
-    <div
-    className="relative h-screen overflow-auto p-4 px-4 md:px-8 lg:px-6 xl:px-8 2xl:px-12 py-4 md:py-5 lg:py-7 xl:py-10 2xl:py-12"
-    style={{
-      backgroundImage:
-        "url('https://png.pngtree.com/thumb_back/fh260/background/20241115/pngtree-happy-vietnamese-farmers-planting-rice-paddy-in-lush-green-field-image_16603887.jpg')",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
-    }}
-  >
-     <div className="absolute inset-0 bg-black/50"></div>
-     <div className="relative z-10">
-    <Profile />
-
-    <div className="text-center mt-8">
-      <h2 className="text-3xl font-bold text-lime-100 mb-6">My Orders</h2>
-    </div>
-
-    {loading ? (
-      <p className="text-center text-lime-200">Loading orders...</p>
-    ) : error ? (
-      <p className="text-center text-red-400">Failed to load orders: {error}</p>
-    ) : (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {sellerOrders.map((order) => (
-          <div
-            key={order.id}
-            className="bg-gradient-to-br from-green-700 via-emerald-600 to-lime-600 p-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition duration-300"
-          >
-            <img
-              src={`http://localhost:8080/${products[order.id]?.imagepath || "static/images/placeholder.jpg"}`}
-              alt={products[order.id]?.name || "Product Image"}
-              className="w-full h-40 rounded-lg object-cover mb-4"
-            />
-            <h3 className="text-lime-100 text-lg font-bold mb-2">
-              Order #{order.id} - {order.name}
-            </h3>
-            <p className="text-lime-200 text-sm mb-2">
-              <span className="font-medium">Status:</span>{" "}
-              <span
-                className={
-                  order.orderStatus === "Pending"
-                    ? "text-yellow-400"
-                    : "text-lime-300"
-                }
-              >
-                {order.orderStatus}
-              </span>
-            </p>
-            <p className="text-lime-200 text-sm mb-2">
-              <span className="font-medium">Total Price:</span> $
-              {order.checkoutPrice}
-            </p>
-            <p className="text-lime-200 text-sm mb-2">
-              <span className="font-medium">Shipping Address:</span>{" "}
-              {order.shippingAddress}, {order.city}, {order.state}, {order.country}
-            </p>
-            <button
-              className="mt-4 w-full bg-lime-600 text-white py-2 rounded-lg hover:bg-lime-700 transition shadow-md"
-              onClick={() => handleViewDetails(order.id)}
-            >
-              View Details
-            </button>
-            <select
-                className="mt-2 w-full bg-lime-600 text-white py-2 rounded-lg hover:bg-green-700 transition shadow-md"
-                onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
-                value={order.orderStatus}
-              >
-                <option value="Pending">Pending</option>
-                <option value="Packed">Packed</option>
-                <option value="Shipped">Shipped</option>
-                <option value="Out for Delivery">Out for Delivery</option>
-                <option value="Delivered">Delivered</option>
-                <option value="completed">completed</option>
-                <option value="Cancelled">Cancelled</option>
-              </select>
-              <button
-                className="mt-4 w-full bg-lime-600 text-white py-2 rounded-lg hover:bg-lime-700 transition shadow-md"
-                onClick={() => handleOpenChat(order.buyerId)}
-              >
-                Chat with Buyer
-              </button>
-          </div>
-          
-        ))}
-      </div>
-    )}
-{isChatVisible && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="bg-green-700 p-6 rounded-lg text-white w-full max-w-lg relative shadow-lg">
-      <button
-        onClick={() => setChatVisible(false)}
-        className="absolute top-3 right-3 text-white hover:text-gray-300 text-lg"
-      >
-
-<AiOutlineClose className="w-6 h-6 cursor-pointer" />
-
-      </button>
-
-      <h2 className="text-xl font-semibold text-center mb-4">Chat with Buyer</h2>
-
-      <div className="h-80 overflow-y-auto border-b mb-4 p-2 flex flex-col space-y-2 scrollbar-thin scrollbar-thumb-gray-400">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`flex ${
-              msg.senderId === userId || msg.user === "Seller" ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`p-3 px-4 rounded-lg max-w-[75%] shadow ${
-                msg.senderId === userId || msg.user === "Seller"
-                  ? "bg-green-500 text-white"
-                  : "bg-gray-300 text-black"
-              }`}
-            >
-              <strong className="block text-sm mb-1">{msg.user}</strong>
-              <span>{msg.content}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex items-center space-x-2">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          className="flex-1 border p-2 rounded-lg text-black outline-none"
-          placeholder="Type a message..."
-        />
-        <button
-          onClick={sendMessage}
-          className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition"
-        >
-          📩
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-
-
-    {isPopupVisible && selectedOrder && (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div className="bg-gradient-to-br from-lime-500 via-green-600 to-emerald-700 rounded-lg shadow-2xl p-6 max-w-md w-full text-white relative">
-          <button
-            className="absolute top-3 right-3 text-lime-100 hover:text-white"
-            onClick={closePopup}
-          >
-            Close
-          </button>
-          <h2 className="text-2xl font-bold mb-6">Order Details</h2>
-          <p className="text-sm mb-2">
-            <span className="font-medium">Order ID:</span> {selectedOrder.id}
-          </p>
-          <p className="text-sm mb-2">
-            <span className="font-medium">Name:</span> {selectedOrder.name}
-          </p>
-          <p className="text-sm mb-2">
-            <span className="font-medium">Email:</span> {selectedOrder.email}
-          </p>
-          <p className="text-sm mb-2">
-            <span className="font-medium">Phone:</span> {selectedOrder.phoneNumber}
-          </p>
-          <p className="text-sm mb-2">
-            <span className="font-medium">Shipping Address:</span>{" "}
-            {selectedOrder.shippingAddress}, {selectedOrder.city}, {selectedOrder.state},{" "}
-            {selectedOrder.country}
-          </p>
-          <p className="text-sm mb-2">
-            <span className="font-medium">Payment Method:</span>{" "}
-            {selectedOrder.paymentMethod}
-          </p>
-          <p className="text-sm mb-6">
-            <span className="font-medium">Product Name:</span>{" "}
-            {selectedOrder.Product?.name || "N/A"}
-          </p>
-          <img
-            src={`http://localhost:8080/${selectedOrder.Product?.imagepath || "static/images/placeholder.jpg"}`}
-            alt={selectedOrder.Product?.name || "Product Image"}
-            className="w-full h-40 rounded-lg object-cover mb-4"
-          />
-          <button
-            className="w-full bg-lime-600 text-white py-2 rounded-lg hover:bg-lime-700 transition shadow-md"
-            onClick={closePopup}
-          >
-            Close
-          </button>
+    <div className="p-6 bg-white min-h-screen">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
+          <p className="text-sm text-gray-500 mt-1">Manage and track your customer orders.</p>
         </div>
       </div>
-    )}
-  </div>
-  </div>
+
+      {loading ? (
+        <div className="text-center py-10">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600 mx-auto"></div>
+          <p className="text-gray-500 mt-4">Loading orders...</p>
+        </div>
+      ) : error ? (
+        <div className="bg-red-50 text-red-600 p-4 rounded-lg text-center">
+          Failed to load orders: {error}
+        </div>
+      ) : (
+        <div className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-medium">
+              <tr>
+                <th className="px-6 py-4">Order ID</th>
+                <th className="px-6 py-4">Product</th>
+                <th className="px-6 py-4">Customer</th>
+                <th className="px-6 py-4">Total</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {sellerOrders.map((order) => (
+                <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
+                  <td className="px-6 py-4 font-medium text-gray-900">#{order.id}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={`http://localhost:8080/${products[order.id]?.imagepath || "static/images/placeholder.jpg"}`}
+                        alt={products[order.id]?.name}
+                        className="w-10 h-10 rounded-lg object-cover bg-gray-100"
+                      />
+                      <span className="text-gray-700 font-medium">{order.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">
+                    <div>{order.email}</div>
+                    <div className="text-xs text-gray-400">{order.shippingAddress}</div>
+                  </td>
+                  <td className="px-6 py-4 font-medium text-gray-900">${order.checkoutPrice}</td>
+                  <td className="px-6 py-4">
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${order.orderStatus === "Pending" ? "bg-yellow-50 text-yellow-700" :
+                      order.orderStatus === "Completed" ? "bg-emerald-50 text-emerald-700" :
+                        order.orderStatus === "Cancelled" ? "bg-red-50 text-red-700" :
+                          "bg-blue-50 text-blue-700"
+                      }`}>
+                      {order.orderStatus}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 flex items-center gap-2">
+                    <button
+                      onClick={() => handleViewDetails(order.id)}
+                      className="px-3 py-1.5 text-sm font-medium text-emerald-600 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors"
+                    >
+                      Details
+                    </button>
+                    <button
+                      onClick={() => handleOpenChat(order.buyerId)}
+                      className="p-2 text-gray-400 hover:text-emerald-600 transition-colors"
+                      title="Chat with Buyer"
+                    >
+                      <span className="text-xl">💬</span>
+                    </button>
+                    {/* Simplified Status Dropdown for quick action */}
+                    <select
+                      className="text-sm border-gray-200 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
+                      onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
+                      value={order.orderStatus}
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Processing">Processing</option>
+                      <option value="Shipped">Shipped</option>
+                      <option value="Delivered">Delivered</option>
+                    </select>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {sellerOrders.length === 0 && (
+            <div className="p-10 text-center text-gray-500">
+              No orders found.
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Popups (Chat & Details) kept functional but could be restyled later if needed. 
+          Assuming they render on top via portals or fixed position. 
+      */}
+      {isChatVisible && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+          {/* ... Keep existing chat logic but wrap in cleaner container ... */}
+          <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-lg relative border border-gray-100">
+            <button
+              onClick={() => setChatVisible(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              <AiOutlineClose className="w-5 h-5" />
+            </button>
+            <h2 className="text-xl font-bold text-gray-900 mb-4 text-center">Chat with Buyer</h2>
+
+            <div className="h-80 overflow-y-auto border border-gray-100 rounded-lg p-4 bg-gray-50 mb-4 space-y-3">
+              {messages.map((msg, index) => (
+                <div key={index} className={`flex ${msg.senderId === userId || msg.user === "Seller" ? "justify-end" : "justify-start"}`}>
+                  <div className={`p-3 rounded-2xl max-w-[80%] text-sm ${msg.senderId === userId || msg.user === "Seller" ? "bg-emerald-600 text-white rounded-br-none" : "bg-white border text-gray-700 rounded-bl-none shadow-sm"}`}>
+                    {msg.content}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="flex-1 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                placeholder="Type a message..."
+              />
+              <button onClick={sendMessage} className="bg-emerald-600 text-white p-2.5 rounded-xl hover:bg-emerald-700 transition shadow-sm">
+                ➤
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isPopupVisible && selectedOrder && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+          <div className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full relative border border-gray-100">
+            <button onClick={closePopup} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><AiOutlineClose /></button>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Order #{selectedOrder.id}</h2>
+
+            <div className="space-y-3 text-sm text-gray-600">
+              <div className="flex justify-between border-b pb-2">
+                <span>Product:</span>
+                <span className="font-medium text-gray-900">{selectedOrder.Product?.name || selectedOrder.name}</span>
+              </div>
+              <div className="flex justify-between border-b pb-2">
+                <span>Buyer:</span>
+                <span className="font-medium text-gray-900">{selectedOrder.name} ({selectedOrder.email})</span>
+              </div>
+              <div className="flex justify-between border-b pb-2">
+                <span>Amount:</span>
+                <span className="font-medium text-emerald-600">${selectedOrder.checkoutPrice}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Address:</span>
+                <span className="text-right max-w-[200px]">{selectedOrder.shippingAddress}, {selectedOrder.city}</span>
+              </div>
+            </div>
+
+            <button onClick={closePopup} className="w-full mt-6 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-medium hover:bg-gray-200 transition">Close</button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 

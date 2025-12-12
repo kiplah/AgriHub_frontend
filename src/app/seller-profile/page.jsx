@@ -146,155 +146,153 @@ export default function SellerDashboardPage() {
   };
 
   return (
-    <Layout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Seller Dashboard</h1>
-            <p className="text-sm text-gray-500 mt-1">Overview of store performance and recent activity</p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Link href="/seller-profile/add-product" className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg shadow-sm text-sm">
-              + Add Product
-            </Link>
-            <button className="px-3 py-2 border rounded-lg text-sm">Share Store</button>
-            <button className="px-3 py-2 border rounded-lg text-sm">Settings</button>
-          </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Seller Dashboard</h1>
+          <p className="text-sm text-gray-500 mt-1">Overview of store performance and recent activity</p>
         </div>
 
-        {/* KPI cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <MetricCard title="Total Earnings" value={`KES ${Number(revenue).toLocaleString()}`} subtext="Last 30 days" />
-          <MetricCard title="Pending Payout" value={`KES ${sellerStats?.PendingPayout?.toLocaleString ? sellerStats.PendingPayout.toLocaleString() : "24,000"}`} />
-          <MetricCard title="Orders Today" value={activeOrders} />
-          <MetricCard title="Products Listed" value={productsCount || 23} />
+        <div className="flex items-center gap-3">
+          <Link href="/seller-profile/add-product" className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg shadow-sm text-sm">
+            + Add Product
+          </Link>
+          <button className="px-3 py-2 border rounded-lg text-sm">Share Store</button>
+          <button className="px-3 py-2 border rounded-lg text-sm">Settings</button>
         </div>
+      </div>
 
-        {/* Main grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left: Charts & Top Products */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-gray-900">Sales Overview</h3>
-                  <p className="text-xs text-gray-500 mt-1">Revenue trend for the last months</p>
-                </div>
-                <div className="text-sm text-emerald-600 font-semibold flex items-center gap-1">
-                  <ArrowUpRight className="w-4 h-4" /> {sellerStats?.GrowthPercent ? `${sellerStats.GrowthPercent}%` : "+12%"}
-                </div>
+      {/* KPI cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <MetricCard title="Total Earnings" value={`KES ${Number(revenue).toLocaleString()}`} subtext="Last 30 days" />
+        <MetricCard title="Pending Payout" value={`KES ${sellerStats?.PendingPayout?.toLocaleString ? sellerStats.PendingPayout.toLocaleString() : "24,000"}`} />
+        <MetricCard title="Orders Today" value={activeOrders} />
+        <MetricCard title="Products Listed" value={productsCount || 23} />
+      </div>
+
+      {/* Main grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Charts & Top Products */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-gray-900">Sales Overview</h3>
+                <p className="text-xs text-gray-500 mt-1">Revenue trend for the last months</p>
               </div>
-
-              <div className="mt-4 h-56">
-                <Line data={chartData} options={chartOptions} />
+              <div className="text-sm text-emerald-600 font-semibold flex items-center gap-1">
+                <ArrowUpRight className="w-4 h-4" /> {sellerStats?.GrowthPercent ? `${sellerStats.GrowthPercent}%` : "+12%"}
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900">Top Selling Products</h3>
-                <Link href="/seller-profile/my-products" className="text-sm text-emerald-600">Manage</Link>
-              </div>
+            <div className="mt-4 h-56">
+              <Line data={chartData} options={chartOptions} />
+            </div>
+          </div>
 
-              <ul className="space-y-3">
-                {(sellerStats?.top_products || [
-                  { name: "Maize - 90kg bag", sold: 120 },
-                  { name: "Layer Chicks (20)", sold: 85 },
-                  { name: "Organic Fertilizer - 50kg", sold: 60 },
-                ]).map((p, idx) => (
-                  <li key={idx} className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-md bg-gray-50 flex items-center justify-center text-sm text-gray-600">Img</div>
-                      <div>
-                        <div className="font-medium text-gray-900">{p.name}</div>
-                        <div className="text-xs text-gray-500">Sold: {p.sold}</div>
-                      </div>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-gray-900">Top Selling Products</h3>
+              <Link href="/seller-profile/my-products" className="text-sm text-emerald-600">Manage</Link>
+            </div>
+
+            <ul className="space-y-3">
+              {(sellerStats?.top_products || [
+                { name: "Maize - 90kg bag", sold: 120 },
+                { name: "Layer Chicks (20)", sold: 85 },
+                { name: "Organic Fertilizer - 50kg", sold: 60 },
+              ]).map((p, idx) => (
+                <li key={idx} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-md bg-gray-50 flex items-center justify-center text-sm text-gray-600">Img</div>
+                    <div>
+                      <div className="font-medium text-gray-900">{p.name}</div>
+                      <div className="text-xs text-gray-500">Sold: {p.sold}</div>
                     </div>
-                    <div className="text-sm text-gray-500">View</div>
-                  </li>
-                ))}
-              </ul>
+                  </div>
+                  <div className="text-sm text-gray-500">View</div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Right: Recent Orders & Quick Actions */}
+        <div className="space-y-6">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="px-6 py-5 border-b flex items-center justify-between">
+              <h3 className="font-semibold text-gray-900">Recent Orders</h3>
+              <Link href="/seller-profile/orders" className="text-sm text-emerald-600">View All</Link>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="text-xs text-gray-500 uppercase">
+                  <tr>
+                    <th className="px-4 py-3">Order</th>
+                    <th className="px-4 py-3">Product</th>
+                    <th className="px-4 py-3">Buyer</th>
+                    <th className="px-4 py-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {recentOrders.length > 0 ? (
+                    recentOrders.map((order) => (
+                      <tr key={order.id} className="hover:bg-emerald-50/30 transition-colors">
+                        <td className="px-4 py-3 font-medium">#{order.id}</td>
+                        <td className="px-4 py-3">{order.product_name || "Product A"}</td>
+                        <td className="px-4 py-3">{order.user_name || "John Doe"}</td>
+                        <td className="px-4 py-3">{getStatusBadge(order.order_status || "Pending")}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    [1001, 1002, 1003, 1004].map((id, i) => (
+                      <tr key={id} className="hover:bg-emerald-50/30 transition-colors">
+                        <td className="px-4 py-3 font-medium">#{id}</td>
+                        <td className="px-4 py-3">{["Maize", "Chicken Eggs", "Potatoes", "Fertilizer"][i]}</td>
+                        <td className="px-4 py-3">{["John Doe", "Jane Smith", "John Doe", "Sprayer"][i]}</td>
+                        <td className="px-4 py-3">{getStatusBadge(["Completed", "Pending", "Pending", "Pending"][i])}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
 
-          {/* Right: Recent Orders & Quick Actions */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="px-6 py-5 border-b flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900">Recent Orders</h3>
-                <Link href="/seller-profile/orders" className="text-sm text-emerald-600">View All</Link>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead className="text-xs text-gray-500 uppercase">
-                    <tr>
-                      <th className="px-4 py-3">Order</th>
-                      <th className="px-4 py-3">Product</th>
-                      <th className="px-4 py-3">Buyer</th>
-                      <th className="px-4 py-3">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {recentOrders.length > 0 ? (
-                      recentOrders.map((order) => (
-                        <tr key={order.id} className="hover:bg-emerald-50/30 transition-colors">
-                          <td className="px-4 py-3 font-medium">#{order.id}</td>
-                          <td className="px-4 py-3">{order.product_name || "Product A"}</td>
-                          <td className="px-4 py-3">{order.user_name || "John Doe"}</td>
-                          <td className="px-4 py-3">{getStatusBadge(order.order_status || "Pending")}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      [1001, 1002, 1003, 1004].map((id, i) => (
-                        <tr key={id} className="hover:bg-emerald-50/30 transition-colors">
-                          <td className="px-4 py-3 font-medium">#{id}</td>
-                          <td className="px-4 py-3">{["Maize", "Chicken Eggs", "Potatoes", "Fertilizer"][i]}</td>
-                          <td className="px-4 py-3">{["John Doe", "Jane Smith", "John Doe", "Sprayer"][i]}</td>
-                          <td className="px-4 py-3">{getStatusBadge(["Completed", "Pending", "Pending", "Pending"][i])}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-gray-900">Quick Actions</h3>
+              <ChevronRight className="w-4 h-4 text-gray-400" />
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900">Quick Actions</h3>
-                <ChevronRight className="w-4 h-4 text-gray-400" />
-              </div>
-
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <Link href="/seller-profile/add-product" className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium text-center transition-colors shadow-sm shadow-emerald-200">
-                  Add Product
-                </Link>
-                <button className="py-2.5 px-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors">
-                  Bulk Upload
-                </button>
-                <button className="py-2.5 px-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors">
-                  Payout Request
-                </button>
-                <button className="py-2.5 px-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors">
-                  Promote Listing
-                </button>
-              </div>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <Link href="/seller-profile/add-product" className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium text-center transition-colors shadow-sm shadow-emerald-200">
+                Add Product
+              </Link>
+              <button className="py-2.5 px-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors">
+                Bulk Upload
+              </button>
+              <button className="py-2.5 px-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors">
+                Payout Request
+              </button>
+              <button className="py-2.5 px-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors">
+                Promote Listing
+              </button>
             </div>
+          </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <h3 className="font-semibold text-gray-900">Inventory Alerts</h3>
-              <ul className="mt-3 text-sm space-y-2">
-                <li className="flex justify-between"><span>Maize - 90kg bag</span><span className="text-red-600">Low (6)</span></li>
-                <li className="flex justify-between"><span>Layer Chicks</span><span className="text-emerald-600">OK (120)</span></li>
-                <li className="flex justify-between"><span>Organic Fertilizer</span><span className="text-yellow-600">Expiring Soon</span></li>
-              </ul>
-            </div>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <h3 className="font-semibold text-gray-900">Inventory Alerts</h3>
+            <ul className="mt-3 text-sm space-y-2">
+              <li className="flex justify-between"><span>Maize - 90kg bag</span><span className="text-red-600">Low (6)</span></li>
+              <li className="flex justify-between"><span>Layer Chicks</span><span className="text-emerald-600">OK (120)</span></li>
+              <li className="flex justify-between"><span>Organic Fertilizer</span><span className="text-yellow-600">Expiring Soon</span></li>
+            </ul>
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 }
