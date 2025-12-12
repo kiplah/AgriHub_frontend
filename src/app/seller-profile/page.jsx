@@ -35,10 +35,10 @@ ChartJS.register(
 
 // Metric Card Component
 const MetricCard = ({ title, value, subtext }) => (
-  <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between h-32">
+  <div className="bg-white p-4 md:p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between h-auto min-h-[8rem]">
     <div>
-      <p className="text-gray-500 text-sm font-medium">{title}</p>
-      <h3 className="text-2xl font-bold text-gray-900 mt-2">{value}</h3>
+      <p className="text-gray-500 text-xs md:text-sm font-medium">{title}</p>
+      <h3 className="text-lg md:text-2xl font-bold text-gray-900 mt-1 md:mt-2 truncate">{value}</h3>
     </div>
     {subtext && <p className="text-xs text-emerald-500 font-medium">{subtext}</p>}
   </div>
@@ -148,23 +148,23 @@ export default function SellerDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Seller Dashboard</h1>
           <p className="text-sm text-gray-500 mt-1">Overview of store performance and recent activity</p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Link href="/seller-profile/add-product" className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg shadow-sm text-sm">
+        <div className="flex items-center gap-3 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+          <Link href="/seller-profile/add-product" className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg shadow-sm text-sm whitespace-nowrap">
             + Add Product
           </Link>
-          <button className="px-3 py-2 border rounded-lg text-sm">Share Store</button>
-          <button className="px-3 py-2 border rounded-lg text-sm">Settings</button>
+          <button className="px-3 py-2 border rounded-lg text-sm whitespace-nowrap">Share Store</button>
+          <button className="px-3 py-2 border rounded-lg text-sm whitespace-nowrap">Settings</button>
         </div>
       </div>
 
       {/* KPI cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <MetricCard title="Total Earnings" value={`KES ${Number(revenue).toLocaleString()}`} subtext="Last 30 days" />
         <MetricCard title="Pending Payout" value={`KES ${sellerStats?.PendingPayout?.toLocaleString ? sellerStats.PendingPayout.toLocaleString() : "24,000"}`} />
         <MetricCard title="Orders Today" value={activeOrders} />
@@ -175,7 +175,7 @@ export default function SellerDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Charts & Top Products */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-semibold text-gray-900">Sales Overview</h3>
@@ -191,7 +191,7 @@ export default function SellerDashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-gray-900">Top Selling Products</h3>
               <Link href="/seller-profile/my-products" className="text-sm text-emerald-600">Manage</Link>
@@ -221,7 +221,7 @@ export default function SellerDashboardPage() {
         {/* Right: Recent Orders & Quick Actions */}
         <div className="space-y-6">
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="px-6 py-5 border-b flex items-center justify-between">
+            <div className="px-4 py-4 md:px-6 md:py-5 border-b flex items-center justify-between">
               <h3 className="font-semibold text-gray-900">Recent Orders</h3>
               <Link href="/seller-profile/orders" className="text-sm text-emerald-600">View All</Link>
             </div>
@@ -261,7 +261,7 @@ export default function SellerDashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-gray-900">Quick Actions</h3>
               <ChevronRight className="w-4 h-4 text-gray-400" />
@@ -283,7 +283,7 @@ export default function SellerDashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6">
             <h3 className="font-semibold text-gray-900">Inventory Alerts</h3>
             <ul className="mt-3 text-sm space-y-2">
               <li className="flex justify-between"><span>Maize - 90kg bag</span><span className="text-red-600">Low (6)</span></li>

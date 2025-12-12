@@ -133,7 +133,7 @@ export default function Layout({ children, initialCollapsed = false }) {
           </div>
         </header>
 
-        <main className="p-6 md:p-8 w-full">
+        <main className="p-4 md:p-8 w-full">
           {children}
         </main>
       </div>
