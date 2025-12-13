@@ -160,7 +160,7 @@ export default function Page() {
                           <CategoryCard
                             key={sub.id}
                             name={sub.name}
-                            src={sub.imagepath ? `http://127.0.0.1:8000/${sub.imagepath}` : "/placeholder.jpg"} // improved fallback if needed, or just keep as is if confident
+                            src={sub.imagepath?.startsWith('http') ? sub.imagepath : sub.imagepath ? `http://127.0.0.1:8000/${sub.imagepath}` : "/placeholder.jpg"}
                             description={sub.description}
                             link={`/products?category=${sub.id}`}
                           />
@@ -217,7 +217,7 @@ export default function Page() {
                     <ProductCard
                       key={product.id}
                       id={product.id}
-                      src={`http://127.0.0.1:8000/${product.imagepath}`}
+                      src={product.imagepath?.startsWith('http') ? product.imagepath : `http://127.0.0.1:8000/${product.imagepath}`}
                       title={product.name}
                       cat={product.category}
                       price={product.price}

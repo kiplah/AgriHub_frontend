@@ -72,7 +72,7 @@ export default function MyProducts() {
             <div key={product.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all group">
               <div className="relative h-48 bg-gray-50">
                 <img
-                  src={`http://127.0.0.1:8000/${product.imagepath}`}
+                  src={product.imagepath?.startsWith('http') ? product.imagepath : `http://127.0.0.1:8000/${product.imagepath}`}
                   alt={product.name}
                   className="w-full h-full object-cover"
                   onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070&auto=format&fit=crop"; }}
