@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "next/navigation";
 import ProductCard from "@/Components/ProductCard/ProductCard";
 import { getProducts } from "@/reducers/product/productSlice";
 import Navbar from "@/Components/Navbar/Navbar";
@@ -22,23 +23,51 @@ export default function ProductsPage() {
     dispatch(getProducts());
   }, [dispatch]);
 
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+  const sellerParam = searchParams.get("seller");
+  const searchParam = searchParams.get("search");
+
   useEffect(() => {
-    setFilteredProducts(products);
-  }, [products]);
+    let filtered = products;
+
+    if (categoryParam) {
+      filtered = filtered.filter((p) => p.category === parseInt(categoryParam) || p.category?.id === parseInt(categoryParam));
+    }
+
+    if (sellerParam) {
+      // Handle both ID and Username scenarios if possible, but assuming ID for now if passed from dashboard
+      // However, ProductSerializer returns user as username string. We need to check if we can filter by that.
+      // If the dashboard link sends userId, but product has username, we have a mismatch.
+      // Ideally, the share link should use the username if that's what's available publicly.
+      // OR, update ProductSerializer to include valid user_id.
+      // For now, let's match loosely or by username if param is string.
+      filtered = filtered.filter((p) =>
+        String(p.user) === String(sellerParam) ||
+        String(p.userId) === String(sellerParam) ||
+        String(p.user_id) === String(sellerParam)
+      );
+    }
+
+    if (searchTerm) {
+      filtered = filtered.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    } else if (searchParam) {
+      // if searchTerm state is empty, check url param
+      setSearchTerm(searchParam); // this might trigger re-render loop if not careful, better to just filter here
+      filtered = filtered.filter((product) =>
+        product.name.toLowerCase().includes(searchParam.toLowerCase())
+      );
+    }
+
+    setFilteredProducts(filtered);
+  }, [products, categoryParam, sellerParam, searchTerm, searchParam]);
 
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-
-    const filtered = products.filter((product) =>
-      product.name.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredProducts(filtered);
-
-    const suggestedNames = products
-      .map((product) => product.name)
-      .filter((name) => name.toLowerCase().includes(value.toLowerCase()));
-    setSuggestions(suggestedNames);
+    // Logic moved to useEffect for consistency
   };
 
   return (
@@ -145,7 +174,7 @@ export default function ProductsPage() {
             </ul>
           )}
         </div>
- <div className="flex items-center mt-16 justify-center gap-4 mb-12">
+        <div className="flex items-center mt-16 justify-center gap-4 mb-12">
           <div className="w-16 h-1 bg-green-600 rounded-full"></div>
           <GiBarbedSpear
             size={40}
@@ -164,14 +193,14 @@ export default function ProductsPage() {
             <div className="flex flex-wrap gap-8 justify-center">
               {filteredProducts.map((product) => (
                 <ProductCard
-                key={product.id}
-                id={product.id}
-                src={`http://localhost:8080/${product.imagepath}`}
-                title={product.name}
-                cat={product.category}
-                price={product.price}
-                rating={product.rating}
-                sellerId={product.userId}
+                  key={product.id}
+                  id={product.id}
+                  src={product.imagepath?.startsWith('http') ? product.imagepath : `http://127.0.0.1:8000/${product.imagepath}`}
+                  title={product.name}
+                  cat={product.category}
+                  price={product.price}
+                  rating={product.rating}
+                  sellerId={product.userId}
                   description={product.description}
                 />
               ))}

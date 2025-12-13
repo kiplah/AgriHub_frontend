@@ -21,6 +21,7 @@ import {
 import Link from "next/link";
 import Layout from "./Layout";
 import { ArrowUpRight, ChevronRight } from "lucide-react";
+import { FaWhatsapp, FaFacebook, FaTwitter } from "react-icons/fa";
 
 ChartJS.register(
   CategoryScale,
@@ -161,6 +162,64 @@ export default function SellerDashboardPage() {
           </Link>
           <button onClick={handleShareStore} className="px-3 py-2 border rounded-lg text-sm whitespace-nowrap hover:bg-gray-50 transition">Share Store</button>
           <Link href="/seller-profile/settings" className="px-3 py-2 border rounded-lg text-sm whitespace-nowrap hover:bg-gray-50 transition">Settings</Link>
+        </div>
+      </div>
+
+      {/* Share Shop Section */}
+      <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">Share your shop</h3>
+        <p className="text-gray-500 text-sm mb-4">Share this link with your friends and customers to show all your products!</p>
+
+        <div className="flex flex-col md:flex-row gap-4 mb-4">
+          <div className="flex-grow relative">
+            <input
+              type="text"
+              readOnly
+              value={typeof window !== 'undefined' ? `${window.location.origin}/products?seller=${user?.username || user?.userId}` : ''}
+              className="w-full pl-4 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-mono text-sm"
+            />
+          </div>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(`${window.location.origin}/products?seller=${user?.username || user?.userId}`);
+              alert("Link copied!");
+            }}
+            className="px-6 py-3 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 transition-colors shadow-sm shadow-emerald-200 flex items-center gap-2 whitespace-nowrap"
+          >
+            <span className="text-lg">📋</span> Copy Link
+          </button>
+          <Link href={`/products?seller=${user?.username || user?.userId}`}>
+            <button className="px-6 py-3 border border-emerald-200 text-emerald-700 font-medium rounded-xl hover:bg-emerald-50 transition-colors flex items-center gap-2 whitespace-nowrap">
+              👁️ View Shop
+            </button>
+          </Link>
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          <a
+            href={`https://wa.me/?text=Check out my shop on AgroMart! ${typeof window !== 'undefined' ? window.location.origin : ''}/products?seller=${user?.username || user?.userId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#25D366] text-white rounded-lg hover:opacity-90 transition-opacity font-medium text-sm shadow-sm"
+          >
+            <FaWhatsapp size={20} /> Share on WhatsApp
+          </a>
+          <a
+            href={`https://www.facebook.com/sharer/sharer.php?u=${typeof window !== 'undefined' ? window.location.origin : ''}/products?seller=${user?.username || user?.userId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#1877F2] text-white rounded-lg hover:opacity-90 transition-opacity font-medium text-sm shadow-sm"
+          >
+            <FaFacebook size={20} /> Share on Facebook
+          </a>
+          <a
+            href={`https://twitter.com/intent/tweet?url=${typeof window !== 'undefined' ? window.location.origin : ''}/products?seller=${user?.username || user?.userId}&text=Check out my products on AgroMart!`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#1DA1F2] text-white rounded-lg hover:opacity-90 transition-opacity font-medium text-sm shadow-sm"
+          >
+            <FaTwitter size={20} /> Share on Twitter
+          </a>
         </div>
       </div>
 
