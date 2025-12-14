@@ -58,63 +58,91 @@ export default function Page() {
           <Navbar />
         </div>
 
-        <div className="relative mt-[160px] md:mt-[230px] z-20 flex flex-col items-center justify-center h-full text-center px-6 space-y-8 md:space-y-12">
-          <div className="absolute top-10 left-10 w-12 h-12 bg-green-400 rounded-full blur-lg opacity-50 animate-ping"></div>
-          <div className="absolute bottom-20 right-20 w-16 h-16 bg-green-500 rounded-full blur-lg opacity-30 animate-pulse"></div>
+        <div className="relative mt-[120px] md:mt-[160px] z-20 container mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start h-full pb-20">
 
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="relative w-full max-w-xl mb-4 animate-fade-in-down z-50">
-            <div className="relative group">
-              <input
-                type="text"
-                placeholder="🔍 Search crops, animals, fertilizers, tools..."
-                className="w-full py-4 pl-6 pr-14 bg-white/20 backdrop-blur-md border border-white/30 rounded-full text-white placeholder-green-100 focus:outline-none focus:ring-4 focus:ring-green-400/50 shadow-2xl text-lg transition-all duration-300 group-hover:bg-white/30"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button
-                type="submit"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-all duration-300 shadow-lg hover:scale-110"
-              >
-                <FaSearch />
+          {/* Left Sidebar - Categories (Hidden on mobile) */}
+          <div className="hidden lg:block col-span-3 bg-green-900/60 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl h-full max-h-[600px] overflow-y-auto custom-scrollbar">
+            <h3 className="text-white font-bold text-xl mb-6 flex items-center gap-2 border-b border-white/10 pb-4">
+              <span className="text-green-400">☰</span> Categories
+            </h3>
+            <ul className="space-y-2">
+              {categories && categories.length > 0 ? categories.map((cat) => (
+                <li key={cat.id}>
+                  <a href={`/products?category=${cat.id}`} className="block text-gray-100 hover:text-white hover:bg-white/10 px-4 py-3 rounded-xl transition-all duration-200 font-medium flex items-center justify-between group">
+                    {cat.name}
+                    <span className="text-green-400 opacity-0 group-hover:opacity-100 transition-opacity">›</span>
+                  </a>
+                </li>
+              )) : (
+                <p className="text-gray-300 italic px-4">Loading categories...</p>
+              )}
+            </ul>
+          </div>
+
+          {/* Main Hero Content (Span 9) */}
+          <div className="col-span-1 lg:col-span-9 flex flex-col items-center lg:items-start text-center lg:text-left space-y-8 pt-4 lg:pt-10">
+
+            {/* Search Bar */}
+            <form onSubmit={handleSearch} className="relative w-full max-w-3xl mb-4 animate-fade-in-down z-30">
+              <div className="relative group">
+                <input
+                  type="text"
+                  placeholder="🔍 Search crops, animals, fertilizers, tools..."
+                  className="w-full py-4 pl-6 pr-14 bg-white/95 backdrop-blur-md border border-green-200 rounded-full text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-green-400/50 shadow-2xl text-lg transition-all duration-300"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full transition-all duration-300 shadow-lg hover:scale-105"
+                >
+                  <FaSearch />
+                </button>
+              </div>
+            </form>
+
+            <div className="space-y-6">
+              <div className="inline-block bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-full px-4 py-1">
+                <h2 className="text-sm md:text-base font-bold text-green-300 animate-fade-in uppercase tracking-wider">
+                  Revolutionizing Agriculture 🌱
+                </h2>
+              </div>
+
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-tight drop-shadow-2xl animate-slide-in">
+                Welcome to <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-500 underline decoration-emerald-500/50 decoration-wavy">AgroMart</span>
+              </h1>
+
+              <p className="text-lg md:text-xl text-gray-100 max-w-2xl leading-relaxed drop-shadow-lg animate-fade-in-delayed font-light">
+                Your one-stop marketplace for premium agricultural tools, seeds, and produce.
+                Empowering farmers with sustainable solutions for a better tomorrow.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-6">
+              <button onClick={() => router.push('/products')} className="bg-green-600 hover:bg-green-500 text-white font-bold py-4 px-10 rounded-full shadow-lg shadow-green-900/20 transition-all transform hover:scale-105 flex items-center gap-2">
+                Shop Now <span className="text-xl">→</span>
+              </button>
+              <button className="bg-white/10 border border-white/30 hover:bg-white/20 text-white font-semibold py-4 px-10 rounded-full shadow-lg transition-all transform hover:scale-105 backdrop-blur-sm">
+                Learn More
               </button>
             </div>
-          </form>
 
-          <div className="flex items-center justify-center space-x-6">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-green-400 animate-fade-in">
-              Revolutionizing Agriculture 🌱
-            </h2>
-          </div>
-
-          <h1 className="text-[40px] sm:text-7xl lg:text-8xl font-extrabold text-white leading-tight tracking-wide drop-shadow-2xl animate-slide-in">
-            Welcome to{" "}
-            <span className="text-green-400 underline decoration-wavy">
-              AgroMart
-            </span>
-          </h1>
-
-          <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 max-w-4xl leading-relaxed drop-shadow-md animate-fade-in-delayed">
-            Revolutionizing agriculture with innovative solutions, premium
-            tools, and sustainable practices. Let’s cultivate a thriving future
-            for farmers and the planet.
-          </p>
-
-          <div className="flex items-center space-x-6">
-            <div className="w-16 h-1 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-green-400 font-bold text-md md:text-lg tracking-wider uppercase animate-bounce">
-              Empowering Farmers Globally
-            </span>
-            <div className="w-16 h-1 bg-green-500 rounded-full animate-pulse"></div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center gap-8 mt-6 pb-8 ">
-            <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-4 px-16 rounded-full shadow-2xl transition-transform transform hover:scale-110 hover:shadow-green-500/50 animate-fade-up">
-              Shop Products
-            </button>
-            <button className="bg-transparent border-2 border-green-600 text-green-400 hover:bg-green-600 hover:text-white font-semibold py-4 px-16 rounded-full shadow-xl transition-transform transform hover:scale-110 hover:shadow-green-600/50 animate-fade-up-delayed">
-              Learn More
-            </button>
+            {/* Quick Stats or Trust Indicators could go here */}
+            <div className="grid grid-cols-3 gap-6 pt-8 w-full max-w-2xl border-t border-white/10 mt-4">
+              <div>
+                <p className="text-2xl font-bold text-white">1k+</p>
+                <p className="text-xs text-green-200 uppercase tracking-wide">Products</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-white">500+</p>
+                <p className="text-xs text-green-200 uppercase tracking-wide">Farmers</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-white">24/7</p>
+                <p className="text-xs text-green-200 uppercase tracking-wide">Support</p>
+              </div>
+            </div>
           </div>
         </div>
 
