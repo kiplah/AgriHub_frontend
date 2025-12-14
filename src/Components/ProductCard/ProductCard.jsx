@@ -16,18 +16,18 @@ const ProductCard = ({ title, src, price, description, rating, id, sellerId }) =
       sellerId,
       price: parseFloat(price), // Ensure price is numeric
     };
-  
+
     addToCart(product);
-  
+
     // Display a success toast notification
     toast.success(`${title} added to cart!`, {
       position: "top-right", // Use string literal for position
       autoClose: 3000,
     });
   };
-  
+
   return (
-    <div className="relative bg-gradient-to-b from-green-50 via-white to-[#baf8cc] p-6 rounded-3xl shadow-lg hover:shadow-2xl hover:scale-105 transform transition-transform duration-300 w-[80%] sm:w-[320px] flex flex-col">
+    <div className="relative bg-gradient-to-b from-green-50 via-white to-[#baf8cc] p-4 rounded-3xl shadow-lg hover:shadow-2xl hover:scale-105 transform transition-transform duration-300 w-full flex flex-col">
       <Link href={`/Product/${id}`}>
         <div className="absolute top-4 left-4 bg-gradient-to-r from-green-600 to-green-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
           Bestseller
@@ -59,11 +59,10 @@ const ProductCard = ({ title, src, price, description, rating, id, sellerId }) =
           <svg
             key={index}
             xmlns="http://www.w3.org/2000/svg"
-            className={`h-5 w-5 ${
-              index < Math.floor(rating || 4)
+            className={`h-5 w-5 ${index < Math.floor(rating || 4)
                 ? "text-yellow-400"
                 : "text-gray-300"
-            }`}
+              }`}
             fill="currentColor"
             viewBox="0 0 24 24"
           >
