@@ -15,7 +15,6 @@ import { GiBarbedSpear } from "react-icons/gi";
 import { FaSearch } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
 export default function Page() {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -37,7 +36,6 @@ export default function Page() {
     dispatch(fetchCategories());
     dispatch(getProducts());
   }, [dispatch]);
-
   return (
     <>
       <div className="min-h-screen relative overflow-hidden font-sans">
@@ -60,189 +58,166 @@ export default function Page() {
           <Navbar />
         </div>
 
-        <div className="relative mt-[120px] md:mt-[160px] z-20 container mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start h-full pb-20">
+        <div className="relative mt-[160px] md:mt-[230px] z-20 flex flex-col items-center justify-center h-full text-center px-6 space-y-8 md:space-y-12">
+          <div className="absolute top-10 left-10 w-12 h-12 bg-green-400 rounded-full blur-lg opacity-50 animate-ping"></div>
+          <div className="absolute bottom-20 right-20 w-16 h-16 bg-green-500 rounded-full blur-lg opacity-30 animate-pulse"></div>
 
-          {/* Left Sidebar - Categories (Hidden on mobile) */}
-          <div className="hidden lg:block col-span-3 bg-green-900/60 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl h-full max-h-[600px] overflow-y-auto custom-scrollbar">
-            <h3 className="text-white font-bold text-xl mb-6 flex items-center gap-2 border-b border-white/10 pb-4">
-              <span className="text-green-400">☰</span> Categories
-            </h3>
-            <ul className="space-y-2">
-              {categories && categories.length > 0 ? categories.map((cat) => (
-                <li key={cat.id}>
-                  <a href={`/products?category=${cat.id}`} className="block text-gray-100 hover:text-white hover:bg-white/10 px-4 py-3 rounded-xl transition-all duration-200 font-medium flex items-center justify-between group">
-                    {cat.name}
-                    <span className="text-green-400 opacity-0 group-hover:opacity-100 transition-opacity">›</span>
-                  </a>
-                </li>
-              )) : (
-                <p className="text-gray-300 italic px-4">Loading categories...</p>
-              )}
-            </ul>
+          {/* Search Bar */}
+          <form onSubmit={handleSearch} className="relative w-full max-w-xl mb-4 animate-fade-in-down z-50">
+            <div className="relative group">
+              <input
+                type="text"
+                placeholder="🔍 Search crops, animals, fertilizers, tools..."
+                className="w-full py-4 pl-6 pr-14 bg-white/20 backdrop-blur-md border border-white/30 rounded-full text-white placeholder-green-100 focus:outline-none focus:ring-4 focus:ring-green-400/50 shadow-2xl text-lg transition-all duration-300 group-hover:bg-white/30"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-all duration-300 shadow-lg hover:scale-110"
+              >
+                <FaSearch />
+              </button>
+            </div>
+          </form>
+
+          <div className="flex items-center justify-center space-x-6">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-green-400 animate-fade-in">
+              Revolutionizing Agriculture 🌱
+            </h2>
           </div>
 
-          {/* Main Hero Content (Span 9) */}
-          <div className="col-span-1 lg:col-span-9 h-full">
-            <div className="bg-gradient-to-br from-green-900/80 to-emerald-900/60 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-12 shadow-2xl h-full min-h-[500px] flex flex-col justify-center items-start text-left relative overflow-hidden group">
+          <h1 className="text-[40px] sm:text-7xl lg:text-8xl font-extrabold text-white leading-tight tracking-wide drop-shadow-2xl animate-slide-in">
+            Welcome to{" "}
+            <span className="text-green-400 underline decoration-wavy">
+              AgroMart
+            </span>
+          </h1>
 
-              {/* Decorative blobs inside banner */}
-              <div className="absolute top-0 right-0 w-96 h-96 bg-green-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
-              <div className="absolute bottom-0 left-0 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
+          <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 max-w-4xl leading-relaxed drop-shadow-md animate-fade-in-delayed">
+            Revolutionizing agriculture with innovative solutions, premium
+            tools, and sustainable practices. Let’s cultivate a thriving future
+            for farmers and the planet.
+          </p>
 
-              <div className="relative z-10 w-full max-w-3xl space-y-6">
-                <div className="inline-block bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-2">
-                  <h2 className="text-xs md:text-sm font-bold text-green-300 uppercase tracking-widest flex items-center gap-2">
-                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                    Revolutionizing Agriculture
-                  </h2>
-                </div>
+          <div className="flex items-center space-x-6">
+            <div className="w-16 h-1 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-green-400 font-bold text-md md:text-lg tracking-wider uppercase animate-bounce">
+              Empowering Farmers Globally
+            </span>
+            <div className="w-16 h-1 bg-green-500 rounded-full animate-pulse"></div>
+          </div>
 
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-tight drop-shadow-lg">
-                  Welcome to <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-emerald-400 to-green-300 animate-gradient-x">AgroMart</span>
-                </h1>
-
-                <p className="text-lg text-gray-200 max-w-2xl leading-relaxed font-light">
-                  The detailed marketplace for all your farming needs.
-                  <span className="hidden sm:inline"> From seeds to machinery, we connect you with the best.</span>
-                </p>
-
-                {/* Search Bar - Integrated in Banner */}
-                <form onSubmit={handleSearch} className="relative w-full max-w-2xl pt-4">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search for products, categories..."
-                      className="w-full py-4 pl-6 pr-14 bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-green-500/30 rounded-xl shadow-xl text-lg transition-all"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <button
-                      type="submit"
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-green-600 hover:bg-green-700 text-white p-2.5 rounded-lg transition-all shadow-md"
-                    >
-                      <FaSearch size={18} />
-                    </button>
-                  </div>
-                </form>
-
-                <div className="flex flex-wrap gap-4 pt-4">
-                  <button onClick={() => router.push('/products')} className="bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 px-8 rounded-xl shadow-lg transition-transform transform hover:-translate-y-1 flex items-center gap-2">
-                    Start Shopping
-                  </button>
-                  <button className="bg-white/10 border border-white/20 hover:bg-white/20 text-white font-semibold py-3.5 px-8 rounded-xl shadow-lg transition-transform transform hover:-translate-y-1 backdrop-blur-sm">
-                    View Categories
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Stats Grid - moved below banner for structure */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-              {[
-                { label: "Active Farmers", val: "2,000+" },
-                { label: "Quality Products", val: "5,000+" },
-                { label: "Happy Customers", val: "10k+" },
-                { label: "Support", val: "24/7" }
-              ].map((stat, idx) => (
-                <div key={idx} className="bg-white/80 backdrop-blur-md rounded-xl p-4 border-l-4 border-green-500 shadow-md">
-                  <p className="text-xl font-bold text-gray-800">{stat.val}</p>
-                  <p className="text-xs text-gray-500 uppercase font-semibold">{stat.label}</p>
-                </div>
-              ))}
-            </div>
+          <div className="flex flex-col sm:flex-row items-center gap-8 mt-6 pb-8 ">
+            <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-4 px-16 rounded-full shadow-2xl transition-transform transform hover:scale-110 hover:shadow-green-500/50 animate-fade-up">
+              Shop Products
+            </button>
+            <button className="bg-transparent border-2 border-green-600 text-green-400 hover:bg-green-600 hover:text-white font-semibold py-4 px-16 rounded-full shadow-xl transition-transform transform hover:scale-110 hover:shadow-green-600/50 animate-fade-up-delayed">
+              Learn More
+            </button>
           </div>
         </div>
 
         <div className="absolute top-0 w-full h-64 bg-gradient-to-b from-black to-transparent"></div>
         <div className="absolute bottom-0 w-full h-64 bg-gradient-to-t from-black to-transparent"></div>
       </div>
-
-      <div className="bg-[#f9fafb] py-16">
-        <div className="container mx-auto px-6 space-y-20">
-
-          {/* Categories Section */}
-          <section>
-            <div className="flex justify-between items-end mb-8 border-b border-gray-200 pb-4">
-              <div>
-                <h2 className="text-3xl font-extrabold text-[#2c6e49]">Shop by Category</h2>
-                <p className="text-gray-500 mt-2">Find everything you need for your farm</p>
-              </div>
-              <a href="/categories" className="hidden md:inline-flex items-center gap-2 text-[#47b881] font-bold hover:text-[#2c6e49] transition-colors">
-                View All Categories <span className="text-xl">→</span>
-              </a>
-            </div>
-
-            {categoriesLoading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {[1, 2, 3, 4].map(i => <div key={i} className="h-64 bg-gray-200 rounded-2xl animate-pulse"></div>)}
-              </div>
-            ) : categoriesError ? (
-              <p className="text-red-500">{categoriesError}</p>
-            ) : (
-              <div className="space-y-12">
-                {categories && categories.length > 0 ? (
-                  categories.map((mainCategory) => (
-                    <div key={mainCategory.id}>
-                      <h3 className="text-xl font-bold text-gray-700 mb-6 flex items-center gap-2">
-                        <span className="w-2 h-8 bg-green-500 rounded-full inline-block"></span>
-                        {mainCategory.name}
-                      </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {mainCategory.subcategories && mainCategory.subcategories.length > 0 ? (
-                          mainCategory.subcategories.map((sub) => (
-                            <div key={sub.id} className="transform transition-all duration-300 hover:-translate-y-2">
-                              <CategoryCard
-                                name={sub.name}
-                                src={sub.imagepath?.startsWith('http') ? sub.imagepath : sub.imagepath ? `http://127.0.0.1:8000/${sub.imagepath}` : "/placeholder.jpg"}
-                                description={sub.description}
-                                link={`/products?category=${sub.id}`}
-                              />
-                            </div>
-                          ))
-                        ) : (
-                          <p className="text-gray-400 italic col-span-full">No subcategories available.</p>
-                        )}
-                      </div>
+      <div className="py-16 relative bg-white overflow-hidden">
+        <div className="absolute top-[-50px] right-[-50px] w-72 h-72 bg-[#f3fdf5] rounded-full blur-3xl opacity-50"></div>
+        <div className="absolute bottom-[-50px] left-[-50px] w-96 h-96 bg-[#e2f9e9] rounded-full blur-3xl opacity-40"></div>
+        <div className="relative z-10 w-[85%] mx-auto text-center">
+          <h2 className="text-2xl md:text-5xl font-extrabold text-[#2c6e49] mb-4 drop-shadow-md">
+            Discover Our Farming Categories
+          </h2>
+          <p className="text-md md:text-xl text-[#4f8c69] mb-10 max-w-2xl mx-auto">
+            Explore a wide range of categories designed to meet every farmer’s
+            needs. From eco-friendly fertilizers to advanced farming tools, we
+            have it all!
+          </p>
+          <div className="flex items-center justify-center gap-4 mb-12">
+            <div className="w-16 h-1 bg-[#47b881] rounded-full"></div>
+            <GiBarbedSpear
+              size={40}
+              className="animate-pulse"
+              style={{ transform: "rotate(45deg)", color: "#3a9149" }}
+            />
+            <div className="w-16 h-1 bg-[#47b881] rounded-full"></div>
+          </div>
+          {categoriesLoading ? (
+            <p className="text-xl text-[#3a9149] animate-pulse">Loading categories...</p>
+          ) : categoriesError ? (
+            <p className="text-red-500 font-bold">{categoriesError}</p>
+          ) : (
+            <div className="space-y-16">
+              {categories && categories.length > 0 ? (
+                categories.map((mainCategory) => (
+                  <div key={mainCategory.id} className="w-full">
+                    <h3 className="text-3xl font-bold text-[#2c6e49] mb-8 border-b-2 border-[#47b881] inline-block pb-2">
+                      {mainCategory.name}
+                    </h3>
+                    <div className="flex flex-wrap gap-10 justify-center">
+                      {mainCategory.subcategories && mainCategory.subcategories.length > 0 ? (
+                        mainCategory.subcategories.map((sub) => (
+                          <CategoryCard
+                            key={sub.id}
+                            name={sub.name}
+                            src={sub.imagepath ? `http://127.0.0.1:8000/${sub.imagepath}` : "/placeholder.jpg"} // improved fallback if needed, or just keep as is if confident
+                            description={sub.description}
+                            link={`/products?category=${sub.id}`}
+                          />
+                        ))
+                      ) : (
+                        <p className="text-gray-500 italic">No subcategories available for {mainCategory.name}</p>
+                      )}
                     </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500">No categories found.</p>
-                )}
-              </div>
-            )}
-
-            <div className="mt-8 md:hidden text-center">
-              <a href="/categories" className="text-[#47b881] font-bold">View All Categories →</a>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 text-xl">No categories found.</p>
+              )}
             </div>
-          </section>
-
-          {/* Featured Products Section */}
-          <section>
-            <div className="flex justify-between items-end mb-8 border-b border-gray-200 pb-4">
-              <div>
-                <h2 className="text-3xl font-extrabold text-[#2c6e49]">Featured Products</h2>
-                <p className="text-gray-500 mt-2">Top picks from our marketplace</p>
-              </div>
-              <a href="/products" className="hidden md:inline-flex items-center gap-2 text-[#47b881] font-bold hover:text-[#2c6e49] transition-colors">
-                View All Products <span className="text-xl">→</span>
-              </a>
-            </div>
-
+          )}
+          <div className="mt-16">
+            <button
+              onClick={() => window.location.href = '/categories'}
+              className="bg-[#47b881] hover:bg-[#3a9149] text-white font-bold py-4 px-14 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 hover:shadow-[#66bb6a]/50">
+              View All Categories
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="py-16 relative bg-white overflow-hidden">
+        <div className="absolute top-[-50px] right-[-50px] w-72 h-72 bg-[#e9f7ef] rounded-full blur-3xl opacity-50"></div>
+        <div className="absolute bottom-[-50px] left-[-50px] w-96 h-96 bg-[#d1f2dc] rounded-full blur-3xl opacity-40"></div>
+        <div className="relative z-10 w-[85%] mx-auto text-center">
+          <h2 className="text-2xl md:text-5xl font-extrabold text-[#2c6e49] mb-4 drop-shadow-md">
+            Explore Our Featured Products
+          </h2>
+          <p className="text-md md:text-xl text-[#4f8c69] mb-10 max-w-2xl mx-auto">
+            Discover our handpicked, sustainable tools and products designed to
+            enhance your farming journey with innovation and care.
+          </p>
+          <div className="flex items-center justify-center gap-4 mb-12">
+            <div className="w-16 h-1 bg-[#47b881] rounded-full"></div>
+            <GiBarbedSpear
+              size={40}
+              className="animate-pulse"
+              style={{ transform: "rotate(45deg)", color: "#3a9149" }}
+            />
+            <div className="w-16 h-1 bg-[#47b881] rounded-full"></div>
+          </div>
+          <div className="flex flex-wrap gap-10 justify-center">
             {productsLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                {[1, 2, 3, 4].map(i => <div key={i} className="h-80 bg-gray-200 rounded-3xl animate-pulse"></div>)}
-              </div>
+              <p>Loading products...</p>
             ) : productsError ? (
               <p className="text-red-500">{productsError}</p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
+              <div className="flex flex-wrap gap-10 justify-center">
                 {products && products.length > 0 ? (
-                  products.slice(0, 8).map((product) => (
+                  products.map((product) => (
                     <ProductCard
                       key={product.id}
                       id={product.id}
-                      src={product.imagepath?.startsWith('http') ? product.imagepath : `http://127.0.0.1:8000/${product.imagepath}`}
+                      src={`http://127.0.0.1:8000/${product.imagepath}`}
                       title={product.name}
                       cat={product.category}
                       price={product.price}
@@ -252,21 +227,18 @@ export default function Page() {
                     />
                   ))
                 ) : (
-                  <p className="text-gray-500 col-span-full text-center">No products found</p>
+                  <p className="text-gray-500">No products found</p>
                 )}
               </div>
             )}
-
-            <div className="mt-12 text-center md:hidden">
-              <button
-                onClick={() => window.location.href = '/products'}
-                className="bg-[#47b881] hover:bg-[#3a9149] text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all"
-              >
-                View All Products
-              </button>
-            </div>
-          </section>
-
+          </div>
+          <div className="mt-16">
+            <button
+              onClick={() => window.location.href = '/products'}
+              className="bg-[#47b881] hover:bg-[#3a9149] text-white font-bold py-4 px-8 md:px-14 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 hover:shadow-[#66bb6a]/50">
+              View All Products
+            </button>
+          </div>
         </div>
       </div>
       <div>
