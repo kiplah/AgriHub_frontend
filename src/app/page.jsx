@@ -149,99 +149,87 @@ export default function Page() {
         <div className="absolute top-0 w-full h-64 bg-gradient-to-b from-black to-transparent"></div>
         <div className="absolute bottom-0 w-full h-64 bg-gradient-to-t from-black to-transparent"></div>
       </div>
-      <div className="py-16 relative bg-white overflow-hidden">
-        <div className="absolute top-[-50px] right-[-50px] w-72 h-72 bg-[#f3fdf5] rounded-full blur-3xl opacity-50"></div>
-        <div className="absolute bottom-[-50px] left-[-50px] w-96 h-96 bg-[#e2f9e9] rounded-full blur-3xl opacity-40"></div>
-        <div className="relative z-10 w-[85%] mx-auto text-center">
-          <h2 className="text-2xl md:text-5xl font-extrabold text-[#2c6e49] mb-4 drop-shadow-md">
-            Discover Our Farming Categories
-          </h2>
-          <p className="text-md md:text-xl text-[#4f8c69] mb-10 max-w-2xl mx-auto">
-            Explore a wide range of categories designed to meet every farmer’s
-            needs. From eco-friendly fertilizers to advanced farming tools, we
-            have it all!
-          </p>
-          <div className="flex items-center justify-center gap-4 mb-12">
-            <div className="w-16 h-1 bg-[#47b881] rounded-full"></div>
-            <GiBarbedSpear
-              size={40}
-              className="animate-pulse"
-              style={{ transform: "rotate(45deg)", color: "#3a9149" }}
-            />
-            <div className="w-16 h-1 bg-[#47b881] rounded-full"></div>
-          </div>
-          {categoriesLoading ? (
-            <p className="text-xl text-[#3a9149] animate-pulse">Loading categories...</p>
-          ) : categoriesError ? (
-            <p className="text-red-500 font-bold">{categoriesError}</p>
-          ) : (
-            <div className="space-y-16">
-              {categories && categories.length > 0 ? (
-                categories.map((mainCategory) => (
-                  <div key={mainCategory.id} className="w-full">
-                    <h3 className="text-3xl font-bold text-[#2c6e49] mb-8 border-b-2 border-[#47b881] inline-block pb-2">
-                      {mainCategory.name}
-                    </h3>
-                    <div className="flex flex-wrap gap-10 justify-center">
-                      {mainCategory.subcategories && mainCategory.subcategories.length > 0 ? (
-                        mainCategory.subcategories.map((sub) => (
-                          <CategoryCard
-                            key={sub.id}
-                            name={sub.name}
-                            src={sub.imagepath?.startsWith('http') ? sub.imagepath : sub.imagepath ? `http://127.0.0.1:8000/${sub.imagepath}` : "/placeholder.jpg"}
-                            description={sub.description}
-                            link={`/products?category=${sub.id}`}
-                          />
-                        ))
-                      ) : (
-                        <p className="text-gray-500 italic">No subcategories available for {mainCategory.name}</p>
-                      )}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500 text-xl">No categories found.</p>
-              )}
+      <div className="bg-[#f9fafb] py-16">
+        <div className="container mx-auto px-6 space-y-20">
+
+          {/* Categories Section */}
+          <section>
+            <div className="flex justify-between items-end mb-8 border-b border-gray-200 pb-4">
+              <div>
+                <h2 className="text-3xl font-extrabold text-[#2c6e49]">Shop by Category</h2>
+                <p className="text-gray-500 mt-2">Find everything you need for your farm</p>
+              </div>
+              <a href="/categories" className="hidden md:inline-flex items-center gap-2 text-[#47b881] font-bold hover:text-[#2c6e49] transition-colors">
+                View All Categories <span className="text-xl">→</span>
+              </a>
             </div>
-          )}
-          <div className="mt-16">
-            <button
-              onClick={() => window.location.href = '/categories'}
-              className="bg-[#47b881] hover:bg-[#3a9149] text-white font-bold py-4 px-14 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 hover:shadow-[#66bb6a]/50">
-              View All Categories
-            </button>
-          </div>
-        </div>
-      </div>
-      <div className="py-16 relative bg-white overflow-hidden">
-        <div className="absolute top-[-50px] right-[-50px] w-72 h-72 bg-[#e9f7ef] rounded-full blur-3xl opacity-50"></div>
-        <div className="absolute bottom-[-50px] left-[-50px] w-96 h-96 bg-[#d1f2dc] rounded-full blur-3xl opacity-40"></div>
-        <div className="relative z-10 w-[85%] mx-auto text-center">
-          <h2 className="text-2xl md:text-5xl font-extrabold text-[#2c6e49] mb-4 drop-shadow-md">
-            Explore Our Featured Products
-          </h2>
-          <p className="text-md md:text-xl text-[#4f8c69] mb-10 max-w-2xl mx-auto">
-            Discover our handpicked, sustainable tools and products designed to
-            enhance your farming journey with innovation and care.
-          </p>
-          <div className="flex items-center justify-center gap-4 mb-12">
-            <div className="w-16 h-1 bg-[#47b881] rounded-full"></div>
-            <GiBarbedSpear
-              size={40}
-              className="animate-pulse"
-              style={{ transform: "rotate(45deg)", color: "#3a9149" }}
-            />
-            <div className="w-16 h-1 bg-[#47b881] rounded-full"></div>
-          </div>
-          <div className="flex flex-wrap gap-10 justify-center">
+
+            {categoriesLoading ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {[1, 2, 3, 4].map(i => <div key={i} className="h-64 bg-gray-200 rounded-2xl animate-pulse"></div>)}
+              </div>
+            ) : categoriesError ? (
+              <p className="text-red-500">{categoriesError}</p>
+            ) : (
+              <div className="space-y-12">
+                {categories && categories.length > 0 ? (
+                  categories.map((mainCategory) => (
+                    <div key={mainCategory.id}>
+                      <h3 className="text-xl font-bold text-gray-700 mb-6 flex items-center gap-2">
+                        <span className="w-2 h-8 bg-green-500 rounded-full inline-block"></span>
+                        {mainCategory.name}
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {mainCategory.subcategories && mainCategory.subcategories.length > 0 ? (
+                          mainCategory.subcategories.map((sub) => (
+                            <div key={sub.id} className="transform transition-all duration-300 hover:-translate-y-2">
+                              <CategoryCard
+                                name={sub.name}
+                                src={sub.imagepath?.startsWith('http') ? sub.imagepath : sub.imagepath ? `http://127.0.0.1:8000/${sub.imagepath}` : "/placeholder.jpg"}
+                                description={sub.description}
+                                link={`/products?category=${sub.id}`}
+                              />
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-gray-400 italic col-span-full">No subcategories available.</p>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No categories found.</p>
+                )}
+              </div>
+            )}
+
+            <div className="mt-8 md:hidden text-center">
+              <a href="/categories" className="text-[#47b881] font-bold">View All Categories →</a>
+            </div>
+          </section>
+
+          {/* Featured Products Section */}
+          <section>
+            <div className="flex justify-between items-end mb-8 border-b border-gray-200 pb-4">
+              <div>
+                <h2 className="text-3xl font-extrabold text-[#2c6e49]">Featured Products</h2>
+                <p className="text-gray-500 mt-2">Top picks from our marketplace</p>
+              </div>
+              <a href="/products" className="hidden md:inline-flex items-center gap-2 text-[#47b881] font-bold hover:text-[#2c6e49] transition-colors">
+                View All Products <span className="text-xl">→</span>
+              </a>
+            </div>
+
             {productsLoading ? (
-              <p>Loading products...</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                {[1, 2, 3, 4].map(i => <div key={i} className="h-80 bg-gray-200 rounded-3xl animate-pulse"></div>)}
+              </div>
             ) : productsError ? (
               <p className="text-red-500">{productsError}</p>
             ) : (
-              <div className="flex flex-wrap gap-10 justify-center">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
                 {products && products.length > 0 ? (
-                  products.map((product) => (
+                  products.slice(0, 8).map((product) => (
                     <ProductCard
                       key={product.id}
                       id={product.id}
@@ -255,18 +243,21 @@ export default function Page() {
                     />
                   ))
                 ) : (
-                  <p className="text-gray-500">No products found</p>
+                  <p className="text-gray-500 col-span-full text-center">No products found</p>
                 )}
               </div>
             )}
-          </div>
-          <div className="mt-16">
-            <button
-              onClick={() => window.location.href = '/products'}
-              className="bg-[#47b881] hover:bg-[#3a9149] text-white font-bold py-4 px-8 md:px-14 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 hover:shadow-[#66bb6a]/50">
-              View All Products
-            </button>
-          </div>
+
+            <div className="mt-12 text-center md:hidden">
+              <button
+                onClick={() => window.location.href = '/products'}
+                className="bg-[#47b881] hover:bg-[#3a9149] text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all"
+              >
+                View All Products
+              </button>
+            </div>
+          </section>
+
         </div>
       </div>
       <div>
