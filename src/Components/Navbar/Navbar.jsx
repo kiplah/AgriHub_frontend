@@ -257,7 +257,7 @@ const Navbar = () => {
 
 
 
-            {(mounted && token) && (
+            {mounted && (
               <div className="relative" ref={cartRef}>
                 <FaShoppingCart
                   onClick={toggleCart}
@@ -356,10 +356,20 @@ const Navbar = () => {
                           >
                             Clear Cart
                           </button>
-                          <Link href="/checkout" passHref>
-                            <button className="py-2 px-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-transform transform hover:scale-105">
-                              Checkout
-                            </button></Link>
+                          <button
+                            onClick={() => {
+                              if (!token) {
+                                toast.info("Please login to checkout");
+                                router.push("/login");
+                              } else {
+                                router.push("/checkout");
+                              }
+                              setShowCart(false);
+                            }}
+                            className="py-2 px-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-transform transform hover:scale-105"
+                          >
+                            Checkout
+                          </button>
                         </div>
                       </>
                     ) : (
@@ -512,6 +522,14 @@ const Navbar = () => {
                 <strong>CONTACT US</strong>
               </li>
             </Link>
+            {mounted && (
+              <li
+                className={`hover:border-b-2 border-current p-2 cursor-pointer flex items-center gap-1 font-bold ${showCart ? 'text-green-600 border-b-2 border-green-500' : ''}`}
+                onClick={toggleCart}
+              >
+                CART ({totalQuantity})
+              </li>
+            )}
           </ul>
         </div>
       </div>
