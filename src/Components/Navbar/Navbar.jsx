@@ -208,6 +208,7 @@ const Navbar = () => {
               {[
                 { label: "Become a Buyer", href: "/login" },
                 { label: "Become a Seller", href: "/login" },
+                { label: "Sign In", href: "/login" },
               ].map((item) => (
                 <Link
                   key={item.label}
@@ -430,6 +431,7 @@ const Navbar = () => {
               {[
                 { label: "Become a Buyer", href: "/login" },
                 { label: "Become a Seller", href: "/login" },
+                { label: "Sign In", href: "/login" },
               ].map((item) => (
                 <Link
                   key={item.label}
