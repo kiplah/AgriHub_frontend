@@ -272,20 +272,7 @@ const Navbar = () => {
                   <div className="absolute right-0 mt-2 w-96 bg-gradient-to-b from-green-100 via-white to-green-50 shadow-2xl rounded-lg p-6 z-50 border-4 border-green-400">
                     <div className="flex justify-between items-center mb-6">
                       <h3 className="text-2xl font-bold text-green-700 flex items-center gap-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-6 w-6 text-green-600"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 10h11M9 21V3M17 10h4m-4 0l4 4m-4-4l4-4"
-                          />
-                        </svg>
+                        <FaShoppingCart className="h-6 w-6 text-green-600" />
                         Your Cart
                       </h3>
                       <button
@@ -377,7 +364,7 @@ const Navbar = () => {
                         <p className="text-green-600 font-medium">
                           Your cart is empty.
                           <br />
-                          Add some seeds, fertilizers, or machines!
+                          Start adding products from our marketplace!
                         </p>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
