@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "@/reducers/Category/categorySlice";
 import { getProducts } from "@/reducers/product/productSlice";
@@ -8,17 +8,16 @@ import Navbar from "@/Components/Navbar/Navbar";
 import Footer from "@/Components/Footer/Footer";
 import Newsletter from "@/Components/NewsLetter/Newsletter";
 import ProductCard from "@/Components/ProductCard/ProductCard";
-import CategoryCard from "@/Components/CategoryCard/CategoryCard";
 import Benifits from "@/Components/Benifites/Benifits";
 import Testimonial from "@/Components/Testimonial/Testimonial";
-import { GiBarbedSpear } from "react-icons/gi";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaFilter } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+
 export default function Page() {
   const dispatch = useDispatch();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All");
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -26,16 +25,24 @@ export default function Page() {
       router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
     }
   };
+  
   const { categories, loading: categoriesLoading, error: categoriesError } = useSelector(
     (state) => state.category
   );
   const { products, loading: productsLoading, error: productsError } = useSelector(
     (state) => state.product
   );
+  
   useEffect(() => {
     dispatch(fetchCategories());
     dispatch(getProducts());
   }, [dispatch]);
+
+  // Filter Logic
+  const filteredProducts = activeCategory === "All" 
+    ? products 
+    : products.filter(p => p.category === activeCategory || p.category_details?.name === activeCategory);
+
   return (
     <>
       <div className="min-h-screen relative overflow-hidden font-sans">
@@ -59,10 +66,11 @@ export default function Page() {
         </div>
 
         <div className="relative mt-[160px] md:mt-[230px] z-20 flex flex-col items-center justify-center h-full text-center px-6 space-y-8 md:space-y-12">
+          {/* Hero Section Content - Kept Original */}
           <div className="absolute top-10 left-10 w-12 h-12 bg-green-400 rounded-full blur-lg opacity-50 animate-ping"></div>
           <div className="absolute bottom-20 right-20 w-16 h-16 bg-green-500 rounded-full blur-lg opacity-30 animate-pulse"></div>
 
-          {/* Search Bar */}
+          {/* Search Bar - Kept for Hero Context */}
           <form onSubmit={handleSearch} className="relative w-full max-w-xl mb-4 animate-fade-in-down z-50">
             <div className="relative group">
               <input
@@ -107,140 +115,119 @@ export default function Page() {
             </span>
             <div className="w-16 h-1 bg-green-500 rounded-full animate-pulse"></div>
           </div>
-
-          <div className="flex flex-col sm:flex-row items-center gap-8 mt-6 pb-8 ">
-            <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-4 px-16 rounded-full shadow-2xl transition-transform transform hover:scale-110 hover:shadow-green-500/50 animate-fade-up">
-              Shop Products
-            </button>
-            <button className="bg-transparent border-2 border-green-600 text-green-400 hover:bg-green-600 hover:text-white font-semibold py-4 px-16 rounded-full shadow-xl transition-transform transform hover:scale-110 hover:shadow-green-600/50 animate-fade-up-delayed">
-              Learn More
-            </button>
+          
+          {/* Scroll Down Indicator */}
+          <div className="pt-10 animate-bounce">
+             <span className="text-white/50 text-sm">Scroll to Explore</span>
+             <div className="w-0.5 h-12 bg-white/30 mx-auto mt-2"></div>
           </div>
-        </div>
 
+        </div>
         <div className="absolute top-0 w-full h-64 bg-gradient-to-b from-black to-transparent"></div>
         <div className="absolute bottom-0 w-full h-64 bg-gradient-to-t from-black to-transparent"></div>
       </div>
-      <div className="py-16 relative bg-white overflow-hidden">
-        <div className="absolute top-[-50px] right-[-50px] w-72 h-72 bg-[#f3fdf5] rounded-full blur-3xl opacity-50"></div>
-        <div className="absolute bottom-[-50px] left-[-50px] w-96 h-96 bg-[#e2f9e9] rounded-full blur-3xl opacity-40"></div>
-        <div className="relative z-10 w-[85%] mx-auto text-center">
-          <h2 className="text-2xl md:text-5xl font-extrabold text-[#2c6e49] mb-4 drop-shadow-md">
-            Discover Our Farming Categories
-          </h2>
-          <p className="text-md md:text-xl text-[#4f8c69] mb-10 max-w-2xl mx-auto">
-            Explore a wide range of categories designed to meet every farmer’s
-            needs. From eco-friendly fertilizers to advanced farming tools, we
-            have it all!
-          </p>
-          <div className="flex items-center justify-center gap-4 mb-12">
-            <div className="w-16 h-1 bg-[#47b881] rounded-full"></div>
-            <GiBarbedSpear
-              size={40}
-              className="animate-pulse"
-              style={{ transform: "rotate(45deg)", color: "#3a9149" }}
-            />
-            <div className="w-16 h-1 bg-[#47b881] rounded-full"></div>
-          </div>
-          {categoriesLoading ? (
-            <p className="text-xl text-[#3a9149] animate-pulse">Loading categories...</p>
-          ) : categoriesError ? (
-            <p className="text-red-500 font-bold">{categoriesError}</p>
-          ) : (
-            <div className="space-y-16">
-              {categories && categories.length > 0 ? (
-                categories.map((mainCategory) => (
-                  <div key={mainCategory.id} className="w-full">
-                    <h3 className="text-3xl font-bold text-[#2c6e49] mb-8 border-b-2 border-[#47b881] inline-block pb-2">
-                      {mainCategory.name}
-                    </h3>
-                    <div className="flex flex-wrap gap-10 justify-center">
-                      {mainCategory.subcategories && mainCategory.subcategories.length > 0 ? (
-                        mainCategory.subcategories.map((sub) => (
-                          <CategoryCard
-                            key={sub.id}
-                            name={sub.name}
-                            src={sub.imagepath ? `http://127.0.0.1:8000/${sub.imagepath}` : "/placeholder.jpg"} // improved fallback if needed, or just keep as is if confident
-                            description={sub.description}
-                            link={`/products?category=${sub.id}`}
+
+      {/* Modern Product Exploration Section (Replaces Old Category + Product Grids) */}
+      <div className="bg-gray-50 py-16 min-h-screen">
+         <div className="container mx-auto px-4 md:px-8">
+            
+            {/* Header + Search + Filter Row */}
+            <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-8">
+               <div className="max-w-xl">
+                  <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                    Browse and purchase agricultural products
+                  </h2>
+                  <p className="text-gray-500">Find the best seeds, fertilizers, and tools for your farm.</p>
+               </div>
+               
+               <div className="flex gap-3 w-full md:w-auto">
+                   <div className="relative flex-1 md:w-80">
+                      <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      <input 
+                        type="text" 
+                        placeholder="Search products..." 
+                        className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 bg-white shadow-sm"
+                        // Note: This local search filters the current list or could route to main search
+                        // For this section, visually matching the mockup request
+                      />
+                   </div>
+                   <button className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-lg font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 shadow-sm transition-all whitespace-nowrap">
+                      <FaFilter className="text-gray-500" />
+                      Filters
+                   </button>
+               </div>
+            </div>
+
+            {/* Category Pills Navigation */}
+            <div className="flex gap-3 overflow-x-auto pb-6 mb-8 custom-scrollbar">
+               <button 
+                 onClick={() => setActiveCategory("All")}
+                 className={`px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${activeCategory === "All" ? "bg-green-600 text-white shadow-md shadow-green-200" : "bg-white text-gray-600 hover:bg-green-50 border border-gray-200"}`}
+               >
+                 All
+               </button>
+               {categories && categories.map(cat => (
+                 <button 
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.name)} // Assuming product.category matches name or we map ID
+                    className={`px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${activeCategory === cat.name ? "bg-green-600 text-white shadow-md shadow-green-200" : "bg-white text-gray-600 hover:bg-green-50 border border-gray-200"}`}
+                 >
+                    {cat.name}
+                 </button>
+               ))}
+               {/* Fixed Pills for visual match if categories fail */}
+               {!categories && ["Seeds", "Fertilizers", "Pesticides", "Equipment"].map(cat => (
+                  <button key={cat} className="px-6 py-2 rounded-lg font-medium whitespace-nowrap bg-white text-gray-600 hover:bg-green-50 border border-gray-200">
+                     {cat}
+                  </button>
+               ))}
+            </div>
+
+            {/* Filtered Product Grid */}
+            <div className="min-h-[400px]">
+               {productsLoading ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                     {[1,2,3,4,5,6,7,8].map(i => <div key={i} className="h-80 bg-gray-200 rounded-3xl animate-pulse"></div>)}
+                  </div>
+               ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                     {filteredProducts && filteredProducts.length > 0 ? (
+                        filteredProducts.map((product) => (
+                          <ProductCard
+                            key={product.id}
+                            id={product.id}
+                            src={product.imagepath?.startsWith('http') ? product.imagepath : `http://127.0.0.1:8000/${product.imagepath}`}
+                            title={product.name}
+                            cat={product.category}
+                            price={product.price}
+                            description={product.description}
+                            rating={product.rating}
+                            sellerId={product.userId}
                           />
                         ))
-                      ) : (
-                        <p className="text-gray-500 italic">No subcategories available for {mainCategory.name}</p>
-                      )}
-                    </div>
+                     ) : (
+                        <div className="col-span-full py-20 text-center">
+                           <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                              <span className="text-4xl">🌱</span>
+                           </div>
+                           <h3 className="text-xl font-bold text-gray-800">No products found in this category</h3>
+                           <p className="text-gray-500 mt-2">Try selecting "All" or browse other categories.</p>
+                           <button onClick={() => setActiveCategory("All")} className="mt-6 text-green-600 font-bold hover:underline">Clear Filters</button>
+                        </div>
+                     )}
                   </div>
-                ))
-              ) : (
-                <p className="text-gray-500 text-xl">No categories found.</p>
-              )}
+               )}
             </div>
-          )}
-          <div className="mt-16">
-            <button
-              onClick={() => window.location.href = '/categories'}
-              className="bg-[#47b881] hover:bg-[#3a9149] text-white font-bold py-4 px-14 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 hover:shadow-[#66bb6a]/50">
-              View All Categories
-            </button>
-          </div>
-        </div>
+
+            <div className="mt-16 text-center">
+                <button onClick={() => router.push('/products')} className="px-8 py-3 border border-green-600 text-green-700 font-bold rounded-lg hover:bg-green-50 transition-colors">
+                   View Full Marketplace
+                </button>
+            </div>
+
+         </div>
       </div>
-      <div className="py-16 relative bg-white overflow-hidden">
-        <div className="absolute top-[-50px] right-[-50px] w-72 h-72 bg-[#e9f7ef] rounded-full blur-3xl opacity-50"></div>
-        <div className="absolute bottom-[-50px] left-[-50px] w-96 h-96 bg-[#d1f2dc] rounded-full blur-3xl opacity-40"></div>
-        <div className="relative z-10 w-[85%] mx-auto text-center">
-          <h2 className="text-2xl md:text-5xl font-extrabold text-[#2c6e49] mb-4 drop-shadow-md">
-            Explore Our Featured Products
-          </h2>
-          <p className="text-md md:text-xl text-[#4f8c69] mb-10 max-w-2xl mx-auto">
-            Discover our handpicked, sustainable tools and products designed to
-            enhance your farming journey with innovation and care.
-          </p>
-          <div className="flex items-center justify-center gap-4 mb-12">
-            <div className="w-16 h-1 bg-[#47b881] rounded-full"></div>
-            <GiBarbedSpear
-              size={40}
-              className="animate-pulse"
-              style={{ transform: "rotate(45deg)", color: "#3a9149" }}
-            />
-            <div className="w-16 h-1 bg-[#47b881] rounded-full"></div>
-          </div>
-          <div className="flex flex-wrap gap-10 justify-center">
-            {productsLoading ? (
-              <p>Loading products...</p>
-            ) : productsError ? (
-              <p className="text-red-500">{productsError}</p>
-            ) : (
-              <div className="flex flex-wrap gap-10 justify-center">
-                {products && products.length > 0 ? (
-                  products.map((product) => (
-                    <ProductCard
-                      key={product.id}
-                      id={product.id}
-                      src={`http://127.0.0.1:8000/${product.imagepath}`}
-                      title={product.name}
-                      cat={product.category}
-                      price={product.price}
-                      description={product.description}
-                      rating={product.rating}
-                      sellerId={product.userId}
-                    />
-                  ))
-                ) : (
-                  <p className="text-gray-500">No products found</p>
-                )}
-              </div>
-            )}
-          </div>
-          <div className="mt-16">
-            <button
-              onClick={() => window.location.href = '/products'}
-              className="bg-[#47b881] hover:bg-[#3a9149] text-white font-bold py-4 px-8 md:px-14 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 hover:shadow-[#66bb6a]/50">
-              View All Products
-            </button>
-          </div>
-        </div>
-      </div>
+
       <div>
         <Benifits />
       </div>
