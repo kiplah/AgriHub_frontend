@@ -171,8 +171,8 @@ const productSlice = createSlice({
       })
       .addCase(fetchProductById.fulfilled, (state, action) => {
         state.loading = false;
-        state.product = action.payload.product;
-        state.username = action.payload.username;
+        state.product = action.payload;
+        state.username = action.payload.user; // Serializer maps user.username to 'user' field
       })
 
 

@@ -25,8 +25,8 @@ export const fetchReviewsByProductId = createAsyncThunk(
   'reviews/fetchReviewsByProductId',
   async (productId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/review/product-review/${productId}`);
-      return response.data;
+      const response = await axios.get(`/review/?product_id=${productId}`);
+      return { reviews: response.data, stats: { avg_rating: 0, total_reviews: response.data.length } }; // Mocking stats for now as backend just returns list
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Failed to fetch reviews for product');
     }
@@ -77,14 +77,14 @@ const reviewsSlice = createSlice({
       .addCase(fetchReviewsByProductId.fulfilled, (state, action) => {
         state.loading = false;
         state.reviews = action.payload.reviews || [];
-        
+
         state.stats = {
           avgRating: action.payload.stats?.avg_rating || 0,
           totalReviews: action.payload.stats?.total_reviews || 0,
         };
       })
-      
-      
+
+
       .addCase(fetchReviewsByProductId.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
