@@ -1,17 +1,27 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, Home, Box, ShoppingCart, FileText, BarChart2, Wallet, MessageSquare, Settings, LogOut } from "lucide-react";
+import { Menu, Home, Box, ShoppingCart, FileText, BarChart2, Wallet, MessageSquare, Settings, LogOut, Eye, EyeOff } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux"; // Added useDispatch
 import { logout } from "@/reducers/Auth/authSlice"; // Import logout action
+import { fetchSellerStats } from "@/reducers/Order/orderSlice"; // Import fetchSellerStats
 import { useRouter } from "next/navigation"; // Import useRouter
 
 export default function Layout({ children, initialCollapsed = false }) {
   const [collapsed, setCollapsed] = useState(initialCollapsed);
   const [profileOpen, setProfileOpen] = useState(false); // Dropdown state
+  const [showBalance, setShowBalance] = useState(true); // Toggle balance visibility
   const { user } = useSelector((state) => state.auth);
+  const { sellerStats } = useSelector((state) => state.orders); // Get sellerStats
   const dispatch = useDispatch();
   const router = useRouter();
+
+  // Fetch stats on mount to ensure header data is real
+  useEffect(() => {
+    if (user?.userId) {
+      dispatch(fetchSellerStats(user.userId));
+    }
+  }, [dispatch, user?.userId]);
 
   const handleLogout = async () => {
     await dispatch(logout());
@@ -154,15 +164,17 @@ export default function Layout({ children, initialCollapsed = false }) {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 border rounded-full px-4 py-1.5 bg-gray-50/50 focus-within:bg-white focus-within:ring-2 ring-emerald-100 transition-all w-64">
+            <div className="hidden sm:flex items-center gap-2 border rounded-full px-4 py-1.5 bg-gray-50/50 focus-within:bg-white focus-within:ring-2 ring-emerald-100 transition-all w-64 hover:bg-white">
               <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"><path d="M21 21L15 15" stroke="#9CA3AF" strokeWidth="2" /></svg>
-              <input placeholder="Search orders..." className="bg-transparent outline-none text-sm w-full" />
+              <input placeholder="Search orders..." className="bg-transparent outline-none text-sm w-full placeholder:text-gray-400 text-gray-700" />
             </div>
 
-            <button className="p-2 rounded-full hover:bg-gray-100 relative">
-              <MessageSquare className="w-5 h-5 text-gray-600" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-            </button>
+            <Link href="/seller-profile/chats">
+              <button className="p-2 rounded-full hover:bg-gray-100 relative transition-colors group">
+                <MessageSquare className="w-5 h-5 text-gray-600 group-hover:text-emerald-600 transition-colors" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+              </button>
+            </Link>
             <div className="h-8 w-[1px] bg-gray-200 mx-1"></div>
 
             {/* Desktop User Dropdown */}
@@ -172,7 +184,15 @@ export default function Layout({ children, initialCollapsed = false }) {
                 className="flex items-center gap-2 hover:bg-gray-50 rounded-full p-1 pr-2 transition-colors"
               >
                 <div className="text-right hidden sm:block">
-                  <div className="text-sm font-medium text-gray-900">KES 24,000</div>
+                  <div className="text-sm font-medium text-gray-900 flex items-center justify-end gap-2">
+                    {showBalance ? `KES ${sellerStats?.Revenue ? Number(sellerStats.Revenue).toLocaleString() : "0"}` : "••••••"}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setShowBalance(!showBalance); }}
+                      className="text-gray-400 hover:text-emerald-600 p-0.5 rounded transition-colors"
+                    >
+                      {showBalance ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </div>
                   <div className="text-xs text-emerald-600 font-medium">Verified Seller</div>
                 </div>
                 <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold border border-emerald-200">
