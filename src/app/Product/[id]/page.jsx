@@ -36,8 +36,6 @@ const ProductDetailsPage = () => {
     }));
 
   const { addToCart } = useCart();
-  const [selectedRating, setSelectedRating] = useState(0);
-  const [newReviewText, setNewReviewText] = useState("");
   const [quantity, setQuantity] = useState(1);
 
   const handleIncrement = () => {
@@ -72,49 +70,6 @@ const ProductDetailsPage = () => {
     }
   };
 
-  const handleSubmitReview = async () => {
-    if (!newReviewText.trim() || selectedRating === 0) {
-      toast.error("Please provide a valid review and rating.", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      return;
-    }
-
-    if (!user) {
-      toast.error("You need to be logged in to submit a review.", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      return;
-    }
-
-    const newReview = {
-      productId: parseInt(id, 10),
-      rating: selectedRating,
-      review: newReviewText,
-      userId: user.id,
-      userName: user.username,
-    };
-
-    try {
-      await dispatch(saveReview(newReview)).unwrap();
-      toast.success("Review submitted successfully!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      setNewReviewText("");
-      setSelectedRating(0);
-      dispatch(fetchReviewsByProductId(id)); // Refresh reviews
-    } catch (err) {
-      console.error("Error saving review:", err);
-      toast.error("Failed to submit review. Please try again later.", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-    }
-  };
-
   if (productLoading || reviewLoading) {
     return <p>Loading product details...</p>;
   }
@@ -128,148 +83,121 @@ const ProductDetailsPage = () => {
   }
 
   const imageUrl = product.imagepath
-    ? `http://localhost:8080/${product.imagepath}`
-    : "path/to/default-image.jpg"; // Fallback image
+    ? (product.imagepath.startsWith('http') ? product.imagepath : `http://127.0.0.1:8000${product.imagepath}`)
+    : "https://via.placeholder.com/600x600?text=No+Image";
 
-  const averageRating = stats.avgRating > 0 ? stats.avgRating.toFixed(1) : "No ratings yet";
+  const averageRating = stats.avgRating > 0 ? stats.avgRating.toFixed(1) : "New";
   const totalReviews = stats.totalReviews || 0;
-
-
 
   return (
     <>
-      <Navbar bground={true} />
-      <div
-        className="relative overflow-hidden py-20"
-        style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(0, 128, 0, 0.6), rgba(255, 255, 255, 0.8)),
-        url('https://static.vecteezy.com/system/resources/previews/001/431/110/non_2x/abstract-green-grass-in-bokeh-background-free-vector.jpg')`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-          backgroundAttachment: "fixed",
-        }}
-      >
-        <section className="container mx-auto px-6">
-          <div className="container mx-auto mt-28 p-10 bg-gradient-to-r from-green-100 to-white shadow-2xl rounded-2xl">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center min-h-[600px]">
-              <div className="flex justify-center items-center">
+      <Navbar />
+      <div className="min-h-screen bg-gray-50 pt-32 pb-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+
+          {/* Breadcrumb / Back Navigation could go here */}
+
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-8">
+
+              {/* Product Image Section */}
+              <div className="relative h-[400px] sm:h-[500px] lg:h-full min-h-[500px] bg-gray-100 flex items-center justify-center p-8">
                 <img
                   src={imageUrl}
                   alt={product.name}
-                  className="w-[90%] max-h-[500px] object-cover rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-contain mix-blend-multiply hover:scale-105 transition-transform duration-500"
                 />
               </div>
-              <div className="flex flex-col justify-between space-y-10 p-6">
-                <h1 className="text-2xl md:text-5xl font-bold">{product.name}</h1>
-                <p className="text-gray-600">{product.description}</p>
-                <p className="text-gray-800 text-lg font-medium">
-                  Average Rating: {averageRating} ({totalReviews} reviews)
+
+              {/* Product Info Section */}
+              <div className="p-8 md:p-12 flex flex-col justify-center">
+                <div className="mb-6">
+                  <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide text-green-700 bg-green-100 mb-4">
+                    {product.categoryName || "Agricultural Product"}
+                  </span>
+                  <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
+                    {product.name}
+                  </h1>
+
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="flex items-center text-yellow-400">
+                      <FaStar className="text-xl" />
+                      <span className="ml-2 text-gray-700 font-bold text-lg">{averageRating}</span>
+                    </div>
+                    <span className="text-gray-400">|</span>
+                    <span className="text-gray-500 text-sm font-medium">{totalReviews} Reviews</span>
+                  </div>
+                </div>
+
+                <p className="text-gray-600 text-lg leading-relaxed mb-8">
+                  {product.description}
                 </p>
 
+                <div className="grid grid-cols-2 gap-6 mb-8 border-t border-b border-gray-100 py-6">
+                  <div>
+                    <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-1">Price</p>
+                    <p className="text-3xl font-bold text-green-600">${product.price}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-1">Seller</p>
+                    <p className="text-lg font-semibold text-gray-800">{username || "AgroMart User"}</p>
+                  </div>
+                </div>
 
-                <div className="flex flex-col space-y-4">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-lg font-medium text-gray-800">
-                      Category:
-                    </span>
-                    <span className="text-lg font-bold text-green-600">
-                      {product.categoryName}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-lg font-medium text-gray-800">
-                      Posted By:
-                    </span>
-                    <span className="text-lg font-bold text-green-600">
-                      {username || "Unknown"}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-lg font-medium text-gray-800">
-                      Price:
-                    </span>
-                    <span className="text-3xl font-extrabold text-green-600">
-                      ${product.price}
-                    </span>
-                  </div>
-
-                  {/* Quantity Selector */}
-                  <div className="flex items-center space-x-4 mt-4">
-                    <button
-                      onClick={handleDecrement}
-                      className="w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full text-xl font-bold text-gray-700 transition"
-                    >
+                {/* Actions */}
+                <div className="flex flex-col sm:flex-row items-center gap-6">
+                  {/* Quantity */}
+                  <div className="flex items-center bg-gray-100 rounded-full px-4 py-2 shadow-inner">
+                    <button onClick={handleDecrement} className="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-green-600 font-bold text-xl transition-colors">
                       -
                     </button>
-                    <span className="text-2xl font-semibold w-8 text-center">{quantity}</span>
-                    <button
-                      onClick={handleIncrement}
-                      className="w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full text-xl font-bold text-gray-700 transition"
-                    >
+                    <span className="w-12 text-center text-xl font-bold text-gray-800">{quantity}</span>
+                    <button onClick={handleIncrement} className="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-green-600 font-bold text-xl transition-colors">
                       +
                     </button>
                   </div>
+
+                  {/* Add to Cart */}
+                  <button
+                    onClick={handleAddToCart}
+                    className="flex-1 w-full py-4 px-8 bg-green-600 hover:bg-green-700 text-white text-lg font-bold rounded-full shadow-lg hover:shadow-green-500/30 transform hover:-translate-y-1 transition-all duration-300 text-center"
+                  >
+                    Add to Cart
+                  </button>
                 </div>
-                <button
-                  onClick={handleAddToCart}
-                  className="w-full py-2 md:py-4 bg-green-600 text-white text-lg md:text-xl font-semibold rounded-lg hover:bg-green-700 shadow-xl hover:shadow-green-500/50 transition-transform hover:scale-105"
-                >
-                  Add to Cart
-                </button>
+
               </div>
             </div>
           </div>
-          <section className="mt-10 py-12 px-6 bg-gradient-to-br from-green-100 to-green-50 rounded-lg shadow-2xl">
-            <h2 className="text-2xl md:text-5xl font-extrabold text-green-700 mb-10 text-center">
-              Customer Reviews
-            </h2>
 
-            <div className="mt-10">
-              <h3 className="text-xl font-bold mb-4">Add Your Review</h3>
-              <div className="flex items-center mb-4">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <FaStar
-                    key={star}
-                    className={`cursor-pointer text-2xl ${star <= selectedRating ? "text-yellow-500" : "text-gray-300"
-                      }`}
-                    onClick={() => setSelectedRating(star)}
-                  />
+          {/* Existing Reviews Display - Simplified and Cleaned */}
+          {reviews && reviews.length > 0 && (
+            <div className="mt-16">
+              <h3 className="text-2xl font-bold text-gray-900 mb-8 px-2">Customer Reviews</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {reviews.map((review) => (
+                  <div key={review.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold">
+                          {review.username ? review.username.charAt(0).toUpperCase() : "U"}
+                        </div>
+                        <p className="font-bold text-gray-900">{review.username}</p>
+                      </div>
+                      <div className="flex text-yellow-400 text-sm">
+                        {[...Array(5)].map((_, i) => (
+                          <FaStar key={i} className={i < review.rating ? "text-yellow-400" : "text-gray-200"} />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-gray-600 leading-relaxed italic">"{review.review}"</p>
+                  </div>
                 ))}
               </div>
-              <textarea
-                value={newReviewText}
-                onChange={(e) => setNewReviewText(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-md"
-                placeholder="Write your review here..."
-              ></textarea>
-              <button
-                onClick={handleSubmitReview}
-                className="mt-4 px-6 py-2 bg-green-600 text-white font-semibold rounded-lg"
-              >
-                Submit Review
-              </button>
             </div>
-            <div className="mt-8">
-              {reviews.map((review) => (
-                <div key={review.id} className="p-6 bg-white rounded-xl shadow-lg mb-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-lg font-bold text-gray-800">{review.username}</span>
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <FaStar
-                          key={i}
-                          className={i < review.rating ? "text-yellow-500" : "text-gray-300"}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-gray-600">{review.review}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        </section>
+          )}
+
+        </div>
       </div>
       <Newsletter />
       <Footer />
