@@ -38,6 +38,15 @@ const ProductDetailsPage = () => {
   const { addToCart } = useCart();
   const [selectedRating, setSelectedRating] = useState(0);
   const [newReviewText, setNewReviewText] = useState("");
+  const [quantity, setQuantity] = useState(1);
+
+  const handleIncrement = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
+  const handleDecrement = () => {
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+  };
 
   useEffect(() => {
     if (id) {
@@ -53,9 +62,10 @@ const ProductDetailsPage = () => {
         name: product.name,
         image: product.imagepath,
         price: product.price,
-      sellerId:product.userId,
+        sellerId: product.userId,
+        quantity: quantity,
       });
-      toast.success(`${product.name} added to cart successfully!`, {
+      toast.success(`${quantity} ${product.name}(s) added to cart successfully!`, {
         position: "top-right",
         autoClose: 3000,
       });
@@ -121,11 +131,11 @@ const ProductDetailsPage = () => {
     ? `http://localhost:8080/${product.imagepath}`
     : "path/to/default-image.jpg"; // Fallback image
 
-    const averageRating = stats.avgRating > 0 ? stats.avgRating.toFixed(1) : "No ratings yet";
-    const totalReviews = stats.totalReviews || 0;
-    
-    
-    
+  const averageRating = stats.avgRating > 0 ? stats.avgRating.toFixed(1) : "No ratings yet";
+  const totalReviews = stats.totalReviews || 0;
+
+
+
   return (
     <>
       <Navbar bground={true} />
@@ -154,11 +164,11 @@ const ProductDetailsPage = () => {
                 <h1 className="text-2xl md:text-5xl font-bold">{product.name}</h1>
                 <p className="text-gray-600">{product.description}</p>
                 <p className="text-gray-800 text-lg font-medium">
-  Average Rating: {averageRating} ({totalReviews} reviews)
-</p>
-               
-               
-<div className="flex flex-col space-y-4">
+                  Average Rating: {averageRating} ({totalReviews} reviews)
+                </p>
+
+
+                <div className="flex flex-col space-y-4">
                   <div className="flex items-center space-x-2">
                     <span className="text-lg font-medium text-gray-800">
                       Category:
@@ -183,6 +193,23 @@ const ProductDetailsPage = () => {
                       ${product.price}
                     </span>
                   </div>
+
+                  {/* Quantity Selector */}
+                  <div className="flex items-center space-x-4 mt-4">
+                    <button
+                      onClick={handleDecrement}
+                      className="w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full text-xl font-bold text-gray-700 transition"
+                    >
+                      -
+                    </button>
+                    <span className="text-2xl font-semibold w-8 text-center">{quantity}</span>
+                    <button
+                      onClick={handleIncrement}
+                      className="w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full text-xl font-bold text-gray-700 transition"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
                 <button
                   onClick={handleAddToCart}
@@ -197,16 +224,15 @@ const ProductDetailsPage = () => {
             <h2 className="text-2xl md:text-5xl font-extrabold text-green-700 mb-10 text-center">
               Customer Reviews
             </h2>
-          
+
             <div className="mt-10">
               <h3 className="text-xl font-bold mb-4">Add Your Review</h3>
               <div className="flex items-center mb-4">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <FaStar
                     key={star}
-                    className={`cursor-pointer text-2xl ${
-                      star <= selectedRating ? "text-yellow-500" : "text-gray-300"
-                    }`}
+                    className={`cursor-pointer text-2xl ${star <= selectedRating ? "text-yellow-500" : "text-gray-300"
+                      }`}
                     onClick={() => setSelectedRating(star)}
                   />
                 ))}
@@ -224,24 +250,24 @@ const ProductDetailsPage = () => {
                 Submit Review
               </button>
             </div>
-          <div className="mt-8">
-          {reviews.map((review) => (
-              <div key={review.id} className="p-6 bg-white rounded-xl shadow-lg mb-4">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-lg font-bold text-gray-800">{review.username}</span>
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <FaStar
-                        key={i}
-                        className={i < review.rating ? "text-yellow-500" : "text-gray-300"}
-                      />
-                    ))}
+            <div className="mt-8">
+              {reviews.map((review) => (
+                <div key={review.id} className="p-6 bg-white rounded-xl shadow-lg mb-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-lg font-bold text-gray-800">{review.username}</span>
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar
+                          key={i}
+                          className={i < review.rating ? "text-yellow-500" : "text-gray-300"}
+                        />
+                      ))}
+                    </div>
                   </div>
+                  <p className="text-gray-600">{review.review}</p>
                 </div>
-                <p className="text-gray-600">{review.review}</p>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
           </section>
         </section>
       </div>

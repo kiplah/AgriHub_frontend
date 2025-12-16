@@ -11,20 +11,21 @@ const initialState = {
 const cartReducer = (state, action) => {
   switch (action.type) {
     case "ADD_TO_CART":
+      const quantityToAdd = action.payload.quantity || 1;
       const existingItem = state.cartItems.find(
         (item) => item.id === action.payload.id
       );
       if (existingItem) {
         const updatedItems = state.cartItems.map((item) =>
           item.id === action.payload.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + quantityToAdd }
             : item
         );
         return {
           ...state,
           cartItems: updatedItems,
-          totalQuantity: state.totalQuantity + 1,
-          totalPrice: state.totalPrice + action.payload.price,
+          totalQuantity: state.totalQuantity + quantityToAdd,
+          totalPrice: state.totalPrice + action.payload.price * quantityToAdd,
         };
       } else {
         return {
@@ -33,14 +34,14 @@ const cartReducer = (state, action) => {
             ...state.cartItems,
             {
               ...action.payload, // Includes id, name, price, and image
-              quantity: 1,
+              quantity: quantityToAdd,
             },
           ],
-          totalQuantity: state.totalQuantity + 1,
-          totalPrice: state.totalPrice + action.payload.price,
+          totalQuantity: state.totalQuantity + quantityToAdd,
+          totalPrice: state.totalPrice + action.payload.price * quantityToAdd,
         };
       }
-    
+
 
     case "REMOVE_FROM_CART":
       const filteredItems = state.cartItems.filter(
