@@ -10,8 +10,8 @@ import { fetchCategories } from "@/reducers/Category/categorySlice";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const Navbar = () => {
-  const [bg, setBg] = useState(false);
+const Navbar = ({ bground }) => {
+  const [bg, setBg] = useState(bground || false);
   const [showNav, setShowNav] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -54,16 +54,21 @@ const Navbar = () => {
   }, [showDropdown]);
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      if (window.scrollY > 50 || bground) {
         setBg(true);
       } else {
         setBg(false);
       }
     };
 
+    // Initial check
+    if (bground) {
+      setBg(true);
+    }
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [bground]);
   const handleNavbar = () => {
     setShowNav(!showNav);
   };
