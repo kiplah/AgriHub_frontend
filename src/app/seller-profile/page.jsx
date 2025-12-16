@@ -19,7 +19,7 @@ import {
   Filler,
 } from "chart.js";
 import Link from "next/link";
-import Layout from "./Layout";
+
 import { ArrowUpRight, ChevronRight } from "lucide-react";
 import { FaWhatsapp, FaFacebook, FaTwitter } from "react-icons/fa";
 
@@ -160,8 +160,8 @@ export default function SellerDashboardPage() {
           <Link href="/seller-profile/add-product" className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg shadow-sm text-sm whitespace-nowrap hover:bg-emerald-700 transition">
             + Add Product
           </Link>
-          <button onClick={handleShareStore} className="px-3 py-2 border rounded-lg text-sm whitespace-nowrap hover:bg-gray-50 transition">Share Store</button>
-          <Link href="/seller-profile/settings" className="px-3 py-2 border rounded-lg text-sm whitespace-nowrap hover:bg-gray-50 transition">Settings</Link>
+          <button onClick={handleShareStore} className="px-3 py-2 border border-emerald-200 bg-emerald-50 text-emerald-700 rounded-lg text-sm whitespace-nowrap hover:bg-emerald-100 transition font-medium">Share Store</button>
+          <Link href="/seller-profile/settings" className="px-3 py-2 border border-gray-200 text-gray-700 rounded-lg text-sm whitespace-nowrap hover:bg-gray-50 transition font-medium">Settings</Link>
         </div>
       </div>
 
