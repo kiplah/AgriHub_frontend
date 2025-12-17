@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Card } from '@/Components/ui/Card';
 import { Upload, Loader2, CheckCircle } from 'lucide-react';
 import { toast } from 'react-toastify';
+import LocationAutocomplete from '@/Components/LocationAutocomplete/LocationAutocomplete';
 
 export default function AddProduct() {
     const dispatch = useDispatch();
@@ -186,17 +187,14 @@ export default function AddProduct() {
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                        <input
-                            type="text"
-                            name="location"
+                        <LocationAutocomplete
                             value={formData.location}
-                            onChange={handleChange}
+                            onChange={(newValue) => setFormData(prev => ({ ...prev, location: newValue }))}
                             className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-gray-900 bg-white placeholder:text-gray-400"
                             placeholder="Enter your location (e.g., Nairobi, Kenya)"
                         />
                         <div className="flex items-center gap-1 mt-1 text-emerald-600">
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                            <span className="text-xs font-medium">Type location for auto-suggestions</span>
+                            <span className="text-xs font-medium">Type to search for verified locations</span>
                         </div>
                     </div>
 
