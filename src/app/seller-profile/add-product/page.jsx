@@ -21,7 +21,9 @@ export default function AddProduct() {
         image: null,
         stock_quantity: '',
         location: '',
-        delivery_options: 'Pickup'
+        delivery_options: 'Pickup',
+        country_code: 'Kenya (+254)',
+        phone_number: ''
     });
 
     const [preview, setPreview] = useState(null);
@@ -55,6 +57,8 @@ export default function AddProduct() {
         data.append('imagepath', formData.image);
         data.append('stock_quantity', formData.stock_quantity);
         data.append('location', formData.location);
+        data.append('country_code', formData.country_code);
+        data.append('phone_number', formData.phone_number);
         data.append('delivery_options', formData.delivery_options);
 
         try {
@@ -153,6 +157,51 @@ export default function AddProduct() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Country Code</label>
+                            <select
+                                name="country_code"
+                                value={formData.country_code}
+                                onChange={handleChange}
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all text-gray-900 bg-white"
+                            >
+                                <option value="Kenya (+254)">Kenya (+254)</option>
+                                <option value="Uganda (+256)">Uganda (+256)</option>
+                                <option value="Tanzania (+255)">Tanzania (+255)</option>
+                                <option value="Rwanda (+250)">Rwanda (+250)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                            <input
+                                type="text"
+                                name="phone_number"
+                                value={formData.phone_number}
+                                onChange={handleChange}
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-gray-900 bg-white"
+                                placeholder="776904675"
+                            />
+                            <p className="text-xs text-orange-500 mt-1">Enter numbers only, no spaces or special characters</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                        <input
+                            type="text"
+                            name="location"
+                            value={formData.location}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-gray-900 bg-white placeholder:text-gray-400"
+                            placeholder="Enter your location (e.g., Nairobi, Kenya)"
+                        />
+                        <div className="flex items-center gap-1 mt-1 text-emerald-600">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            <span className="text-xs font-medium">Type location for auto-suggestions</span>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Stock Quantity *</label>
                             <input
                                 type="number"
@@ -165,29 +214,18 @@ export default function AddProduct() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                            <input
-                                type="text"
-                                name="location"
-                                value={formData.location}
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Option</label>
+                            <select
+                                name="delivery_options"
+                                value={formData.delivery_options}
                                 onChange={handleChange}
                                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-gray-900 bg-white"
-                                placeholder="e.g. Nairobi, Kiambu"
-                            />
+                            >
+                                <option value="Pickup">Pickup</option>
+                                <option value="Delivery">Delivery</option>
+                                <option value="Both">Both</option>
+                            </select>
                         </div>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Option</label>
-                        <select
-                            name="delivery_options"
-                            value={formData.delivery_options}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-gray-900 bg-white"
-                        >
-                            <option value="Pickup">Pickup</option>
-                            <option value="Delivery">Delivery</option>
-                            <option value="Both">Both</option>
-                        </select>
                     </div>
 
                     <div>
