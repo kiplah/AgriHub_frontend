@@ -28,7 +28,7 @@ export default function LocationAutocomplete({ value, onChange, placeholder, cla
     // Debounced search function
     useEffect(() => {
         const delayDebounceFn = setTimeout(async () => {
-            if (query.length > 2 && isOpen) {
+            if (query.length > 1 && isOpen) {
                 // Only search if user typed >2 chars and dropdown is conceptually 'open' for typing
                 // We track 'isOpen' to distinguish between 'just selected' vs 'typing'
                 setLoading(true);
@@ -38,9 +38,19 @@ export default function LocationAutocomplete({ value, onChange, placeholder, cla
                     const response = await axios.get(
                         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
                             query
-                        )}&countrycodes=ke&addressdetails=1&limit=5`
+                        )}&countrycodes=ke&addressdetails=1&limit=15`
                     );
-                    setSuggestions(response.data);
+                    const results = response.data.sort((a, b) => {
+                        const q = query.toLowerCase();
+                        const nameA = a.display_name.toLowerCase();
+                        const nameB = b.display_name.toLowerCase();
+                        const startsA = nameA.startsWith(q);
+                        const startsB = nameB.startsWith(q);
+                        if (startsA && !startsB) return -1;
+                        if (!startsA && startsB) return 1;
+                        return 0;
+                    });
+                    setSuggestions(results);
                 } catch (error) {
                     console.error("Error fetching locations:", error);
                     setSuggestions([]);
@@ -91,17 +101,36 @@ export default function LocationAutocomplete({ value, onChange, placeholder, cla
 
             {isOpen && suggestions.length > 0 && (
                 <ul className="absolute z-50 w-full bg-white border border-gray-100 rounded-lg shadow-lg mt-1 max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-200">
-                    {suggestions.map((place) => (
-                        <li
-                            key={place.place_id}
-                            onClick={() => handleSelect(place)}
-                            className="px-4 py-2 hover:bg-emerald-50 cursor-pointer text-sm text-gray-700 border-b border-gray-50 last:border-none flex items-start gap-2"
-                        >
-                            <MapPin className="w-4 h-4 mt-0.5 text-emerald-500 shrink-0" />
-                            <span>{place.display_name}</span>
-                        </li>
-                    ))}
+                    {suggestions.map((place) => {
+                        const parts = place.display_name.split(",");
+                        const mainText = parts[0];
+                        const secondaryText = parts.slice(1).join(",").trim();
+
+                        return (
+                            <li
+                                key={place.place_id}
+                                onClick={() => handleSelect(place)}
+                                className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-none transition-colors"
+                            >
+                                <div className="flex items-start gap-3">
+                                    <div className="mt-1 bg-gray-100 p-1.5 rounded-full shrink-0">
+                                        <MapPin className="w-4 h-4 text-gray-500" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-gray-900 font-medium text-sm">{mainText}</span>
+                                        <span className="text-xs text-gray-500 mt-0.5 line-clamp-1">{secondaryText}</span>
+                                    </div>
+                                </div>
+                            </li>
+                        );
+                    })}
                 </ul>
+            )}
+
+            {isOpen && !loading && suggestions.length === 0 && query.length > 1 && (
+                <div className="absolute z-50 w-full bg-white border border-gray-100 rounded-lg shadow-lg mt-1 p-4 text-center text-gray-500 text-sm animate-in fade-in slide-in-from-top-1">
+                    No locations found. Try typing more details.
+                </div>
             )}
         </div>
     );

@@ -179,7 +179,7 @@ export default function AddProduct() {
                                 value={formData.phone_number}
                                 onChange={handleChange}
                                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-gray-900 bg-white"
-                                placeholder="776904675"
+                                placeholder="703924936"
                             />
                             <p className="text-xs text-orange-500 mt-1">Enter numbers only, no spaces or special characters</p>
                         </div>
