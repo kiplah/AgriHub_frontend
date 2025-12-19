@@ -9,8 +9,9 @@ async function testApi() {
         console.log("Status:", response.status);
         console.log("Data length:", response.data.length);
         console.log("First 3 results:");
-        response.data.slice(0, 3).forEach(item => {
-            console.log(`- ${item.display_name}`);
+        response.data.slice(0, 1).forEach(item => {
+            console.log(`- Display Name: ${item.display_name}`);
+            console.log(`- Address:`, item.address);
         });
     } catch (error) {
         console.error("Error:", error.message);

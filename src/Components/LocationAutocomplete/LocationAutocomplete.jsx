@@ -73,9 +73,17 @@ export default function LocationAutocomplete({ value, onChange, placeholder, cla
     };
 
     const handleSelect = (place) => {
-        const displayName = place.display_name;
-        setQuery(displayName);
-        onChange(displayName); // update parent with selected full name
+        // Construct a shorter, cleaner name
+        const addr = place.address;
+        const displayNameParts = place.display_name.split(",");
+        const mainName = addr.town || addr.city || addr.village || addr.municipality || place.name || displayNameParts[0];
+
+        // User requested ONLY the main name (e.g. Londiani)
+        // We no longer append region or country
+        const formattedName = mainName;
+
+        setQuery(formattedName);
+        onChange(formattedName);
         setIsOpen(false);
         setSuggestions([]);
     };
