@@ -32,14 +32,6 @@ export default function MyProducts() {
     }
   };
 
-  if (loading && products.length === 0) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
-      </div>
-    );
-  }
-
   // Helper to format date
   const formatDate = (dateString) => {
     if (!dateString) return 'Unknown Date';
@@ -49,6 +41,14 @@ export default function MyProducts() {
       year: 'numeric'
     });
   };
+
+  if (loading && products.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-6 bg-white min-h-screen">
@@ -85,11 +85,17 @@ export default function MyProducts() {
               key={product.id}
               id={product.id}
               name={product.name}
-              image={product.imagepath?.startsWith('http') ? product.imagepath : `http://127.0.0.1:8000/${product.imagepath}`}
-              category={product.category_name}
+              image={
+                product.imagepath
+                  ? (product.imagepath.startsWith('http')
+                    ? product.imagepath
+                    : `http://127.0.0.1:8000${product.imagepath.startsWith('/') ? '' : '/'}${product.imagepath}`)
+                  : "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070&auto=format&fit=crop"
+              }
+              category={product.category_details?.name || "Uncategorized"}
               price={product.price}
               location={product.location}
-              postedDate={formatDate(product.created_at || new Date().toISOString())}
+              postedDate={formatDate(product.created_at)}
               priceType="Negotiable"
             >
               <div className="grid grid-cols-2 gap-3">
