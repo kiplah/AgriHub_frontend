@@ -23,7 +23,7 @@ export default function AddProduct() {
         stock_quantity: '',
         location: '',
         delivery_options: 'Pickup',
-        country_code: 'Kenya (+254)',
+        country_code: '+254',
         phone_number: ''
     });
 
@@ -165,10 +165,10 @@ export default function AddProduct() {
                                 onChange={handleChange}
                                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all text-gray-900 bg-white"
                             >
-                                <option value="Kenya (+254)">Kenya (+254)</option>
-                                <option value="Uganda (+256)">Uganda (+256)</option>
-                                <option value="Tanzania (+255)">Tanzania (+255)</option>
-                                <option value="Rwanda (+250)">Rwanda (+250)</option>
+                                <option value="+254">Kenya (+254)</option>
+                                <option value="+256">Uganda (+256)</option>
+                                <option value="+255">Tanzania (+255)</option>
+                                <option value="+250">Rwanda (+250)</option>
                             </select>
                         </div>
                         <div>
