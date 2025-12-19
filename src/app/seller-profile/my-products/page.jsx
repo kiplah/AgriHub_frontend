@@ -8,6 +8,8 @@ import { Plus, Trash2, Edit, Package } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 
+import ProductCard from '@/Components/ProductCard/ProductCard';
+
 export default function MyProducts() {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.product);
@@ -37,6 +39,16 @@ export default function MyProducts() {
       </div>
     );
   }
+
+  // Helper to format date
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Unknown Date';
+    return new Date(dateString).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
 
   return (
     <div className="p-4 md:p-6 bg-white min-h-screen">
@@ -69,42 +81,33 @@ export default function MyProducts() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map((product) => (
-            <div key={product.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all group">
-              <div className="relative h-48 bg-gray-50">
-                <img
-                  src={product.imagepath?.startsWith('http') ? product.imagepath : `http://127.0.0.1:8000/${product.imagepath}`}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070&auto=format&fit=crop"; }}
-                />
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs font-semibold text-emerald-700 shadow-sm">
-                  {product.category_name}
-                </div>
-              </div>
-              <div className="p-5">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold text-gray-900 text-lg line-clamp-1 group-hover:text-emerald-600 transition-colors">{product.name}</h3>
-                  <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md text-sm">KES {product.price}</span>
-                </div>
-                <p className="text-gray-500 text-sm mb-4 line-clamp-2 min-h-[40px]">{product.description}</p>
-
-                <div className="grid grid-cols-2 gap-3 pt-4 border-t border-gray-50">
-                  <Link href={`/seller-profile/edit-product/${product.id}`} className="block">
-                    <button className="w-full flex items-center justify-center gap-2 py-2 bg-gray-50 text-gray-700 rounded-xl hover:bg-white hover:border-gray-200 border border-transparent text-sm font-medium transition-all">
-                      <Edit size={16} />
-                      Edit
-                    </button>
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(product.id)}
-                    className="w-full flex items-center justify-center gap-2 py-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 text-sm font-medium transition-colors"
-                  >
-                    <Trash2 size={16} />
-                    Delete
+            <ProductCard
+              key={product.id}
+              id={product.id}
+              name={product.name}
+              image={product.imagepath?.startsWith('http') ? product.imagepath : `http://127.0.0.1:8000/${product.imagepath}`}
+              category={product.category_name}
+              price={product.price}
+              location={product.location}
+              postedDate={formatDate(product.created_at || new Date().toISOString())}
+              priceType="Negotiable"
+            >
+              <div className="grid grid-cols-2 gap-3">
+                <Link href={`/seller-profile/edit-product/${product.id}`} className="block">
+                  <button className="w-full flex items-center justify-center gap-2 py-2 bg-gray-50 text-gray-700 rounded-xl hover:bg-white hover:border-gray-200 border border-transparent text-sm font-medium transition-all">
+                    <Edit size={16} />
+                    Edit
                   </button>
-                </div>
+                </Link>
+                <button
+                  onClick={() => handleDelete(product.id)}
+                  className="w-full flex items-center justify-center gap-2 py-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 text-sm font-medium transition-colors"
+                >
+                  <Trash2 size={16} />
+                  Delete
+                </button>
               </div>
-            </div>
+            </ProductCard>
           ))}
         </div>
       )}
