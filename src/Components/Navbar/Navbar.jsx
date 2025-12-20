@@ -305,7 +305,7 @@ const Navbar = ({ bground }) => {
                                 <div>
                                   <p className="font-bold text-green-700 text-sm">{item.name}</p>
                                   <p className="text-sm text-gray-500">
-                                    ${item.price.toFixed(2)} each
+                                    Ksh {item.price} each
                                   </p>
                                 </div>
                               </div>
@@ -337,7 +337,7 @@ const Navbar = ({ bground }) => {
 
                         <div className="mt-6 p-4 bg-green-100 rounded-lg shadow-md">
                           <p className="text-right font-bold text-green-800 text-lg">
-                            Total: ${totalPrice.toFixed(2)}
+                            Total: Ksh {totalPrice.toFixed(2)}
                           </p>
                         </div>
 

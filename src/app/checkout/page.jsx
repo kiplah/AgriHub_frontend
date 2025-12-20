@@ -285,23 +285,23 @@ const Checkout = () => {
                     {item.name} (x{item.quantity})
                   </span>
                 </div>
-                <span>${item.price * item.quantity}</span>
+                <span>Ksh{item.price * item.quantity}</span>
               </li>
             ))}
           </ul>
           <div className="flex justify-between mt-4">
             <span>Subtotal:</span>
-            <span>${calculateSubtotal()}</span>
+            <span>Ksh{calculateSubtotal()}</span>
           </div>
           <div className="flex justify-between mt-2">
             <span>Delivery:</span>
             <span>
-              {formData.deliveryMethod === "express" ? "$10" : "Free"}
+              {formData.deliveryMethod === "express" ? "Ksh10" : "Free"}
             </span>
           </div>
           <div className="flex justify-between font-bold mt-4">
             <span>Total:</span>
-            <span>${calculateTotal()}</span>
+            <span>Ksh{calculateTotal()}</span>
           </div>
         </div>
         <button

@@ -136,7 +136,7 @@ const ProductDetailsPage = () => {
                 <div className="grid grid-cols-2 gap-6 mb-8 border-t border-b border-gray-100 py-6">
                   <div>
                     <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-1">Price</p>
-                    <p className="text-3xl font-bold text-green-600">${product.price}</p>
+                    <p className="text-3xl font-bold text-green-600">Ksh {product.price}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-1">Seller</p>

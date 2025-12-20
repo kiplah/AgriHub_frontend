@@ -42,7 +42,7 @@ const CartCard = ({ name = "Product Name", price = 100, quantity = 1, onIncremen
                     />
                 </div>
                 <div className="text-lg font-semibold text-gray-800">
-                    ${price}
+                    Ksh {price}
                 </div>
             </div>
         </div>
