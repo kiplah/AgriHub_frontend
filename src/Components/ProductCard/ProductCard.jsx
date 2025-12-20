@@ -1,6 +1,8 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { MapPin, Heart, Star } from "lucide-react";
 
 export default function ProductCard({
@@ -14,6 +16,19 @@ export default function ProductCard({
   priceType = "Negotiable",
   children
 }) {
+  const { token } = useSelector((state) => state.auth);
+
+  const handleFavoriteClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!token) {
+      toast.error("You are not logged in");
+      return;
+    }
+
+    toast.success("Added to favorites!");
+  };
   return (
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col h-full group">
       {/* Image Container */}
@@ -26,9 +41,21 @@ export default function ProductCard({
         </div>
 
         {/* Favorite Button */}
-        <button className="absolute top-3 right-3 z-10 bg-white/80 backdrop-blur-sm p-1.5 rounded-full text-gray-400 hover:text-red-500 hover:bg-white transition-colors">
-          <Heart className="w-5 h-5" />
-        </button>
+        {/* Favorite Button */}
+        <div className="absolute top-3 right-3 z-10 group/btn">
+          <button
+            onClick={handleFavoriteClick}
+            className="bg-white/80 backdrop-blur-sm p-1.5 rounded-full text-gray-400 hover:text-red-500 hover:bg-white transition-colors relative"
+          >
+            <Heart className="w-5 h-5" />
+          </button>
+          {/* Tooltip */}
+          <div className="absolute top-full right-0 mt-2 w-max px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/btn:opacity-100 transition-opacity pointer-events-none z-20 whitespace-nowrap">
+            Click to make it favourite
+            {/* Tiny arrow */}
+            <div className="absolute bottom-full right-2 border-4 border-transparent border-b-gray-900"></div>
+          </div>
+        </div>
 
         <Link href={`/Product/${id}`}>
           <img
