@@ -8,8 +8,8 @@ const CartCard = ({ name = "Product Name", price = 100, quantity = 1, onIncremen
 
             <div className='flex items-center'>
                 <div className='mr-4'>
-                    <img 
-                        src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8fDA%3D" 
+                    <img
+                        src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8fDA%3D"
                         alt={name}
                         width="70"
                         className="rounded-md object-cover"
@@ -37,12 +37,12 @@ const CartCard = ({ name = "Product Name", price = 100, quantity = 1, onIncremen
 
             <div className="text-right">
                 <div className="mb-4">
-                    <FaTrashAlt 
-                        style={{ fontSize: '25px', color: 'red', cursor: 'pointer' }} 
+                    <FaTrashAlt
+                        style={{ fontSize: '25px', color: 'red', cursor: 'pointer' }}
                     />
                 </div>
                 <div className="text-lg font-semibold text-gray-800">
-                    ${price.toFixed(2)}
+                    ${price}
                 </div>
             </div>
         </div>

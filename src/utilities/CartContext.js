@@ -1,4 +1,5 @@
 import { createContext, useContext, useReducer, useEffect } from "react";
+import { parsePrice } from "./priceParser";
 
 const CartContext = createContext();
 
@@ -15,6 +16,8 @@ const cartReducer = (state, action) => {
       const existingItem = state.cartItems.find(
         (item) => item.id === action.payload.id
       );
+      const priceToAdd = parsePrice(action.payload.price);
+
       if (existingItem) {
         const updatedItems = state.cartItems.map((item) =>
           item.id === action.payload.id
@@ -25,7 +28,7 @@ const cartReducer = (state, action) => {
           ...state,
           cartItems: updatedItems,
           totalQuantity: state.totalQuantity + quantityToAdd,
-          totalPrice: state.totalPrice + action.payload.price * quantityToAdd,
+          totalPrice: state.totalPrice + priceToAdd * quantityToAdd,
         };
       } else {
         return {
@@ -33,15 +36,14 @@ const cartReducer = (state, action) => {
           cartItems: [
             ...state.cartItems,
             {
-              ...action.payload, // Includes id, name, price, and image
+              ...action.payload, // Includes id, name, price (string), and image
               quantity: quantityToAdd,
             },
           ],
           totalQuantity: state.totalQuantity + quantityToAdd,
-          totalPrice: state.totalPrice + action.payload.price * quantityToAdd,
+          totalPrice: state.totalPrice + priceToAdd * quantityToAdd,
         };
       }
-
 
     case "REMOVE_FROM_CART":
       const filteredItems = state.cartItems.filter(
@@ -50,14 +52,19 @@ const cartReducer = (state, action) => {
       const removedItem = state.cartItems.find(
         (item) => item.id === action.payload.id
       );
+      // Recalculate total price from scratch to ensure accuracy or subtract carefully
+      // Here we parse the price of the removed item
+      const priceToRemove = parsePrice(removedItem.price);
+
       return {
         ...state,
         cartItems: filteredItems,
         totalQuantity: state.totalQuantity - removedItem.quantity,
-        totalPrice: state.totalPrice - removedItem.price * removedItem.quantity,
+        totalPrice: state.totalPrice - priceToRemove * removedItem.quantity,
       };
 
     case "INCREASE_QUANTITY":
+      const priceToIncrease = parsePrice(action.payload.price);
       const increasedItems = state.cartItems.map((item) =>
         item.id === action.payload.id
           ? { ...item, quantity: item.quantity + 1 }
@@ -67,10 +74,11 @@ const cartReducer = (state, action) => {
         ...state,
         cartItems: increasedItems,
         totalQuantity: state.totalQuantity + 1,
-        totalPrice: state.totalPrice + action.payload.price,
+        totalPrice: state.totalPrice + priceToIncrease,
       };
 
     case "DECREASE_QUANTITY":
+      const priceToDecrease = parsePrice(action.payload.price);
       const decreasedItems = state.cartItems
         .map((item) =>
           item.id === action.payload.id
@@ -82,7 +90,7 @@ const cartReducer = (state, action) => {
         ...state,
         cartItems: decreasedItems,
         totalQuantity: state.totalQuantity - 1,
-        totalPrice: state.totalPrice - action.payload.price,
+        totalPrice: state.totalPrice - priceToDecrease,
       };
 
     case "CLEAR_CART":

@@ -122,13 +122,12 @@ export default function AddProduct() {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Price (KES) *</label>
                                 <input
-                                    type="number"
+                                    type="text"
                                     name="price"
                                     value={formData.price}
                                     onChange={handleChange}
                                     className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all text-gray-900 bg-white"
-                                    placeholder="0.00"
-                                    min="0"
+                                    placeholder="e.g. 1500 per bag"
                                     required
                                 />
                             </div>
@@ -202,12 +201,12 @@ export default function AddProduct() {
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Stock Quantity *</label>
                             <input
-                                type="number"
+                                type="text"
                                 name="stock_quantity"
                                 value={formData.stock_quantity}
                                 onChange={handleChange}
                                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-gray-900 bg-white"
-                                placeholder="Available quantity"
+                                placeholder="e.g. 100 kgs, 50 units"
                                 required
                             />
                         </div>

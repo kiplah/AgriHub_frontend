@@ -69,7 +69,7 @@ export default function ProductCard({
         <div className="mt-auto pt-3 border-t border-gray-50">
           <div className="flex items-baseline gap-2">
             <span className="text-emerald-600 font-bold text-lg">
-              Ksh{Number(price).toLocaleString()}
+              Ksh{price}
             </span>
             <span className="text-xs text-gray-500 font-medium">
               ({priceType})
