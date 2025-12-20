@@ -25,22 +25,22 @@ export default function Page() {
       router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
     }
   };
-  
+
   const { categories, loading: categoriesLoading, error: categoriesError } = useSelector(
     (state) => state.category
   );
   const { products, loading: productsLoading, error: productsError } = useSelector(
     (state) => state.product
   );
-  
+
   useEffect(() => {
     dispatch(fetchCategories());
     dispatch(getProducts());
   }, [dispatch]);
 
   // Filter Logic
-  const filteredProducts = activeCategory === "All" 
-    ? products 
+  const filteredProducts = activeCategory === "All"
+    ? products
     : products.filter(p => p.category === activeCategory || p.category_details?.name === activeCategory);
 
   return (
@@ -115,11 +115,11 @@ export default function Page() {
             </span>
             <div className="w-16 h-1 bg-green-500 rounded-full animate-pulse"></div>
           </div>
-          
+
           {/* Scroll Down Indicator */}
           <div className="pt-10 animate-bounce">
-             <span className="text-white/50 text-sm">Scroll to Explore</span>
-             <div className="w-0.5 h-12 bg-white/30 mx-auto mt-2"></div>
+            <span className="text-white/50 text-sm">Scroll to Explore</span>
+            <div className="w-0.5 h-12 bg-white/30 mx-auto mt-2"></div>
           </div>
 
         </div>
@@ -129,103 +129,109 @@ export default function Page() {
 
       {/* Modern Product Exploration Section (Replaces Old Category + Product Grids) */}
       <div className="bg-gray-50 py-16 min-h-screen">
-         <div className="container mx-auto px-4 md:px-8">
-            
-            {/* Header + Search + Filter Row */}
-            <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-8">
-               <div className="max-w-xl">
-                  <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-                    Browse and purchase agricultural products
-                  </h2>
-                  <p className="text-gray-500">Find the best seeds, fertilizers, and tools for your farm.</p>
-               </div>
-               
-               <div className="flex gap-3 w-full md:w-auto">
-                   <div className="relative flex-1 md:w-80">
-                      <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                      <input 
-                        type="text" 
-                        placeholder="Search products..." 
-                        className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 bg-white shadow-sm"
-                        // Note: This local search filters the current list or could route to main search
-                        // For this section, visually matching the mockup request
-                      />
-                   </div>
-                   <button className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-lg font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 shadow-sm transition-all whitespace-nowrap">
-                      <FaFilter className="text-gray-500" />
-                      Filters
-                   </button>
-               </div>
+        <div className="container mx-auto px-4 md:px-8">
+
+          {/* Header + Search + Filter Row */}
+          <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-8">
+            <div className="max-w-xl">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                Browse and purchase agricultural products
+              </h2>
+              <p className="text-gray-500">Find the best seeds, fertilizers, and tools for your farm.</p>
             </div>
 
-            {/* Category Pills Navigation */}
-            <div className="flex gap-3 overflow-x-auto pb-6 mb-8 custom-scrollbar">
-               <button 
-                 onClick={() => setActiveCategory("All")}
-                 className={`px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${activeCategory === "All" ? "bg-green-600 text-white shadow-md shadow-green-200" : "bg-white text-gray-600 hover:bg-green-50 border border-gray-200"}`}
-               >
-                 All
-               </button>
-               {categories && categories.map(cat => (
-                 <button 
-                    key={cat.id}
-                    onClick={() => setActiveCategory(cat.name)} // Assuming product.category matches name or we map ID
-                    className={`px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${activeCategory === cat.name ? "bg-green-600 text-white shadow-md shadow-green-200" : "bg-white text-gray-600 hover:bg-green-50 border border-gray-200"}`}
-                 >
-                    {cat.name}
-                 </button>
-               ))}
-               {/* Fixed Pills for visual match if categories fail */}
-               {!categories && ["Seeds", "Fertilizers", "Pesticides", "Equipment"].map(cat => (
-                  <button key={cat} className="px-6 py-2 rounded-lg font-medium whitespace-nowrap bg-white text-gray-600 hover:bg-green-50 border border-gray-200">
-                     {cat}
-                  </button>
-               ))}
+            <div className="flex gap-3 w-full md:w-auto">
+              <div className="relative flex-1 md:w-80">
+                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 bg-white shadow-sm"
+                // Note: This local search filters the current list or could route to main search
+                // For this section, visually matching the mockup request
+                />
+              </div>
+              <button className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-lg font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 shadow-sm transition-all whitespace-nowrap">
+                <FaFilter className="text-gray-500" />
+                Filters
+              </button>
             </div>
+          </div>
 
-            {/* Filtered Product Grid */}
-            <div className="min-h-[400px]">
-               {productsLoading ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                     {[1,2,3,4,5,6,7,8].map(i => <div key={i} className="h-80 bg-gray-200 rounded-3xl animate-pulse"></div>)}
+          {/* Category Pills Navigation */}
+          <div className="flex gap-3 overflow-x-auto pb-6 mb-8 custom-scrollbar">
+            <button
+              onClick={() => setActiveCategory("All")}
+              className={`px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${activeCategory === "All" ? "bg-green-600 text-white shadow-md shadow-green-200" : "bg-white text-gray-600 hover:bg-green-50 border border-gray-200"}`}
+            >
+              All
+            </button>
+            {categories && categories.map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.name)} // Assuming product.category matches name or we map ID
+                className={`px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${activeCategory === cat.name ? "bg-green-600 text-white shadow-md shadow-green-200" : "bg-white text-gray-600 hover:bg-green-50 border border-gray-200"}`}
+              >
+                {cat.name}
+              </button>
+            ))}
+            {/* Fixed Pills for visual match if categories fail */}
+            {!categories && ["Seeds", "Fertilizers", "Pesticides", "Equipment"].map(cat => (
+              <button key={cat} className="px-6 py-2 rounded-lg font-medium whitespace-nowrap bg-white text-gray-600 hover:bg-green-50 border border-gray-200">
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Filtered Product Grid */}
+          <div className="min-h-[400px]">
+            {productsLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <div key={i} className="h-80 bg-gray-200 rounded-3xl animate-pulse"></div>)}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                {filteredProducts && filteredProducts.length > 0 ? (
+                  filteredProducts.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      id={product.id}
+                      name={product.name}
+                      image={
+                        product.imagepath
+                          ? (product.imagepath.startsWith('http')
+                            ? product.imagepath
+                            : `http://127.0.0.1:8000/media/${product.imagepath.replace(/^\/+/, '')}`)
+                          : null
+                      }
+                      category={product.category_details?.name || product.category_name || "Uncategorized"}
+                      price={product.price}
+                      location={product.location || "Location not specified"}
+                      postedDate={new Date(product.created_at || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}
+                      priceType="Negotiable"
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-full py-20 text-center">
+                    <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span className="text-4xl">🌱</span>
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-800">No products found in this category</h3>
+                    <p className="text-gray-500 mt-2">Try selecting "All" or browse other categories.</p>
+                    <button onClick={() => setActiveCategory("All")} className="mt-6 text-green-600 font-bold hover:underline">Clear Filters</button>
                   </div>
-               ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                     {filteredProducts && filteredProducts.length > 0 ? (
-                        filteredProducts.map((product) => (
-                          <ProductCard
-                            key={product.id}
-                            id={product.id}
-                            src={product.imagepath?.startsWith('http') ? product.imagepath : `http://127.0.0.1:8000/${product.imagepath}`}
-                            title={product.name}
-                            cat={product.category}
-                            price={product.price}
-                            description={product.description}
-                            rating={product.rating}
-                            sellerId={product.userId}
-                          />
-                        ))
-                     ) : (
-                        <div className="col-span-full py-20 text-center">
-                           <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                              <span className="text-4xl">🌱</span>
-                           </div>
-                           <h3 className="text-xl font-bold text-gray-800">No products found in this category</h3>
-                           <p className="text-gray-500 mt-2">Try selecting "All" or browse other categories.</p>
-                           <button onClick={() => setActiveCategory("All")} className="mt-6 text-green-600 font-bold hover:underline">Clear Filters</button>
-                        </div>
-                     )}
-                  </div>
-               )}
-            </div>
+                )}
+              </div>
+            )}
+          </div>
 
-            <div className="mt-16 text-center">
-                <button onClick={() => router.push('/products')} className="px-8 py-3 border border-green-600 text-green-700 font-bold rounded-lg hover:bg-green-50 transition-colors">
-                   View Full Marketplace
-                </button>
-            </div>
+          <div className="mt-16 text-center">
+            <button onClick={() => router.push('/products')} className="px-8 py-3 border border-green-600 text-green-700 font-bold rounded-lg hover:bg-green-50 transition-colors">
+              View Full Marketplace
+            </button>
+          </div>
 
-         </div>
+        </div>
       </div>
 
       <div>

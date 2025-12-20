@@ -33,8 +33,8 @@ export default function MyProducts() {
   };
 
   // Helper to format date
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Unknown Date';
+  const formatDate = (dateString, fallback) => {
+    if (!dateString) return fallback || 'Unknown Date';
     return new Date(dateString).toLocaleDateString('en-GB', {
       day: '2-digit',
       month: 'long',
@@ -89,12 +89,12 @@ export default function MyProducts() {
                 product.imagepath
                   ? (product.imagepath.startsWith('http')
                     ? product.imagepath
-                    : `http://127.0.0.1:8000${product.imagepath.startsWith('/') ? '' : '/'}${product.imagepath}`)
-                  : "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070&auto=format&fit=crop"
+                    : `http://127.0.0.1:8000/media/${product.imagepath.replace(/^\/+/, '')}`)
+                  : null
               }
-              category={product.category_details?.name || "Uncategorized"}
+              category={product.category_details?.name || product.category_name || "Uncategorized"}
               price={product.price}
-              location={product.location}
+              location={product.location || "Location not specified"}
               postedDate={formatDate(product.created_at)}
               priceType="Negotiable"
             >
