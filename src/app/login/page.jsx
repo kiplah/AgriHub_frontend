@@ -46,23 +46,35 @@ export default function LoginPage() {
       console.log("Login successful, response:", result);
 
       const { role } = result;
-      toast.success("Login successful! Redirecting...", {
-        position: "top-right",
-        autoClose: 3000,
-      });
 
-      const normalizedRole = role.toLowerCase();
-      if (normalizedRole === "admin") {
-        router.push("/admin");
-      } else if (normalizedRole === "buyer") {
-        router.push("/buyer");
-      } else if (normalizedRole === "seller") {
-        router.push("/seller-profile");
-      } else {
-        toast.error("Unauthorized role. Please contact support.", {
+      console.log("Login result:", result); // Debugging
+
+      if (role) {
+        toast.success("Login successful! Redirecting...", {
           position: "top-right",
           autoClose: 3000,
         });
+
+        const normalizedRole = role.toLowerCase();
+        if (normalizedRole === "admin") {
+          router.push("/admin");
+        } else if (normalizedRole === "buyer") {
+          router.push("/buyer");
+        } else if (normalizedRole === "seller") {
+          router.push("/seller-profile");
+        } else {
+          toast.error(`Unknown role: ${role}`, {
+            position: "top-right",
+            autoClose: 3000,
+          });
+        }
+      } else {
+        console.warn("Role is missing in login response:", result);
+        toast.warning("Login successful, but user role is undefined. Redirecting to home.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        router.push("/");
       }
     } catch (err) {
       console.error("Login failed:", err);
