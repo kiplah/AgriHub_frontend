@@ -77,6 +77,33 @@ export const loginUser = createAsyncThunk(
 );
 
 
+export const googleLoginUser = createAsyncThunk(
+  "auth/googleLogin",
+  async ({ accessToken, role }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/google-login/", { access_token: accessToken, role });
+      if (response.status === 200) {
+        const { access, user } = response.data;
+        const decodedToken = jwtDecode(access);
+        const expirationTime = new Date().getTime() + TOKEN_EXPIRATION_TIME;
+
+        localStorage.setItem("access_token", access);
+        localStorage.setItem("user_role", user.role);
+        localStorage.setItem("userId", user.id);
+        localStorage.setItem("token_expiration", expirationTime);
+
+        return { token: access, role: user.role, user: user };
+      } else {
+        return rejectWithValue({ message: "Unexpected response status." });
+      }
+    } catch (err) {
+      console.error("Google Login Failed:", err.response?.data || err.message || err);
+      return rejectWithValue(err.response?.data || { message: "Google Login failed. Please try again." });
+    }
+  }
+);
+
+
 export const registerUser = createAsyncThunk(
   "auth/register",
   async (userData, { rejectWithValue }) => {
@@ -324,6 +351,20 @@ const authSlice = createSlice({
         state.role = action.payload.role;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.message;
+      })
+      .addCase(googleLoginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(googleLoginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+        state.role = action.payload.role;
+      })
+      .addCase(googleLoginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload.message;
       })
