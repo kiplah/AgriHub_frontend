@@ -93,7 +93,7 @@ const Sidebar = ({ role }) => {
           title: "OVERVIEW",
           items: [
             { label: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/buyer" },
-            { label: "Marketplace", icon: <Store size={20} />, path: "/marketplace" },
+            { label: "Marketplace", icon: <Store size={20} />, path: "/buyer/marketplace" },
             { label: "My Orders", icon: <ShoppingBag size={20} />, path: "/buyer/orders" },
           ]
         },

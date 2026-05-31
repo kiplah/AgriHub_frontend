@@ -37,6 +37,18 @@ export const fetchSellerStats = createAsyncThunk(
   }
 );
 
+export const fetchBuyerStats = createAsyncThunk(
+  "orders/fetchBuyerStats",
+  async (buyerId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`/order/buyer-stats/${buyerId}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 export const fetchSellerMonthlyStats = createAsyncThunk(
   "orders/fetchSellerMonthlyStats",
   async (sellerId, { rejectWithValue }) => {
@@ -130,6 +142,7 @@ const ordersSlice = createSlice({
     sellerOrders: [],
     buyerOrders: [],
     sellerStats: null,
+    buyerStats: null,
     sellerMonthlyStats: [],
     loading: false,
     error: null,
@@ -182,6 +195,18 @@ const ordersSlice = createSlice({
         state.sellerStats = action.payload;
       })
       .addCase(fetchSellerStats.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchBuyerStats.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchBuyerStats.fulfilled, (state, action) => {
+        state.loading = false;
+        state.buyerStats = action.payload;
+      })
+      .addCase(fetchBuyerStats.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

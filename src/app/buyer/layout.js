@@ -4,29 +4,26 @@ import Link from "next/link";
 import { Menu, Home, Store, ShoppingBag, Truck, MapPin, MessageSquare, Settings, LogOut, Eye, EyeOff } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "@/reducers/Auth/authSlice";
+import { fetchBuyerStats } from "@/reducers/Order/orderSlice";
 import { useRouter } from "next/navigation";
-import { mockOrders } from "../../utils/mockData";
 
 export default function Layout({ children, initialCollapsed = false }) {
   const [collapsed, setCollapsed] = useState(initialCollapsed);
   const [profileOpen, setProfileOpen] = useState(false); // Dropdown state
   const [showBalance, setShowBalance] = useState(true); // Toggle balance visibility
-  const [totalSpent, setTotalSpent] = useState(13000);
   const { user } = useSelector((state) => state.auth);
+  const { buyerStats } = useSelector((state) => state.orders);
   const dispatch = useDispatch();
   const router = useRouter();
 
-  // Calculate spent dynamically
+  // Fetch stats from backend on mount
   useEffect(() => {
-    try {
-      if (mockOrders && mockOrders.length > 0) {
-        const spent = mockOrders.reduce((acc, order) => acc + parseInt(order.total.replace(/,/g, "")), 0);
-        setTotalSpent(spent);
-      }
-    } catch (e) {
-      console.error("Error calculating spent amount:", e);
+    if (user?.userId) {
+      dispatch(fetchBuyerStats(user.userId));
     }
-  }, []);
+  }, [dispatch, user?.userId]);
+
+  const totalSpent = buyerStats?.TotalSpent || 0;
 
   const handleLogout = async () => {
     await dispatch(logout());
@@ -44,7 +41,7 @@ export default function Layout({ children, initialCollapsed = false }) {
 
   const menu = [
     { key: "overview", label: "Dashboard", href: "/buyer", icon: <Home className="w-5 h-5" /> },
-    { key: "marketplace", label: "Marketplace", href: "/marketplace", icon: <Store className="w-5 h-5" /> },
+    { key: "marketplace", label: "Marketplace", href: "/buyer/marketplace", icon: <Store className="w-5 h-5" /> },
     { key: "orders", label: "My Orders", href: "/buyer/orders", icon: <ShoppingBag className="w-5 h-5" /> },
     { key: "track-order", label: "Track Order", href: "/buyer/track-order", icon: <Truck className="w-5 h-5" /> },
     { key: "saved-addresses", label: "Addresses", href: "/buyer/saved-addresses", icon: <MapPin className="w-5 h-5" /> },
@@ -119,7 +116,7 @@ export default function Layout({ children, initialCollapsed = false }) {
           </div>
 
           <div className={`mt-4 ${collapsed ? "md:hidden" : "block"}`}>
-            <Link href="/marketplace" className="block w-full">
+            <Link href="/buyer/marketplace" className="block w-full">
               <button className="w-full py-2 px-3 rounded-md bg-green-600 text-white text-sm hover:bg-green-700 transition">Shop Now</button>
             </Link>
             <Link href="/buyer/support" className="block w-full mt-2">

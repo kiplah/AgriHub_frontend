@@ -3,10 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getProducts } from '@/reducers/product/productSlice';
-import { Search, Filter, ShoppingCart, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Search, ShoppingBag, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
-export default function Marketplace() {
+export default function BuyerMarketplace() {
   const dispatch = useDispatch();
   const { products, loading } = useSelector((state) => state.product);
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,7 +16,7 @@ export default function Marketplace() {
     dispatch(getProducts());
   }, [dispatch]);
 
-  // Extract unique categories from backend dynamically
+  // Extract unique categories dynamically from products
   const categories = [
     "All",
     ...Array.from(
@@ -28,7 +28,7 @@ export default function Marketplace() {
     )
   ];
 
-  // Filter products based on search term and active category
+  // Filter products based on search term and category
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
       product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -47,30 +47,28 @@ export default function Marketplace() {
     if (product.imagepath.startsWith("http")) {
       return product.imagepath;
     }
-    // Remove duplicate starting slashes if any
     const cleanPath = product.imagepath.replace(/^\/+/, "");
     return `http://127.0.0.1:8000/${cleanPath}`;
   };
 
   return (
-    <div className="space-y-6 p-6 bg-gray-50 min-h-screen">
-      {/* Header section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-5 border-gray-200/60">
+    <div className="space-y-6">
+      {/* Subheader and Search Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Marketplace</h1>
-          <p className="text-gray-500 mt-1 text-base">
-            Browse and buy fresh, quality agricultural products directly from verified farms.
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900">Agro-Mart Marketplace</h1>
+          <p className="text-sm text-gray-500 mt-1">Browse quality agricultural crops and items listed by verified sellers</p>
         </div>
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <div className="relative flex-1 md:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="relative flex-grow sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
             <input
               type="text"
-              placeholder="Search farm products..."
+              placeholder="Search products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent shadow-sm placeholder:text-gray-400 text-gray-700 transition-all"
+              className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white text-gray-700 shadow-sm"
             />
           </div>
         </div>
@@ -82,9 +80,9 @@ export default function Marketplace() {
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className={`px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-200 border ${
+            className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 border ${
               activeCategory === cat
-                ? "bg-emerald-600 border-emerald-600 text-white shadow-md shadow-emerald-100"
+                ? "bg-emerald-600 border-emerald-600 text-white shadow-sm"
                 : "bg-white border-gray-200 text-gray-600 hover:bg-emerald-50/50 hover:text-emerald-700"
             }`}
           >
@@ -114,7 +112,7 @@ export default function Marketplace() {
                 className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between"
               >
                 <div>
-                  <div className="relative h-44 bg-gray-50 overflow-hidden">
+                  <div className="relative h-40 bg-gray-50 overflow-hidden">
                     <img
                       src={getProductImage(product)}
                       alt={product.name}
@@ -123,12 +121,12 @@ export default function Marketplace() {
                         e.target.src = "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070&auto=format&fit=crop";
                       }}
                     />
-                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold text-emerald-700 shadow-sm capitalize">
+                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-[10px] font-bold text-emerald-700 shadow-sm capitalize">
                       {product.category_details?.name || product.category_name || "Crop"}
                     </div>
                   </div>
-                  <div className="p-4 space-y-2">
-                    <div className="flex items-center justify-between text-xs text-gray-400">
+                  <div className="p-4 space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px] text-gray-400">
                       <span>📍 {product.location || "Kenya"}</span>
                       {product.stock_quantity && (
                         <span className="font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
@@ -136,7 +134,7 @@ export default function Marketplace() {
                         </span>
                       )}
                     </div>
-                    <h3 className="font-bold text-gray-900 group-hover:text-emerald-700 transition-colors text-base truncate">
+                    <h3 className="font-bold text-gray-950 group-hover:text-emerald-700 transition-colors text-sm truncate">
                       {product.name}
                     </h3>
                     <p className="text-gray-500 text-xs line-clamp-2 min-h-[32px]">
@@ -148,13 +146,13 @@ export default function Marketplace() {
                 <div className="p-4 pt-0">
                   <div className="flex items-center justify-between border-t border-gray-100 pt-4 mt-2">
                     <div className="flex flex-col">
-                      <span className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Price</span>
-                      <span className="text-emerald-700 font-extrabold text-base">KES {product.price}</span>
+                      <span className="text-[9px] text-gray-400 uppercase tracking-wider font-semibold">Price</span>
+                      <span className="text-emerald-700 font-extrabold text-sm">KES {product.price}</span>
                     </div>
                     <Link href={`/Product/${product.id}`}>
-                      <button className="flex items-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold rounded-xl text-xs transition-all transform hover:scale-105 active:scale-95">
+                      <button className="flex items-center gap-1 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold rounded-xl text-[11px] transition-all transform hover:scale-105 active:scale-95">
                         Buy Now
-                        <ArrowRight size={14} />
+                        <ArrowRight size={12} />
                       </button>
                     </Link>
                   </div>
@@ -163,12 +161,12 @@ export default function Marketplace() {
             ))}
           </div>
         ) : (
-          <div className="py-20 text-center bg-white border rounded-2xl shadow-sm border-gray-100 max-w-xl mx-auto mt-10">
-            <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm">
-              <ShoppingBag className="w-10 h-10 text-emerald-600" />
+          <div className="py-16 text-center bg-white border rounded-2xl shadow-sm border-gray-100 max-w-md mx-auto mt-6">
+            <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+              <ShoppingBag className="w-8 h-8 text-emerald-600" />
             </div>
-            <h3 className="text-xl font-bold text-gray-800">No products found</h3>
-            <p className="text-gray-500 mt-2 text-sm max-w-sm mx-auto">
+            <h3 className="text-lg font-bold text-gray-800">No products found</h3>
+            <p className="text-gray-500 mt-2 text-xs max-w-xs mx-auto">
               We couldn't find any products matching "{searchTerm}" in category "{activeCategory}".
             </p>
             <button
@@ -176,7 +174,7 @@ export default function Marketplace() {
                 setSearchTerm("");
                 setActiveCategory("All");
               }}
-              className="mt-6 px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 shadow-sm text-sm transition-all"
+              className="mt-5 px-5 py-2 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 shadow-sm text-xs transition-all"
             >
               Reset Filters
             </button>
