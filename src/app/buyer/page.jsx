@@ -100,119 +100,129 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="space-y-8 p-8 bg-gray-50 min-h-screen font-sans">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-            {greeting}, <span className="text-emerald-600">{user?.username || 'Buyer'}</span>! 👋
-          </h1>
-          <p className="text-gray-500 mt-2 text-lg">
-            Here's what's happening with your farm orders today.
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900">Buyer Dashboard</h1>
+          <p className="text-sm text-gray-500 mt-1">Overview of your farm orders, spending trends, and active deliveries</p>
         </div>
-        <div className="flex gap-3">
-          <Link href="/marketplace">
-            <button className="px-6 py-2.5 bg-emerald-600 text-white rounded-full font-medium shadow-lg shadow-emerald-200 hover:bg-emerald-700 hover:shadow-emerald-300 transition-all transform hover:-translate-y-0.5">
-              Browse Market
-            </button>
+
+        <div className="flex items-center gap-3 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+          <Link href="/marketplace" className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg shadow-sm text-sm whitespace-nowrap hover:bg-emerald-700 transition">
+            Browse Marketplace
+          </Link>
+          <Link href="/buyer/orders" className="px-3 py-2 border border-emerald-200 bg-emerald-50 text-emerald-700 rounded-lg text-sm whitespace-nowrap hover:bg-emerald-100 transition font-medium">
+            View My Orders
+          </Link>
+          <Link href="/buyer/settings" className="px-3 py-2 border border-gray-200 text-gray-700 rounded-lg text-sm whitespace-nowrap hover:bg-gray-50 transition font-medium">
+            Account Settings
           </Link>
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* KPI Stats Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <StatCard
           title="Total Orders"
           value={mockOrders.length}
           icon={ShoppingBagIcon}
           trend={{ value: 12, isPositive: true }}
-          className="bg-white"
+          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-5 h-full"
         />
         <StatCard
           title="Total Spent"
           value={`KES ${totalSpent.toLocaleString()}`}
           icon={TrendingUpIcon}
           trend={{ value: 8, isPositive: true }}
-          className="bg-white"
+          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-5 h-full"
         />
         <StatCard
           title="Active Orders"
           value={activeOrders}
           icon={PackageIcon}
-          className="bg-white"
+          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-5 h-full"
         />
         <StatCard
           title="Saved Addresses"
           value="3"
           icon={MapPinIcon}
-          className="bg-white"
+          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-5 h-full"
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Spending Chart */}
         <div className="lg:col-span-2">
-          <Card className="h-full">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6 h-full">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Spending Overview</h2>
-              <select className="bg-gray-50 border-none text-sm font-medium text-gray-500 focus:ring-0 cursor-pointer hover:text-gray-700">
+              <div>
+                <h3 className="font-semibold text-gray-900">Spending Overview</h3>
+                <p className="text-xs text-gray-500 mt-1">Detailed spending trends over the recent period</p>
+              </div>
+              <select className="bg-gray-50 border-none text-sm font-medium text-gray-500 focus:ring-0 cursor-pointer hover:text-gray-700 rounded-lg p-1.5 px-3">
                 <option>This Week</option>
                 <option>Last Week</option>
                 <option>This Month</option>
               </select>
             </div>
-            <div className="h-[300px] w-full">
+            <div className="h-[250px] w-full">
               <Line data={chartData} options={chartOptions} />
             </div>
-          </Card>
+          </div>
         </div>
 
         {/* Order Tracking */}
         <div className="lg:col-span-1">
-          <Card className="h-full bg-gradient-to-br from-emerald-600 to-teal-700 text-white border-none">
-            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-              <TruckIcon className="w-6 h-6" />
-              Track Order
-            </h2>
+          <div className="bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-2xl p-6 shadow-sm flex flex-col justify-between h-full min-h-[300px]">
+            <div>
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <TruckIcon className="w-6 h-6" />
+                Track Order
+              </h2>
 
-            <div className="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <p className="text-emerald-100 text-sm">Order #ORD-2024-001</p>
-                  <h3 className="font-bold text-lg mt-1">Organic Fertilizer</h3>
+              <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <p className="text-emerald-100 text-sm">Order #ORD-2024-001</p>
+                    <h3 className="font-bold text-base mt-1">Organic Fertilizer</h3>
+                  </div>
+                  <span className="bg-white/20 px-2.5 py-0.5 rounded-full text-xs font-semibold">
+                    In Transit
+                  </span>
                 </div>
-                <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold">
-                  In Transit
-                </span>
+
+                <div className="relative pt-2">
+                  <div className="flex mb-2 items-center justify-between text-xs font-semibold text-emerald-100">
+                    <span>Shipped</span>
+                    <span>Delivered</span>
+                  </div>
+                  <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-emerald-800/50">
+                    <div style={{ width: "65%" }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-white"></div>
+                  </div>
+                  <p className="text-xs text-emerald-50">
+                    Estimated delivery: <span className="font-bold text-white">Today, 4:00 PM</span>
+                  </p>
+                </div>
               </div>
-
-              <div className="relative pt-4 pb-2">
-                <div className="flex mb-2 items-center justify-between text-xs font-semibold text-emerald-100">
-                  <span>Shipped</span>
-                  <span>Delivered</span>
-                </div>
-                <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-emerald-800/50">
-                  <div style={{ width: "65%" }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-white"></div>
-                </div>
-                <p className="text-sm text-emerald-50">
-                  Estimated delivery: <span className="font-bold text-white">Today, 4:00 PM</span>
-                </p>
-              </div>
-
-              <button className="w-full mt-6 py-3 bg-white text-emerald-700 rounded-lg font-bold hover:bg-emerald-50 transition-colors">
-                View Details
-              </button>
             </div>
-          </Card>
+
+            <button className="w-full mt-4 py-3 bg-white text-emerald-700 rounded-xl font-bold hover:bg-emerald-50 transition-colors shadow-sm text-sm">
+              View Details
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Featured Products */}
-      <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Featured for You</h2>
-          <Link href="/marketplace" className="text-emerald-600 font-medium hover:text-emerald-700 flex items-center gap-1">
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="font-semibold text-gray-900">Featured for You</h3>
+            <p className="text-xs text-gray-500 mt-1">Recommended agricultural items and supplies</p>
+          </div>
+          <Link href="/marketplace" className="text-emerald-600 font-medium hover:text-emerald-700 flex items-center gap-1 text-sm">
             View All <ArrowRight size={16} />
           </Link>
         </div>
@@ -220,8 +230,8 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.slice(0, 4).map((product) => (
             <Link key={product.id} href={`/Product/${product.id}`}>
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
-                <div className="relative h-48 bg-gray-100 overflow-hidden">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+                <div className="relative h-44 bg-gray-100 overflow-hidden">
                   <img
                     src={`http://127.0.0.1:8000/${product.imagepath}`}
                     alt={product.name}
@@ -233,8 +243,8 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-1 truncate">{product.name}</h3>
-                  <p className="text-emerald-600 font-bold">KES {product.price}</p>
+                  <h3 className="font-bold text-gray-900 mb-1 truncate text-sm">{product.name}</h3>
+                  <p className="text-emerald-600 font-bold text-sm">KES {product.price}</p>
                 </div>
               </div>
             </Link>
@@ -242,7 +252,7 @@ export default function Dashboard() {
           {products.length === 0 && (
             [1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 animate-pulse">
-                <div className="h-40 bg-gray-200 rounded-lg mb-4"></div>
+                <div className="h-36 bg-gray-200 rounded-lg mb-4"></div>
                 <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
                 <div className="h-4 bg-gray-200 rounded w-1/2"></div>
               </div>
@@ -253,4 +263,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
