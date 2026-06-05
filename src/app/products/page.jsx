@@ -1,19 +1,53 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "next/navigation";
 import ProductCard from "@/Components/ProductCard/ProductCard";
 import { getProducts } from "@/reducers/product/productSlice";
+import { fetchCategories } from "@/reducers/Category/categorySlice";
 import Navbar from "@/Components/Navbar/Navbar";
 import Footer from "@/Components/Footer/Footer";
 import Newsletter from "@/Components/NewsLetter/Newsletter";
 import { FaSearch } from "react-icons/fa";
 import { GiBarbedSpear } from "react-icons/gi";
 
-export default function ProductsPage() {
+// Helper to recursively collect all subcategory IDs under a category ID
+function getDescendantIds(categoryId, categoriesList) {
+  const ids = [parseInt(categoryId, 10)];
+  
+  function collect(node) {
+    if (!node) return false;
+    if (parseInt(node.id, 10) === parseInt(categoryId, 10)) {
+      function traverse(n) {
+        if (n.subcategories) {
+          n.subcategories.forEach(sub => {
+            ids.push(parseInt(sub.id, 10));
+            traverse(sub);
+          });
+        }
+      }
+      traverse(node);
+      return true;
+    }
+    if (node.subcategories) {
+      for (const sub of node.subcategories) {
+        if (collect(sub)) return true;
+      }
+    }
+    return false;
+  }
+
+  for (const cat of categoriesList) {
+    if (collect(cat)) break;
+  }
+  return ids;
+}
+
+function ProductsContent() {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.product);
+  const { categories = [] } = useSelector((state) => state.category);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -21,6 +55,7 @@ export default function ProductsPage() {
 
   useEffect(() => {
     dispatch(getProducts());
+    dispatch(fetchCategories());
   }, [dispatch]);
 
   const searchParams = useSearchParams();
@@ -32,16 +67,14 @@ export default function ProductsPage() {
     let filtered = products;
 
     if (categoryParam) {
-      filtered = filtered.filter((p) => p.category === parseInt(categoryParam) || p.category?.id === parseInt(categoryParam));
+      const descendantIds = getDescendantIds(categoryParam, categories);
+      filtered = filtered.filter((p) => {
+        const pCatId = p.category?.id || p.category;
+        return descendantIds.includes(parseInt(pCatId, 10));
+      });
     }
 
     if (sellerParam) {
-      // Handle both ID and Username scenarios if possible, but assuming ID for now if passed from dashboard
-      // However, ProductSerializer returns user as username string. We need to check if we can filter by that.
-      // If the dashboard link sends userId, but product has username, we have a mismatch.
-      // Ideally, the share link should use the username if that's what's available publicly.
-      // OR, update ProductSerializer to include valid user_id.
-      // For now, let's match loosely or by username if param is string.
       filtered = filtered.filter((p) =>
         String(p.user) === String(sellerParam) ||
         String(p.userId) === String(sellerParam) ||
@@ -54,20 +87,18 @@ export default function ProductsPage() {
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     } else if (searchParam) {
-      // if searchTerm state is empty, check url param
-      setSearchTerm(searchParam); // this might trigger re-render loop if not careful, better to just filter here
+      setSearchTerm(searchParam);
       filtered = filtered.filter((product) =>
         product.name.toLowerCase().includes(searchParam.toLowerCase())
       );
     }
 
     setFilteredProducts(filtered);
-  }, [products, categoryParam, sellerParam, searchTerm, searchParam]);
+  }, [products, categories, categoryParam, sellerParam, searchTerm, searchParam]);
 
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-    // Logic moved to useEffect for consistency
   };
 
   return (
@@ -212,5 +243,13 @@ export default function ProductsPage() {
       <Newsletter />
       <Footer />
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-8">Loading Products...</div>}>
+      <ProductsContent />
+    </Suspense>
   );
 }

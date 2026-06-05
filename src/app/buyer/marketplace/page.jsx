@@ -1,20 +1,28 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getProducts } from '@/reducers/product/productSlice';
 import { Search, ShoppingBag, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
-export default function BuyerMarketplace() {
+function MarketplaceContent() {
   const dispatch = useDispatch();
   const { products, loading } = useSelector((state) => state.product);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     dispatch(getProducts());
   }, [dispatch]);
+
+  // Sync search input with URL search parameters
+  useEffect(() => {
+    const search = searchParams?.get("search") || "";
+    setSearchTerm(search);
+  }, [searchParams]);
 
   // Extract unique categories dynamically from products
   const categories = [
@@ -182,5 +190,13 @@ export default function BuyerMarketplace() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function BuyerMarketplace() {
+  return (
+    <Suspense fallback={<div className="text-center py-8">Loading Marketplace...</div>}>
+      <MarketplaceContent />
+    </Suspense>
   );
 }
