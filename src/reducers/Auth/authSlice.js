@@ -180,7 +180,7 @@ export const updateUser = createAsyncThunk(
   "auth/updateUser",
   async ({ userId, userData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`/users/${userId}/`, userData);
+      const response = await axios.patch(`/users/${userId}/`, userData);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || { message: "Failed to update user." });
