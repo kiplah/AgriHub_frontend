@@ -11,6 +11,7 @@ export default function Layout({ children, initialCollapsed = false }) {
   const [collapsed, setCollapsed] = useState(initialCollapsed);
   const [profileOpen, setProfileOpen] = useState(false); // Dropdown state
   const [showBalance, setShowBalance] = useState(true); // Toggle balance visibility
+  const [searchQuery, setSearchQuery] = useState("");
   const { user } = useSelector((state) => state.auth);
   const { buyerStats } = useSelector((state) => state.orders);
   const dispatch = useDispatch();
@@ -136,7 +137,12 @@ export default function Layout({ children, initialCollapsed = false }) {
               <div className="font-bold text-green-600">AGRO MART</div>
             </div>
             <div className="flex items-center gap-3">
-              <MessageSquare className="w-5 h-5 text-gray-600" />
+              <Link href="/buyer/chats" className="relative p-1.5 rounded-full hover:bg-gray-100 transition-colors">
+                <MessageSquare className="w-5 h-5 text-gray-600" />
+                {buyerStats?.UnreadMessages > 0 && (
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white animate-pulse"></span>
+                )}
+              </Link>
               <button onClick={() => setProfileOpen(!profileOpen)} className="relative">
                 <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 border">
                   {userInitials}
@@ -163,28 +169,45 @@ export default function Layout({ children, initialCollapsed = false }) {
           <div className="flex items-center gap-4">
             <div className="hidden md:block text-sm text-gray-500">Welcome back,</div>
             <div className="text-lg font-semibold text-gray-900">{userName}</div>
-            <div className="rounded-md border px-3 py-1 text-xs text-gray-500 hidden sm:inline"></div>
+            <div className="rounded-md border px-3 py-1 text-xs text-gray-500 capitalize hidden sm:inline">
+              {user?.role || "buyer"}
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2 border rounded-full px-4 py-1.5 bg-gray-50/50 focus-within:bg-white focus-within:ring-2 ring-emerald-100 transition-all w-64 hover:bg-white">
               <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"><path d="M21 21L15 15" stroke="#9CA3AF" strokeWidth="2" /></svg>
-              <input placeholder="Search products..." className="bg-transparent outline-none text-sm w-full placeholder:text-gray-400 text-gray-700" />
+              <input 
+                placeholder="Search products..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && searchQuery.trim()) {
+                    router.push(`/buyer/marketplace?search=${encodeURIComponent(searchQuery.trim())}`);
+                  }
+                }}
+                className="bg-transparent outline-none text-sm w-full placeholder:text-gray-400 text-gray-700" 
+              />
             </div>
 
             <Link href="/buyer/chats">
               <button className="p-2 rounded-full hover:bg-gray-100 relative transition-colors group">
                 <MessageSquare className="w-5 h-5 text-gray-600 group-hover:text-emerald-600 transition-colors" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                {buyerStats?.UnreadMessages > 0 && (
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white animate-pulse"></span>
+                )}
               </button>
             </Link>
             <div className="h-8 w-[1px] bg-gray-200 mx-1"></div>
 
             {/* Desktop User Dropdown */}
             <div className="relative">
-              <button
+              <div
                 onClick={() => setProfileOpen(!profileOpen)}
-                className="flex items-center gap-2 hover:bg-gray-50 rounded-full p-1 pr-2 transition-colors"
+                className="flex items-center gap-2 hover:bg-gray-50 rounded-full p-1 pr-2 transition-colors cursor-pointer"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { setProfileOpen(!profileOpen); } }}
               >
                 <div className="text-right hidden sm:block">
                   <div className="text-sm font-medium text-gray-900 flex items-center justify-end gap-2">
@@ -201,7 +224,7 @@ export default function Layout({ children, initialCollapsed = false }) {
                 <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold border border-emerald-200">
                   {userInitials}
                 </div>
-              </button>
+              </div>
 
               {profileOpen && (
                 <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-100 rounded-xl shadow-lg py-2 z-50 animate-in fade-in zoom-in-95 duration-200">

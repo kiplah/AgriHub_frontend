@@ -20,7 +20,7 @@ const Navbar = ({ bground }) => {
   const inputsDropdownRef = useRef(null);
   const dispatch = useDispatch();
   const { username, role, token } = useSelector((state) => state.auth);
-  const user = useSelector((state) => state.auth.user || {});
+  const user = useSelector((state) => state.auth.user);
   const { categories } = useSelector((state) => state.category);
   const router = useRouter();
   const pathname = usePathname();
@@ -237,7 +237,7 @@ const Navbar = ({ bground }) => {
                     className={`text-2xl ${bg ? "text-black" : "text-white"
                       } hover:scale-110 transition-transform`}
                   />
-                  {user.username && (
+                  {user?.username && (
                     <span
                       className={`${bg ? "text-black" : "text-white"
                         } font-medium text-sm`}
@@ -457,52 +457,57 @@ const Navbar = ({ bground }) => {
               </li>
             </Link>
 
-            {/* Dynamic Categories */}
-            {categories && categories.map((cat) => (
-              <div key={cat.id} className="relative group z-50">
-                <li
-                  className={`hover:border-b-2 border-current p-2 cursor-pointer flex items-center gap-1 uppercase font-bold`}
-                  // Simple hover for desktop, click for mobile handled by logic if needed, 
-                  // but sticking to CSS hover for simplicity or React state if complex.
-                  // Using state for dropdown control to match previous style
-                  onClick={() => {
-                    if (cat.name === "FARM INPUTS") setShowInputsDropdown(!showInputsDropdown);
-                    // Add state for Produce if needed, or generalize.
-                    // For simplicity/speed, I'll validly map "FARM INPUTS" and "FARM PRODUCE"
-                    // But wait, previous implementation used specific state refs.
-                    // Let's use a cleaner approach: a single activeDropdown state?
-                  }}
-                >
-                  {cat.name}
-                </li>
-
-                {/* customized dropdown logic could help here, but for now I'll use the 'group-hover' class for CSS-only dropdown 
-                        OR the existing explicit state approach if preferred. 
-                        Given I removed the refs/states for generic categories, I'll use CSS group-hover for simplicity and robustness.
-                    */}
-                <ul className="absolute left-0 mt-2 w-48 bg-white text-black rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top z-50">
-                  {cat.subcategories && cat.subcategories.map(sub => (
-                    <Link key={sub.id} href={`/products?category=${sub.id}`}>
-                      <li className="px-4 py-3 hover:bg-green-50 hover:text-green-700 transition-colors duration-200 border-b border-gray-100 last:border-none">
-                        {sub.name}
+            {/* Consolidated Dynamic Marketplace Dropdown */}
+            <div className="relative group z-50">
+              <li className="hover:border-b-2 border-current p-2 cursor-pointer flex items-center gap-1 uppercase font-bold">
+                <strong>MARKETPLACE</strong>
+              </li>
+              
+              {/* Dropdown list of top-level categories */}
+              <ul className="absolute left-0 mt-2 w-56 bg-white text-black rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top z-50">
+                {categories && categories.filter(cat => cat.parent === null && cat.name !== "Crops").map((cat) => (
+                  <li key={cat.id} className="relative group/sub px-4 py-3 hover:bg-green-50 hover:text-green-700 transition-colors duration-200 border-b border-gray-100 last:border-none cursor-pointer font-bold text-sm">
+                    <span className="flex items-center justify-between">
+                      {cat.name}
+                      {cat.subcategories && cat.subcategories.length > 0 && (
+                        <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                        </svg>
+                      )}
+                    </span>
+                    
+                    {/* Nested Subcategories slide-out dropdown (shows on hover) */}
+                    {cat.subcategories && cat.subcategories.length > 0 && (
+                      <ul className="absolute left-full top-0 ml-1 w-52 bg-white text-black rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all duration-300 transform origin-left z-50">
+                        {cat.subcategories.map((sub) => (
+                          <Link key={sub.id} href={`/products?category=${sub.id}`}>
+                            <li className="px-4 py-2.5 hover:bg-green-50 hover:text-green-700 font-medium text-xs transition-colors duration-200 border-b border-gray-50 last:border-none">
+                              {sub.name}
+                            </li>
+                          </Link>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+                
+                {/* Fallback items if categories not loaded yet */}
+                {(!categories || categories.length === 0) && (
+                  <>
+                    <Link href="/products?category=produce">
+                      <li className="px-4 py-3 hover:bg-green-50 hover:text-green-700 transition-colors duration-200 border-b border-gray-100 font-bold text-sm">
+                        FARM PRODUCE
                       </li>
                     </Link>
-                  ))}
-                </ul>
-              </div>
-            ))}
-
-            {/* Fallback if categories not loaded yet or to ensure structure */}
-            {(!categories || categories.length === 0) && (
-              <>
-                <Link href="/products?category=produce">
-                  <li className="p-2"><strong>FARM PRODUCE</strong></li>
-                </Link>
-                <Link href="/products?category=inputs">
-                  <li className="p-2"><strong>FARM INPUTS</strong></li>
-                </Link>
-              </>
-            )}
+                    <Link href="/products?category=inputs">
+                      <li className="px-4 py-3 hover:bg-green-50 hover:text-green-700 transition-colors duration-200 border-b border-gray-100 font-bold text-sm">
+                        FARM INPUTS
+                      </li>
+                    </Link>
+                  </>
+                )}
+              </ul>
+            </div>
 
             <Link href="/aboutUs">
               <li className={`hover:border-b-2 border-current p-2 ${pathname === '/aboutUs' ? 'border-b-2 border-green-500 text-green-600' : ''}`}>
