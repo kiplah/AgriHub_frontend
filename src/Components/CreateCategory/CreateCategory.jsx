@@ -24,7 +24,7 @@ const CreateCategory = ({
     name: "",
     description: "",
     image: null,
-    userId: user?.userId || localStorage.getItem("userId") || null, // Handle fallback
+    userId: user?.userId || (typeof window !== "undefined" ? localStorage.getItem("userId") : null) || null, // Handle fallback
   });
 
   useEffect(() => {

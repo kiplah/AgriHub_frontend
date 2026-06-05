@@ -23,7 +23,7 @@ const CreateProduct = ({ showAddProduct, setShowAddProduct, initialData }) => {
     description: initialData?.description || "",
     price: initialData?.price || "",
     image: null,
-    userId: user?.userId || localStorage.getItem("userId") || null,
+    userId: user?.userId || (typeof window !== "undefined" ? localStorage.getItem("userId") : null) || null,
     // New Fields
     variety: initialData?.variety || "",
     breed: initialData?.breed || "",
