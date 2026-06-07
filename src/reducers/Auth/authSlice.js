@@ -347,7 +347,7 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.token = action.payload.token;
-        state.user = action.payload.user;
+        state.user = action.payload.user ? { ...action.payload.user, userId: action.payload.user.id } : null;
         state.role = action.payload.role;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -361,7 +361,7 @@ const authSlice = createSlice({
       .addCase(googleLoginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.token = action.payload.token;
-        state.user = action.payload.user;
+        state.user = action.payload.user ? { ...action.payload.user, userId: action.payload.user.id } : null;
         state.role = action.payload.role;
       })
       .addCase(googleLoginUser.rejected, (state, action) => {
@@ -377,7 +377,7 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
         state.token = action.payload.token;
-        state.user = action.payload.user;
+        state.user = action.payload.user ? { ...action.payload.user, userId: action.payload.user.id } : null;
         state.role = action.payload.role;
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -393,7 +393,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.verified = true;
         state.token = action.payload.token;
-        state.user = action.payload.user;
+        state.user = action.payload.user ? { ...action.payload.user, userId: action.payload.user.id } : null;
         state.role = action.payload.role;
       })
       .addCase(verifyEmail.rejected, (state, action) => {

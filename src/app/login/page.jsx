@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { motion } from "framer-motion";
@@ -9,10 +9,11 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { loginUser, googleLoginUser } from "../../reducers/Auth/authSlice";
 
-export default function LoginPage() {
+function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const searchParams = useSearchParams();
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -55,18 +56,23 @@ export default function LoginPage() {
           autoClose: 3000,
         });
 
-        const normalizedRole = role.toLowerCase();
-        if (normalizedRole === "admin") {
-          router.push("/admin");
-        } else if (normalizedRole === "buyer") {
-          router.push("/buyer");
-        } else if (normalizedRole === "seller") {
-          router.push("/seller-profile");
+        const redirectPath = searchParams.get("redirect");
+        if (redirectPath) {
+          router.push(redirectPath);
         } else {
-          toast.error(`Unknown role: ${role}`, {
-            position: "top-right",
-            autoClose: 3000,
-          });
+          const normalizedRole = role.toLowerCase();
+          if (normalizedRole === "admin") {
+            router.push("/admin");
+          } else if (normalizedRole === "buyer") {
+            router.push("/buyer");
+          } else if (normalizedRole === "seller") {
+            router.push("/seller-profile");
+          } else {
+            toast.error(`Unknown role: ${role}`, {
+              position: "top-right",
+              autoClose: 3000,
+            });
+          }
         }
       } else {
         console.warn("Role is missing in login response:", result);
@@ -114,7 +120,10 @@ export default function LoginPage() {
             });
             
             const { role } = result;
-            if (role) {
+            const redirectPath = searchParams.get("redirect");
+            if (redirectPath) {
+              router.push(redirectPath);
+            } else if (role) {
               const normalizedRole = role.toLowerCase();
               if (normalizedRole === "admin") {
                 router.push("/admin");
@@ -260,5 +269,17 @@ export default function LoginPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+        <p className="text-xl font-bold">Loading...</p>
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }
