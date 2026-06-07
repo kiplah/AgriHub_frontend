@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { sendContactMessage, resetState } from "@/reducers/Contact/contactSlice";
-import Profile from "@/Components/ProfileCard/ProfileCard";
 
 const ContactUs = () => {
   
@@ -48,7 +47,6 @@ const ContactUs = () => {
       <div className="absolute inset-0 bg-black/60"></div>
 
       <div className="relative z-10 text-white">
-        <Profile />
         <div className="py-12">
           <div className="container mx-auto px-6 lg:px-20 text-center mb-12">
             <h1 className="text-5xl font-extrabold text-green-300 mb-4 drop-shadow-lg">

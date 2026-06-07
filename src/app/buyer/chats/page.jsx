@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchConversations, fetchMessages, sendMessage, addMessage } from "@/reducers/Chat/chatSlice";
 import { fetchBuyerStats } from "@/reducers/Order/orderSlice";
+import { API_BASE_URL, WS_BASE_URL } from "@/axios/config";
 import { 
   Loader2, 
   Send, 
@@ -60,7 +61,7 @@ export default function ChatPage() {
     if (!user?.userId) return;
   
     console.log("🚀 Initializing Chat WebSocket...");
-    const websocket = new WebSocket(`ws://localhost:8081/ws?senderID=${user.userId}`);
+    const websocket = new WebSocket(`${WS_BASE_URL}/ws?senderID=${user.userId}`);
     setWs(websocket);
   
     websocket.onmessage = (event) => {

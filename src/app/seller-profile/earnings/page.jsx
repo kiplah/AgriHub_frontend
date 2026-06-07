@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Profile from "@/Components/ProfileCard/ProfileCard";
 import { FaArrowUp, FaArrowDown, FaMoneyBillAlt, FaWallet, FaHistory } from "react-icons/fa";
 import { Line } from "react-chartjs-2";
 import {

@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getProducts } from '@/reducers/product/productSlice';
 import { Search, Filter, ShoppingCart, ShoppingBag, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { API_BASE_URL } from '@/axios/config';
 
 export default function Marketplace() {
   const dispatch = useDispatch();
@@ -49,7 +50,7 @@ export default function Marketplace() {
     }
     // Remove duplicate starting slashes if any
     const cleanPath = product.imagepath.replace(/^\/+/, "");
-    return `http://127.0.0.1:8000/${cleanPath}`;
+    return `${API_BASE_URL}/${cleanPath}`;
   };
 
   return (

@@ -12,6 +12,7 @@ import { FaStar } from "react-icons/fa";
 import { useCart } from "../../../utilities/CartContext";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { API_BASE_URL } from "@/axios/config";
 const ProductDetailsPage = () => {
   const params = useParams();
   const id = params?.id;
@@ -92,7 +93,7 @@ const ProductDetailsPage = () => {
   }
 
   const imageUrl = product.imagepath
-    ? (product.imagepath.startsWith('http') ? product.imagepath : `http://127.0.0.1:8000${product.imagepath}`)
+    ? (product.imagepath.startsWith('http') ? product.imagepath : `${API_BASE_URL}${product.imagepath}`)
     : "https://via.placeholder.com/600x600?text=No+Image";
 
   const averageRating = stats.avgRating > 0 ? stats.avgRating.toFixed(1) : "New";

@@ -12,6 +12,7 @@ import Benifits from "@/Components/Benifites/Benifits";
 import Testimonial from "@/Components/Testimonial/Testimonial";
 import { FaSearch, FaFilter } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/axios/config";
 
 export default function Page() {
   const dispatch = useDispatch();
@@ -201,7 +202,7 @@ export default function Page() {
                         product.imagepath
                           ? (product.imagepath.startsWith('http')
                             ? product.imagepath
-                            : `http://127.0.0.1:8000/media/${product.imagepath.replace(/^\/+/, '')}`)
+                            : `${API_BASE_URL}/media/${product.imagepath.replace(/^\/+/, '')}`)
                           : null
                       }
                       category={product.category_details?.name || product.category_name || "Uncategorized"}

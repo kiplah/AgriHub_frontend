@@ -6,6 +6,7 @@ import { Card } from '@/Components/ui/Card';
 // import { Button } from '@/Components/ui/Button'; // Removed as it does not exist
 import { Loader2, Upload, Camera, Store } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { API_BASE_URL } from '@/axios/config';
 
 export default function StoreProfile() {
     const dispatch = useDispatch();
@@ -42,8 +43,8 @@ export default function StoreProfile() {
                 banner: null
             });
 
-            if (sellerProfile.logo) setLogoPreview(sellerProfile.logo.startsWith('http') ? sellerProfile.logo : `http://127.0.0.1:8000${sellerProfile.logo}`);
-            if (sellerProfile.banner) setBannerPreview(sellerProfile.banner.startsWith('http') ? sellerProfile.banner : `http://127.0.0.1:8000${sellerProfile.banner}`);
+            if (sellerProfile.logo) setLogoPreview(sellerProfile.logo.startsWith('http') ? sellerProfile.logo : `${API_BASE_URL}${sellerProfile.logo}`);
+            if (sellerProfile.banner) setBannerPreview(sellerProfile.banner.startsWith('http') ? sellerProfile.banner : `${API_BASE_URL}${sellerProfile.banner}`);
         }
     }, [sellerProfile]);
 

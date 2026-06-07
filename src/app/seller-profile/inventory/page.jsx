@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Edit, Trash2, AlertTriangle, CheckCircle, Search, Filter } from "lucide-react";
 import { Card } from "@/Components/ui/Card";
 import { toast } from "react-toastify";
+import { API_BASE_URL } from "@/axios/config";
 
 // Simple UI Components
 const Badge = ({ children, color }) => (
@@ -96,7 +97,7 @@ export default function InventoryPage() {
                                             <div className="flex items-center gap-3">
                                                 {product.imagepath ? (
                                                     <img
-                                                        src={`http://127.0.0.1:8000${product.imagepath}`}
+                                                        src={product.imagepath.startsWith('http') ? product.imagepath : `${API_BASE_URL}${product.imagepath}`}
                                                         alt={product.name}
                                                         className="w-10 h-10 rounded-md object-cover bg-gray-100"
                                                     />

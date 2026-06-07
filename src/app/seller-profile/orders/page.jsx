@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchSellerOrders, fetchOrderDetail, updateOrderStatus } from "@/reducers/Order/orderSlice";
-import Profile from "@/Components/ProfileCard/ProfileCard";
 import { fetchMessages } from "@/reducers/Chat/chatSlice";
 import { AiOutlineClose } from "react-icons/ai";
+import { API_BASE_URL, WS_BASE_URL } from "@/axios/config";
 
 export default function Orders() {
   const dispatch = useDispatch();
@@ -45,7 +45,7 @@ export default function Orders() {
       return order.product_image;
     }
     const cleanPath = order.product_image.replace(/^\/+/, "");
-    return `http://127.0.0.1:8000/${cleanPath}`;
+    return `${API_BASE_URL}/${cleanPath}`;
   };
 
   const handleViewDetails = (orderId) => {
@@ -75,7 +75,7 @@ export default function Orders() {
     dispatch(fetchMessages({ receiverId: buyerId }));
 
     const websocket = new WebSocket(
-      `ws://localhost:8081/ws?senderID=${userId}&receiverID=${buyerId}`
+      `${WS_BASE_URL}/ws?senderID=${userId}&receiverID=${buyerId}`
     );
     setWs(websocket);
 

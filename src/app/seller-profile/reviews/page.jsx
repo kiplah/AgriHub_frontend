@@ -1,8 +1,6 @@
 "use client";
-import React from "react";
 import { Card } from "@/Components/ui/Card";
 import { Star, User, ThumbsUp } from "lucide-react";
-import Profile from "@/Components/ProfileCard/ProfileCard";
 
 const reviewsUtils = [
     {

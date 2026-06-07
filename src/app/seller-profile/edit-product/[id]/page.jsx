@@ -7,6 +7,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { Card } from '@/Components/ui/Card';
 import { Upload, Loader2, CheckCircle, ArrowLeft } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { API_BASE_URL } from '@/axios/config';
 
 export default function EditProduct() {
     const dispatch = useDispatch();
@@ -49,7 +50,7 @@ export default function EditProduct() {
                 image: null
             });
             if (fetchedProduct.imagepath) {
-                setPreview(`http://127.0.0.1:8000/${fetchedProduct.imagepath}`);
+                setPreview(fetchedProduct.imagepath.startsWith('http') ? fetchedProduct.imagepath : `${API_BASE_URL}/${fetchedProduct.imagepath}`);
             }
             setInitialFetchDone(true);
         }

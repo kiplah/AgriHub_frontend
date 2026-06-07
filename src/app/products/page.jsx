@@ -11,6 +11,7 @@ import Footer from "@/Components/Footer/Footer";
 import Newsletter from "@/Components/NewsLetter/Newsletter";
 import { FaSearch } from "react-icons/fa";
 import { GiBarbedSpear } from "react-icons/gi";
+import { API_BASE_URL } from "@/axios/config";
 
 // Helper to recursively collect all subcategory IDs under a category ID
 function getDescendantIds(categoryId, categoriesList) {
@@ -226,7 +227,7 @@ function ProductsContent() {
                 <ProductCard
                   key={product.id}
                   id={product.id}
-                  src={product.imagepath?.startsWith('http') ? product.imagepath : `http://127.0.0.1:8000/${product.imagepath}`}
+                  src={product.imagepath?.startsWith('http') ? product.imagepath : `${API_BASE_URL}/${product.imagepath}`}
                   title={product.name}
                   cat={product.category}
                   price={product.price}

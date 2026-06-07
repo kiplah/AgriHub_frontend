@@ -7,6 +7,7 @@ import { Card } from '@/Components/ui/Card';
 import { Plus, Trash2, Edit, Package } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
+import { API_BASE_URL } from '@/axios/config';
 
 import ProductCard from '@/Components/ProductCard/ProductCard';
 
@@ -89,7 +90,7 @@ export default function MyProducts() {
                 product.imagepath
                   ? (product.imagepath.startsWith('http')
                     ? product.imagepath
-                    : `http://127.0.0.1:8000/media/${product.imagepath.replace(/^\/+/, '')}`)
+                    : `${API_BASE_URL}/media/${product.imagepath.replace(/^\/+/, '')}`)
                   : null
               }
               category={product.category_details?.name || product.category_name || "Uncategorized"}
