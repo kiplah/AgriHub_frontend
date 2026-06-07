@@ -6,7 +6,7 @@ export const fetchOrders = createAsyncThunk(
   "orders/fetchOrders",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/order/orders");
+      const response = await axios.get("/order/orders/");
       return response.data; // Assuming response contains an array of orders
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -18,7 +18,7 @@ export const fetchOrderDetail = createAsyncThunk(
   "orders/fetchOrderDetail",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/order/order-detail/${id}`);
+      const response = await axios.get(`/order/${id}/`);
       return response.data; // Assuming response contains the order detail
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -29,7 +29,7 @@ export const fetchSellerStats = createAsyncThunk(
   "orders/fetchSellerStats",
   async (sellerId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/order/seller-stats/${sellerId}`);
+      const response = await axios.get(`/order/seller-stats/${sellerId}/`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -41,7 +41,7 @@ export const fetchBuyerStats = createAsyncThunk(
   "orders/fetchBuyerStats",
   async (buyerId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/order/buyer-stats/${buyerId}`);
+      const response = await axios.get(`/order/buyer-stats/${buyerId}/`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -53,7 +53,7 @@ export const fetchSellerMonthlyStats = createAsyncThunk(
   "orders/fetchSellerMonthlyStats",
   async (sellerId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/order/monthly-stats/${sellerId}`);
+      const response = await axios.get(`/order/monthly-stats/${sellerId}/`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -65,7 +65,7 @@ export const saveOrder = createAsyncThunk(
     "orders/saveOrder",
     async (orderData, { rejectWithValue }) => {
       try {
-        const response = await axios.post("/order/new-order", orderData);
+        const response = await axios.post("/order/new-order/", orderData);
         return response.data;
       } catch (error) {
         return rejectWithValue(error.response?.data || { message: error.message });
@@ -78,7 +78,7 @@ export const updateOrder = createAsyncThunk(
   "orders/updateOrder",
   async ({ id, orderData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`/orders/${id}`, orderData, {
+      const response = await axios.put(`/order/${id}/`, orderData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -93,7 +93,7 @@ export const fetchSellerOrders = createAsyncThunk(
   "orders/fetchSellerOrders",
   async (sellerId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/order/seller-orders/${sellerId}`);
+      const response = await axios.get(`/order/seller-orders/${sellerId}/`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -104,7 +104,7 @@ export const fetchBuyerOrders = createAsyncThunk(
   "orders/fetchBuyerOrders",
   async (buyerId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/order/buyer-orders/${buyerId}`);
+      const response = await axios.get(`/order/buyer-orders/${buyerId}/`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -115,7 +115,7 @@ export const updateOrderStatus = createAsyncThunk(
   "orders/updateOrderStatus",
   async ({ id, orderStatus }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`/order/update-status/${id}`, { orderStatus });
+      const response = await axios.put(`/order/update-status/${id}/`, { orderStatus: orderStatus.toLowerCase() });
       return { id, orderStatus: response.data.orderStatus };
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -127,7 +127,7 @@ export const deleteOrder = createAsyncThunk(
   "orders/deleteOrder",
   async (id, { rejectWithValue }) => {
     try {
-      await axios.delete(`/order/delete-order/${id}`);
+      await axios.delete(`/order/delete-order/${id}/`);
       return id;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);

@@ -22,7 +22,7 @@ import {
 export default function Orders() {
   const dispatch = useDispatch();
   const { buyerOrders = [], loading, error } = useSelector((state) => state.orders);
-  const userId = useSelector((state) => state.auth.user?.userId);
+  const userId = useSelector((state) => state.auth.user?.userId || state.auth.user?.id);
   const token = useSelector((state) => state.auth.token);
   
   const [selectedOrder, setSelectedOrder] = useState(null);

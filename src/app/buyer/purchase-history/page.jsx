@@ -9,7 +9,7 @@ import { AiOutlineClose } from "react-icons/ai";
 export default function Orders() {
   const dispatch = useDispatch();
   const { buyerOrders, loading, error } = useSelector((state) => state.orders);
-  const userId = useSelector((state) => state.auth.user?.userId);
+  const userId = useSelector((state) => state.auth.user?.userId || state.auth.user?.id);
   const token = useSelector((state) => state.auth.token);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isPopupVisible, setPopupVisible] = useState(false);
@@ -17,8 +17,13 @@ export default function Orders() {
   const [isChatVisible, setChatVisible] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
   const [selectedSellerId, setSelectedSellerId] = useState(null);
-  const completedOrders = buyerOrders.filter(order => order.orderStatus === "completed");
-const activeOrders = buyerOrders.filter(order => order.orderStatus !== "completed");
+  const getOrderStatus = (order) => {
+    if (!order) return "";
+    const status = order.orderStatus || order.order_status || "pending";
+    return status.toLowerCase();
+  };
+  const completedOrders = buyerOrders.filter(order => getOrderStatus(order) === "completed" || getOrderStatus(order) === "delivered");
+  const activeOrders = buyerOrders.filter(order => getOrderStatus(order) !== "completed" && getOrderStatus(order) !== "delivered");
 
   useEffect(() => {
     if (userId) {
@@ -171,12 +176,12 @@ const setMessages = (newMessages) => {
               <span className="font-medium">Status:</span>{" "}
               <span
                 className={
-                  order.orderStatus === "Pending"
+                  getOrderStatus(order) === "pending"
                     ? "text-yellow-400"
                     : "text-lime-300"
                 }
               >
-                {order.orderStatus}
+                {getOrderStatus(order).toUpperCase()}
               </span>
             </p>
             <p className="text-lime-200 text-sm mb-2">
@@ -298,7 +303,7 @@ const setMessages = (newMessages) => {
           />
           
           <div className="flex gap-8">
-          {selectedOrder.orderStatus === "Pending" && (
+          {getOrderStatus(selectedOrder) === "pending" && (
                 <button
                   className="mt-2 w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition shadow-md"
                   onClick={() => handleDeleteOrder(selectedOrder.id)}
