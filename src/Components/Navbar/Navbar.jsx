@@ -204,7 +204,7 @@ const Navbar = ({ bground }) => {
               className={`transition-all duration-300 ease-in-out drop-shadow-md ${bg
                 ? "hover:drop-shadow-[0_4px_20px_rgba(76,175,80,1)] "
                 : "hover:drop-shadow-[0px_4px_20px_rgba(255,255,255,1)]"
-                } rounded-lg"`}
+                } rounded-lg`}
             />
           </div>
 
@@ -274,10 +274,10 @@ const Navbar = ({ bground }) => {
                   </div>
                 )}
                 {showCart && (
-                  <div className="absolute right-0 mt-2 w-96 bg-gradient-to-b from-green-100 via-white to-green-50 shadow-2xl rounded-lg p-6 z-50 border-4 border-green-400">
-                    <div className="flex justify-between items-center mb-6">
-                      <h3 className="text-2xl font-bold text-green-700 flex items-center gap-2">
-                        <FaShoppingCart className="h-6 w-6 text-green-600" />
+                  <div className="absolute left-1/2 -translate-x-1/2 sm:left-auto sm:right-0 sm:translate-x-0 mt-2 w-[calc(100vw-2rem)] max-w-sm sm:w-96 bg-gradient-to-b from-green-100 via-white to-green-50 shadow-2xl rounded-lg p-4 sm:p-6 z-50 border-4 border-green-400">
+                    <div className="flex justify-between items-center mb-4 sm:mb-6">
+                      <h3 className="text-xl sm:text-2xl font-bold text-green-700 flex items-center gap-2">
+                        <FaShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
                         Your Cart
                       </h3>
                       <button
@@ -290,43 +290,49 @@ const Navbar = ({ bground }) => {
 
                     {cartItems.length > 0 ? (
                       <>
-                        <div className="max-h-60 overflow-y-auto space-y-4">
+                        <div className="max-h-60 overflow-y-auto space-y-4 pr-1">
                           {cartItems.map((item) => (
                             <div
                               key={item.id}
-                              className="flex justify-between items-center p-3 bg-white rounded-lg shadow-md"
+                              className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 bg-white rounded-lg shadow-md gap-3"
                             >
-                              <div className="flex items-center gap-4">
+                              <div className="flex items-center gap-4 w-full sm:w-auto">
                                 <img
-                                  src={item.image}
+                                  src={item.image || "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070&auto=format&fit=crop"}
                                   alt={item.name}
-                                  className="w-16 h-16 rounded-md object-cover border-2 border-green-300"
+                                  className="w-16 h-16 rounded-md object-cover border-2 border-green-300 flex-shrink-0"
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070&auto=format&fit=crop";
+                                  }}
                                 />
-                                <div>
-                                  <p className="font-bold text-green-700 text-sm">{item.name}</p>
+                                <div className="min-w-0 flex-1">
+                                  <p className="font-bold text-green-700 text-sm break-words">{item.name}</p>
                                   <p className="text-sm text-gray-500">
                                     Ksh {item.price} each
                                   </p>
                                 </div>
                               </div>
 
-                              <div className="flex items-center gap-3">
-                                <button
-                                  onClick={() => decreaseQuantity(item.id, item.price)}
-                                  className="px-3 py-1 text-sm bg-yellow-300 hover:bg-yellow-400 text-yellow-800 rounded shadow-md"
-                                >
-                                  -
-                                </button>
-                                <span className="font-bold text-green-700">{item.quantity}</span>
-                                <button
-                                  onClick={() => increaseQuantity(item.id, item.price)}
-                                  className="px-3 py-1 text-sm bg-green-300 hover:bg-green-400 text-green-800 rounded shadow-md"
-                                >
-                                  +
-                                </button>
+                              <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto pt-2 sm:pt-0 border-t border-gray-100 sm:border-t-0">
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => decreaseQuantity(item.id, item.price)}
+                                    className="px-2.5 py-1 text-sm bg-yellow-300 hover:bg-yellow-400 text-yellow-800 rounded shadow-md"
+                                  >
+                                    -
+                                  </button>
+                                  <span className="font-bold text-green-700 w-6 text-center">{item.quantity}</span>
+                                  <button
+                                    onClick={() => increaseQuantity(item.id, item.price)}
+                                    className="px-2.5 py-1 text-sm bg-green-300 hover:bg-green-400 text-green-800 rounded shadow-md"
+                                  >
+                                    +
+                                  </button>
+                                </div>
                                 <button
                                   onClick={() => handleRemoveFromCart(item.id)}
-                                  className="text-red-500 hover:text-red-700 text-xl"
+                                  className="text-red-500 hover:text-red-700 text-xl p-1"
                                 >
                                   &times;
                                 </button>
@@ -335,16 +341,16 @@ const Navbar = ({ bground }) => {
                           ))}
                         </div>
 
-                        <div className="mt-6 p-4 bg-green-100 rounded-lg shadow-md">
-                          <p className="text-right font-bold text-green-800 text-lg">
+                        <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-green-100 rounded-lg shadow-md">
+                          <p className="text-right font-bold text-green-800 text-base sm:text-lg">
                             Total: Ksh {totalPrice.toFixed(2)}
                           </p>
                         </div>
 
-                        <div className="flex justify-between mt-6">
+                        <div className="flex justify-between gap-2 mt-6">
                           <button
                             onClick={handleClearCart}
-                            className="py-2 px-4 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-transform transform hover:scale-105"
+                            className="py-2 px-3 sm:px-4 text-sm sm:text-base bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-transform transform hover:scale-105"
                           >
                             Clear Cart
                           </button>
@@ -352,13 +358,13 @@ const Navbar = ({ bground }) => {
                             onClick={() => {
                               if (!token) {
                                 toast.info("Please login to checkout");
-                                router.push("/login");
+                                router.push("/login?redirect=/checkout");
                               } else {
                                 router.push("/checkout");
                               }
                               setShowCart(false);
                             }}
-                            className="py-2 px-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-transform transform hover:scale-105"
+                            className="py-2 px-3 sm:px-4 text-sm sm:text-base bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-transform transform hover:scale-105"
                           >
                             Checkout
                           </button>

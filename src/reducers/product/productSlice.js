@@ -117,6 +117,8 @@ const productSlice = createSlice({
   name: "product",
   initialState: {
     products: [],
+    product: null,
+    username: null,
     selectedProduct: null,
     loading: false,
     error: null,
