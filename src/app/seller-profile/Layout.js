@@ -18,10 +18,11 @@ export default function Layout({ children, initialCollapsed = false }) {
 
   // Fetch stats on mount to ensure header data is real
   useEffect(() => {
-    if (user?.userId) {
-      dispatch(fetchSellerStats(user.userId));
+    const sellerId = user?.userId || user?.id;
+    if (sellerId) {
+      dispatch(fetchSellerStats(sellerId));
     }
-  }, [dispatch, user?.userId]);
+  }, [dispatch, user?.userId, user?.id]);
 
   const handleLogout = async () => {
     await dispatch(logout());
@@ -179,9 +180,12 @@ export default function Layout({ children, initialCollapsed = false }) {
 
             {/* Desktop User Dropdown */}
             <div className="relative">
-              <button
+              <div
                 onClick={() => setProfileOpen(!profileOpen)}
-                className="flex items-center gap-2 hover:bg-gray-50 rounded-full p-1 pr-2 transition-colors"
+                className="flex items-center gap-2 hover:bg-gray-50 rounded-full p-1 pr-2 transition-colors cursor-pointer"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { setProfileOpen(!profileOpen); } }}
               >
                 <div className="text-right hidden sm:block">
                   <div className="text-sm font-medium text-gray-900 flex items-center justify-end gap-2">
@@ -198,7 +202,7 @@ export default function Layout({ children, initialCollapsed = false }) {
                 <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold border border-emerald-200">
                   {userInitials}
                 </div>
-              </button>
+              </div>
 
               {profileOpen && (
                 <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-100 rounded-xl shadow-lg py-2 z-50 animate-in fade-in zoom-in-95 duration-200">

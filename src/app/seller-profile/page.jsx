@@ -51,12 +51,13 @@ export default function SellerDashboardPage() {
   const { sellerStats, sellerMonthlyStats, orders } = useSelector((state) => state.orders);
 
   useEffect(() => {
-    if (user?.userId) {
-      dispatch(fetchSellerStats(user.userId));
-      dispatch(fetchSellerMonthlyStats(user.userId));
-      dispatch(fetchSellerOrders(user.userId));
+    const sellerId = user?.userId || user?.id;
+    if (sellerId) {
+      dispatch(fetchSellerStats(sellerId));
+      dispatch(fetchSellerMonthlyStats(sellerId));
+      dispatch(fetchSellerOrders(sellerId));
     }
-  }, [dispatch, user?.userId]);
+  }, [dispatch, user?.userId, user?.id]);
 
   const totalOrders = sellerStats?.TotalOrders || 0;
   const revenue = sellerStats?.Revenue || 0;
