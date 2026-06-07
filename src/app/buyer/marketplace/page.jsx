@@ -6,6 +6,7 @@ import { getProducts } from '@/reducers/product/productSlice';
 import { Search, ShoppingBag, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { API_BASE_URL } from '@/axios/config';
 
 function MarketplaceContent() {
   const dispatch = useDispatch();
@@ -56,7 +57,7 @@ function MarketplaceContent() {
       return product.imagepath;
     }
     const cleanPath = product.imagepath.replace(/^\/+/, "");
-    return `http://127.0.0.1:8000/${cleanPath}`;
+    return `${API_BASE_URL}/${cleanPath}`;
   };
 
   return (

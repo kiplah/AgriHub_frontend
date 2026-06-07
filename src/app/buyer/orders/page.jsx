@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchBuyerOrders, fetchOrderDetail, deleteOrder } from "@/reducers/Order/orderSlice";
 import { fetchMessages } from "@/reducers/Chat/chatSlice";
+import { API_BASE_URL, WS_BASE_URL } from "@/axios/config";
 import { 
   ShoppingBag, 
   MessageSquare, 
@@ -51,7 +52,7 @@ export default function Orders() {
       return product.imagepath;
     }
     const cleanPath = product.imagepath.replace(/^\/+/, "");
-    return `http://127.0.0.1:8000/${cleanPath}`;
+    return `${API_BASE_URL}/${cleanPath}`;
   };
 
   // Helper to format timestamps nicely
@@ -115,7 +116,7 @@ export default function Orders() {
     if (!userId) return;
   
     console.log("🚀 Initializing WebSocket...");
-    let websocket = new WebSocket(`ws://localhost:8081/ws?senderID=${userId}`);
+    let websocket = new WebSocket(`${WS_BASE_URL}/ws?senderID=${userId}`);
     setWs(websocket);
   
     websocket.onopen = () => console.log("✅ WebSocket Connected");
@@ -124,7 +125,7 @@ export default function Orders() {
       console.error("❌ WebSocket Error:", err);
       setTimeout(() => {
         console.log("🔄 Retrying WebSocket connection...");
-        websocket = new WebSocket(`ws://localhost:8081/ws?senderID=${userId}`);
+        websocket = new WebSocket(`${WS_BASE_URL}/ws?senderID=${userId}`);
         setWs(websocket);
       }, 5000);
     };
@@ -171,7 +172,7 @@ export default function Orders() {
     if (!ws || ws.readyState !== WebSocket.OPEN) {
       console.log("🔹 Establishing WebSocket connection...");
       const websocket = new WebSocket(
-        `ws://localhost:8081/ws?senderID=${userId}&receiverID=${sellerId}`
+        `${WS_BASE_URL}/ws?senderID=${userId}&receiverID=${sellerId}`
       );
   
       websocket.onopen = () => {

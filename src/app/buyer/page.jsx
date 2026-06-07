@@ -6,6 +6,7 @@ import { ShoppingBagIcon, PackageIcon, TrendingUpIcon, MapPinIcon, TruckIcon, Ar
 import Link from 'next/link';
 import { getProducts } from '@/reducers/product/productSlice';
 import { fetchBuyerStats } from '@/reducers/Order/orderSlice';
+import { API_BASE_URL } from '@/axios/config';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -58,7 +59,7 @@ export default function Dashboard() {
       return product.imagepath;
     }
     const cleanPath = product.imagepath.replace(/^\/+/, "");
-    return `http://127.0.0.1:8000/${cleanPath}`;
+    return `${API_BASE_URL}/${cleanPath}`;
   };
   const trackingOrder = buyerStats?.TrackingOrder || null;
 

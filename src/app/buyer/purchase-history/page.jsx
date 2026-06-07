@@ -1,10 +1,11 @@
 'use client';
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchBuyerOrders, fetchOrderDetail,deleteOrder } from "@/reducers/Order/orderSlice";
-import Profile from "@/Components/ProfileCard/ProfileCard";
+import { fetchBuyerOrders, fetchOrderDetail, deleteOrder } from "@/reducers/Order/orderSlice";
 import { fetchMessages, } from "@/reducers/Chat/chatSlice";
 import { AiOutlineClose } from "react-icons/ai";
+import { ShoppingBag } from "lucide-react";
+import { API_BASE_URL, WS_BASE_URL } from "@/axios/config";
 
 export default function Orders() {
   const dispatch = useDispatch();
@@ -113,7 +114,7 @@ const setMessages = (newMessages) => {
     dispatch(fetchMessages({ receiverId: sellerId }));
 
     const websocket = new WebSocket(
-      `ws://localhost:8081/ws?senderID=${userId}&receiverID=${sellerId}`
+      `${WS_BASE_URL}/ws?senderID=${userId}&receiverID=${sellerId}`
     );
     setWs(websocket);
 
@@ -145,183 +146,203 @@ const setMessages = (newMessages) => {
 
 
   return (
-    <div className="bg-gradient-to-br from-green-900 via-emerald-700 to-lime-500 min-h-screen p-6 text-white">
-      <Profile />
+    <div className="space-y-6">
+      {/* Header section */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <ShoppingBag className="text-emerald-600 w-6 h-6" />
+            Purchase History
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">A record of your completed and delivered purchases</p>
+        </div>
+      </div>
 
-    <div className="text-center mt-8">
-      <h2 className="text-3xl font-bold text-lime-100 mb-6">My Purchase History</h2>
-    </div>
-
-    {completedOrders.length === 0 ? (
-      <p className="text-center text-lime-200">Loading orders...</p>
-    ) : error ? (
-      <p className="text-center text-red-400">Failed to load orders: {error}</p>
-    ) : (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-    {completedOrders.map((order) => (
-          <div
-            key={order.id}
-            className="bg-gradient-to-br from-green-700 via-emerald-600 to-lime-600 p-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition duration-300"
-          >
-            <img
-              src={`http://localhost:8080/${products[order.id]?.imagepath || "static/images/placeholder.jpg"}`}
-              alt={products[order.id]?.name || "Product Image"}
-              className="w-full h-40 rounded-lg object-cover mb-4"
-            />
-            <h3 className="text-lime-100 text-lg font-bold mb-2">
-              Order #{order.id} - {order.name}
-            </h3>
-            <p className="text-lime-200 text-sm mb-2">
-              <span className="font-medium">Status:</span>{" "}
-              <span
-                className={
-                  getOrderStatus(order) === "pending"
-                    ? "text-yellow-400"
-                    : "text-lime-300"
-                }
-              >
-                {getOrderStatus(order).toUpperCase()}
-              </span>
-            </p>
-            <p className="text-lime-200 text-sm mb-2">
-              <span className="font-medium">Total Price:</span> $
-              {order.checkoutPrice}
-            </p>
-            <p className="text-lime-200 text-sm mb-2">
-              <span className="font-medium">Shipping Address:</span>{" "}
-              {order.shippingAddress}, {order.city}, {order.state}, {order.country}
-            </p>
-            <button
-              className="mt-4 w-full bg-lime-600 text-white py-2 rounded-lg hover:bg-lime-700 transition shadow-md"
-              onClick={() => handleViewDetails(order.id)}
+      {completedOrders.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center shadow-sm">
+          <p className="text-gray-500">No completed orders found.</p>
+        </div>
+      ) : error ? (
+        <div className="bg-red-50 border border-red-100 text-red-700 p-4 rounded-xl text-center">
+          Failed to load orders: {error}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {completedOrders.map((order) => (
+            <div
+              key={order.id}
+              className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-all duration-300"
             >
-              View Details
-            </button>
-            <button
-                className="mt-4 w-full bg-lime-600 text-white py-2 rounded-lg hover:bg-lime-700 transition shadow-md"
-                onClick={() => handleOpenChat(order.sellerId)}
-              >
-                Chat with Seller
-              </button>
-          </div>
-        ))}
-      </div>
-    )}
-{isChatVisible && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="bg-green-700 p-6 rounded-lg text-white w-full max-w-lg relative">
-      <button
-        onClick={() => setChatVisible(false)}
-        className="absolute top-3 right-3 text-white hover:text-gray-300"
-      >
-
-<AiOutlineClose className="w-6 h-6 cursor-pointer"  />
-
-      </button>
-      <h2 className="text-xl font-semibold text-center mb-4">Chat with Seller</h2>
-      
-      <div className="h-72 overflow-y-auto border-b mb-4 p-2 flex flex-col space-y-2">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`p-2 px-4 rounded-lg max-w-[75%] ${
-              msg.senderId === userId || msg.user === "Seller"
-              ?"bg-gray-300 text-black self-start"
-
-                : "bg-green-500 text-white self-end"
-            }`}
-          >
-            <strong className="block text-sm mb-1">
-              {msg.senderId === userId || msg.user}
-            </strong>
-            <span>{msg.content}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex items-center space-x-2">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          className="flex-1 border p-2 rounded-lg text-black"
-          placeholder="Type a message..."
-        />
-        <button
-          onClick={sendMessage}
-          className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700"
-        >
-          📩
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-
-
-    {isPopupVisible && selectedOrder && (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div className="bg-gradient-to-br from-lime-500 via-green-600 to-emerald-700 rounded-lg shadow-2xl p-6 max-w-md w-full text-white relative">
-          <button
-            className="absolute top-3 right-3 text-lime-100 hover:text-white"
-            onClick={closePopup}
-          >
-            Close
-          </button>
-          <h2 className="text-2xl font-bold mb-6">Order Details</h2>
-          <p className="text-sm mb-2">
-            <span className="font-medium">Order ID:</span> {selectedOrder.id}
-          </p>
-          <p className="text-sm mb-2">
-            <span className="font-medium">Name:</span> {selectedOrder.name}
-          </p>
-          <p className="text-sm mb-2">
-            <span className="font-medium">Email:</span> {selectedOrder.email}
-          </p>
-          <p className="text-sm mb-2">
-            <span className="font-medium">Phone:</span> {selectedOrder.phoneNumber}
-          </p>
-          <p className="text-sm mb-2">
-            <span className="font-medium">Shipping Address:</span>{" "}
-            {selectedOrder.shippingAddress}, {selectedOrder.city}, {selectedOrder.state},{" "}
-            {selectedOrder.country}
-          </p>
-          <p className="text-sm mb-2">
-            <span className="font-medium">Payment Method:</span>{" "}
-            {selectedOrder.paymentMethod}
-          </p>
-          <p className="text-sm mb-6">
-            <span className="font-medium">Product Name:</span>{" "}
-            {selectedOrder.Product?.name || "N/A"}
-          </p>
-          <img
-            src={`http://localhost:8080/${selectedOrder.Product?.imagepath || "static/images/placeholder.jpg"}`}
-            alt={selectedOrder.Product?.name || "Product Image"}
-            className="w-full h-40 rounded-lg object-cover mb-4"
-          />
-          
-          <div className="flex gap-8">
-          {getOrderStatus(selectedOrder) === "pending" && (
+              <div>
+                <img
+                  src={products[order.id]?.imagepath?.startsWith('http') ? products[order.id].imagepath : `${API_BASE_URL}/${products[order.id]?.imagepath || "static/images/placeholder.jpg"}`}
+                  alt={products[order.id]?.name || "Product Image"}
+                  className="w-full h-44 rounded-xl object-cover mb-4 bg-gray-50"
+                  onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070&auto=format&fit=crop"; }}
+                />
+                <h3 className="text-gray-900 text-lg font-bold mb-2 truncate">
+                  Order #{order.id} - {order.name}
+                </h3>
+                <div className="space-y-1.5 text-sm text-gray-600 mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-400">Status:</span>
+                    <span className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2.5 py-0.5 rounded-full text-xs font-semibold">
+                      {getOrderStatus(order).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-400">Total Price:</span>
+                    <span className="font-bold text-gray-900">KES {order.checkoutPrice}</span>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1 line-clamp-2">
+                    <span className="font-medium">Shipping Address:</span> {order.shippingAddress}, {order.city}
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-2 pt-2 border-t border-gray-50">
                 <button
-                  className="mt-2 w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition shadow-md"
+                  className="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-medium hover:bg-emerald-700 transition shadow-sm active:scale-98"
+                  onClick={() => handleViewDetails(order.id)}
+                >
+                  View Details
+                </button>
+                <button
+                  className="w-full border border-emerald-200 text-emerald-700 py-2.5 rounded-xl font-medium hover:bg-emerald-50 transition active:scale-98 flex items-center justify-center gap-1.5"
+                  onClick={() => handleOpenChat(order.sellerId)}
+                >
+                  <span>💬</span> Chat with Seller
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Chat Dialog */}
+      {isChatVisible && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+          <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-lg relative border border-gray-100 mx-4">
+            <button
+              onClick={() => setChatVisible(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <AiOutlineClose className="w-5 h-5" />
+            </button>
+            <h2 className="text-xl font-bold text-gray-900 mb-4 text-center">Chat with Seller</h2>
+            
+            <div className="h-72 overflow-y-auto border border-gray-100 rounded-xl p-4 bg-gray-50 mb-4 space-y-3">
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`flex ${msg.senderId === userId || msg.user === "Seller" ? "justify-start" : "justify-end"}`}
+                >
+                  <div
+                    className={`p-3 rounded-2xl max-w-[80%] text-sm ${
+                      msg.senderId === userId || msg.user === "Seller"
+                        ? "bg-white border text-gray-700 rounded-bl-none shadow-sm"
+                        : "bg-emerald-600 text-white rounded-br-none shadow-sm"
+                    }`}
+                  >
+                    <strong className="block text-xs mb-1 opacity-75">
+                      {msg.senderId === userId || msg.user === "Seller" ? "Seller" : "Me"}
+                    </strong>
+                    <span>{msg.content}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="flex-1 border border-gray-200 p-2.5 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                placeholder="Type a message..."
+              />
+              <button
+                onClick={sendMessage}
+                className="bg-emerald-600 text-white p-3 rounded-xl hover:bg-emerald-700 transition shadow-sm active:scale-95"
+              >
+                📩
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Details Dialog */}
+      {isPopupVisible && selectedOrder && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+          <div className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full text-gray-900 relative border border-gray-100 mx-4">
+            <button
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              onClick={closePopup}
+            >
+              <AiOutlineClose className="w-5 h-5" />
+            </button>
+            <h2 className="text-2xl font-bold mb-6 text-gray-900">Order Details</h2>
+            
+            <div className="space-y-3 text-sm text-gray-600 border-b pb-4 mb-4">
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-400">Order ID:</span>
+                <span className="font-semibold text-gray-900">#{selectedOrder.id}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-400">Recipient Name:</span>
+                <span className="font-medium text-gray-900">{selectedOrder.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-400">Email:</span>
+                <span className="text-gray-900">{selectedOrder.email}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-400">Phone:</span>
+                <span className="text-gray-900">{selectedOrder.phoneNumber}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-400">Shipping Address:</span>
+                <span className="text-gray-900 text-right max-w-[200px]">
+                  {selectedOrder.shippingAddress}, {selectedOrder.city}, {selectedOrder.state}, {selectedOrder.country}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-400">Payment Method:</span>
+                <span className="text-gray-900">{selectedOrder.paymentMethod}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-400">Product Name:</span>
+                <span className="font-semibold text-gray-900">{selectedOrder.Product?.name || "N/A"}</span>
+              </div>
+            </div>
+            
+            <img
+              src={selectedOrder.Product?.imagepath?.startsWith('http') ? selectedOrder.Product.imagepath : `${API_BASE_URL}/${selectedOrder.Product?.imagepath || "static/images/placeholder.jpg"}`}
+              alt={selectedOrder.Product?.name || "Product Image"}
+              className="w-full h-40 rounded-xl object-cover mb-6 bg-gray-50 border border-gray-100"
+              onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070&auto=format&fit=crop"; }}
+            />
+            
+            <div className="flex gap-4">
+              {getOrderStatus(selectedOrder) === "pending" && (
+                <button
+                  className="w-full bg-red-600 text-white py-2.5 rounded-xl font-semibold hover:bg-red-700 transition shadow-sm active:scale-95"
                   onClick={() => handleDeleteOrder(selectedOrder.id)}
                 >
                   Delete Order
                 </button>
               )}
-          <button
-            className="w-full bg-lime-600 text-white py-2 rounded-lg hover:bg-lime-700 transition shadow-md"
-            onClick={closePopup}
-          >
-            Close
-          </button>
+              <button
+                className="w-full bg-gray-100 text-gray-700 py-2.5 rounded-xl font-semibold hover:bg-gray-200 transition active:scale-95"
+                onClick={closePopup}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    )}
-  </div>
+      )}
+    </div>
   );
 }
 
