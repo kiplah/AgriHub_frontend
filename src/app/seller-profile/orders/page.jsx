@@ -9,7 +9,12 @@ import { AiOutlineClose } from "react-icons/ai";
 export default function Orders() {
   const dispatch = useDispatch();
   const { sellerOrders, loading, error } = useSelector((state) => state.orders);
-  const userId = useSelector((state) => state.auth.user?.userId);
+  const userId = useSelector((state) => state.auth.user?.userId || state.auth.user?.id);
+  const getOrderStatus = (order) => {
+    if (!order) return "";
+    const status = order.orderStatus || order.order_status || "pending";
+    return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+  };
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [products, setProducts] = useState({});
@@ -32,30 +37,19 @@ export default function Orders() {
     }
   }, [dispatch, userId]);
 
-  useEffect(() => {
-    const fetchProductDetails = async () => {
-      const productData = {};
-      for (const order of sellerOrders) {
-        try {
-          const response = await dispatch(fetchOrderDetail(order.id));
-          if (response.meta.requestStatus === "fulfilled") {
-            productData[order.id] = response.payload.Product;
-          }
-        } catch (error) {
-          console.error("Failed to fetch product details:", error);
-        }
-      }
-      setProducts(productData);
-    };
-
-    if (sellerOrders.length > 0) fetchProductDetails();
-  }, [sellerOrders, dispatch]);
+  const getProductImage = (order) => {
+    if (!order || !order.product_image) {
+      return "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070&auto=format&fit=crop";
+    }
+    if (order.product_image.startsWith("http")) {
+      return order.product_image;
+    }
+    const cleanPath = order.product_image.replace(/^\/+/, "");
+    return `http://127.0.0.1:8000/${cleanPath}`;
+  };
 
   const handleViewDetails = (orderId) => {
-    setSelectedOrder({
-      ...sellerOrders.find((order) => order.id === orderId),
-      Product: products[orderId],
-    });
+    setSelectedOrder(sellerOrders.find((order) => order.id === orderId));
     setPopupVisible(true);
   };
   const handleUpdateStatus = async (orderId, newStatus) => {
@@ -145,25 +139,26 @@ export default function Orders() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <img
-                        src={`http://localhost:8080/${products[order.id]?.imagepath || "static/images/placeholder.jpg"}`}
-                        alt={products[order.id]?.name}
+                        src={getProductImage(order)}
+                        alt={order.product_name || "Product"}
                         className="w-10 h-10 rounded-lg object-cover bg-gray-100"
+                        onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070&auto=format&fit=crop"; }}
                       />
-                      <span className="text-gray-700 font-medium">{order.name}</span>
+                      <span className="text-gray-700 font-medium">{order.product_name || order.name}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-gray-600">
                     <div>{order.email}</div>
-                    <div className="text-xs text-gray-400">{order.shippingAddress}</div>
+                    <div className="text-xs text-gray-400">{order.shipping_address || order.shippingAddress}</div>
                   </td>
-                  <td className="px-6 py-4 font-medium text-gray-900">KES {order.checkoutPrice}</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">KES {order.checkout_price || order.checkoutPrice}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${order.orderStatus === "Pending" ? "bg-yellow-50 text-yellow-700" :
-                      order.orderStatus === "Completed" ? "bg-emerald-50 text-emerald-700" :
-                        order.orderStatus === "Cancelled" ? "bg-red-50 text-red-700" :
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getOrderStatus(order) === "Pending" ? "bg-yellow-50 text-yellow-700" :
+                      getOrderStatus(order) === "Completed" ? "bg-emerald-50 text-emerald-700" :
+                        getOrderStatus(order) === "Cancelled" ? "bg-red-50 text-red-700" :
                           "bg-blue-50 text-blue-700"
                       }`}>
-                      {order.orderStatus}
+                      {getOrderStatus(order)}
                     </span>
                   </td>
                   <td className="px-6 py-4 flex items-center gap-2">
@@ -182,14 +177,16 @@ export default function Orders() {
                     </button>
                     {/* Simplified Status Dropdown for quick action */}
                     <select
-                      className="text-sm border-gray-200 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
+                      className="text-sm text-gray-700 bg-white border border-gray-200 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
                       onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
-                      value={order.orderStatus}
+                      value={getOrderStatus(order)}
                     >
-                      <option value="Pending">Pending</option>
-                      <option value="Processing">Processing</option>
-                      <option value="Shipped">Shipped</option>
-                      <option value="Delivered">Delivered</option>
+                      <option value="Pending" className="text-gray-900 bg-white">Pending</option>
+                      <option value="Processing" className="text-gray-900 bg-white">Processing</option>
+                      <option value="Shipped" className="text-gray-900 bg-white">Shipped</option>
+                      <option value="Delivered" className="text-gray-900 bg-white">Delivered</option>
+                      <option value="Cancelled" className="text-gray-900 bg-white">Cancelled</option>
+                      <option value="Returned" className="text-gray-900 bg-white">Returned</option>
                     </select>
                   </td>
                 </tr>
@@ -254,7 +251,7 @@ export default function Orders() {
             <div className="space-y-3 text-sm text-gray-600">
               <div className="flex justify-between border-b pb-2">
                 <span>Product:</span>
-                <span className="font-medium text-gray-900">{selectedOrder.Product?.name || selectedOrder.name}</span>
+                <span className="font-medium text-gray-900">{selectedOrder.product_name || selectedOrder.name}</span>
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span>Buyer:</span>
@@ -262,11 +259,11 @@ export default function Orders() {
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span>Amount:</span>
-                <span className="font-medium text-emerald-600">${selectedOrder.checkoutPrice}</span>
+                <span className="font-medium text-emerald-600">KES {selectedOrder.checkout_price || selectedOrder.checkoutPrice}</span>
               </div>
               <div className="flex justify-between">
                 <span>Address:</span>
-                <span className="text-right max-w-[200px]">{selectedOrder.shippingAddress}, {selectedOrder.city}</span>
+                <span className="text-right max-w-[200px]">{selectedOrder.shipping_address || selectedOrder.shippingAddress}, {selectedOrder.city}</span>
               </div>
             </div>
 

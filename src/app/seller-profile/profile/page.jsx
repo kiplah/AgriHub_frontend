@@ -25,10 +25,11 @@ export default function StoreProfile() {
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
-        if (user?.userId) {
-            dispatch(fetchSellerProfile(user.userId));
+        const sellerId = user?.userId || user?.id;
+        if (sellerId) {
+            dispatch(fetchSellerProfile(sellerId));
         }
-    }, [dispatch, user?.userId]);
+    }, [dispatch, user?.userId, user?.id]);
 
     useEffect(() => {
         if (sellerProfile) {
