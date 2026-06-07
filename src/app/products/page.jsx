@@ -231,7 +231,7 @@ function ProductsContent() {
                   cat={product.category}
                   price={product.price}
                   rating={product.rating}
-                  sellerId={product.userId}
+                  sellerId={product.user_id || product.userId}
                   description={product.description}
                 />
               ))}

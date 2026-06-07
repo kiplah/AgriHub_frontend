@@ -16,9 +16,7 @@ const ProductDetailsPage = () => {
   const params = useParams();
   const id = params?.id;
   const dispatch = useDispatch();
-
   const user = useSelector((state) => state.auth.user);
-
   const { product, username, loading: productLoading, error: productError } =
     useSelector((state) => ({
       product: state.product?.product || null,
@@ -26,6 +24,8 @@ const ProductDetailsPage = () => {
       loading: state.product?.loading || false,
       error: state.product?.error || null,
     }));
+
+  console.log("ProductDetailsPage rendering:", { params, id, productLoading, productError, product });
 
   const { reviews, stats, loading: reviewLoading, error: reviewError } =
     useSelector((state) => ({
@@ -60,7 +60,7 @@ const ProductDetailsPage = () => {
         name: product.name,
         image: product.imagepath,
         price: product.price,
-        sellerId: product.userId,
+        sellerId: product.user_id || product.userId,
         quantity: quantity,
       });
       toast.success(`${quantity} ${product.name}(s) added to cart successfully!`, {
@@ -79,7 +79,16 @@ const ProductDetailsPage = () => {
   }
 
   if (!product) {
-    return <p>No product found!</p>;
+    return (
+      <div className="p-10 text-black">
+        <p className="font-bold text-red-500 text-lg">No product found!</p>
+        <div className="mt-4 p-4 bg-gray-100 rounded text-xs overflow-auto space-y-1">
+          <p><strong>Product ID:</strong> {String(id)}</p>
+          <p><strong>Loading state:</strong> {String(productLoading)}</p>
+          <p><strong>Error state:</strong> {String(productError)}</p>
+        </div>
+      </div>
+    );
   }
 
   const imageUrl = product.imagepath

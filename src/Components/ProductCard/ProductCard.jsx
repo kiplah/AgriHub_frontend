@@ -14,9 +14,16 @@ export default function ProductCard({
   location,
   postedDate,
   priceType = "Negotiable",
-  children
+  children,
+  src,
+  title,
+  cat
 }) {
   const { token } = useSelector((state) => state.auth);
+
+  const finalImage = image || src;
+  const finalName = name || title;
+  const finalCategory = category || cat;
 
   const handleFavoriteClick = (e) => {
     e.preventDefault();
@@ -41,7 +48,6 @@ export default function ProductCard({
         </div>
 
         {/* Favorite Button */}
-        {/* Favorite Button */}
         <div className="absolute top-3 right-3 z-10 group/btn">
           <button
             onClick={handleFavoriteClick}
@@ -59,8 +65,8 @@ export default function ProductCard({
 
         <Link href={`/Product/${id}`}>
           <img
-            src={image || "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070&auto=format&fit=crop"}
-            alt={name || "Product"}
+            src={finalImage || "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070&auto=format&fit=crop"}
+            alt={finalName || "Product"}
             className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
             onError={(e) => {
               e.target.onerror = null;
@@ -74,13 +80,13 @@ export default function ProductCard({
       <div className="p-4 flex flex-col flex-grow">
         <div className="mb-1">
           <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-            {category || "Uncategorized"}
+            {finalCategory || "Uncategorized"}
           </span>
         </div>
 
         <Link href={`/Product/${id}`}>
           <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-emerald-600 transition-colors">
-            {name}
+            {finalName}
           </h3>
         </Link>
 
