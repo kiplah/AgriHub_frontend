@@ -4,7 +4,7 @@ import { FaTruck, FaCog, FaSeedling, FaCogs, FaUserAlt, FaHome, FaWarehouse, FaB
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Logo from "../../assets/images/logo.png";
+import Logo from "../../Assets/images/logo.png";
 import { logout } from '../../reducers/Auth/authSlice';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';

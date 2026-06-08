@@ -27,7 +27,7 @@ import {
   Megaphone // Added for Marketing
 } from "lucide-react";
 
-import Logo from "../../assets/images/logo.png";
+import Logo from "../../Assets/images/logo.png";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";

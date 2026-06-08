@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
-import ProfileImage from "../../assets/images/blank.png";
+import ProfileImage from "../../Assets/images/blank.png";
 import { logout } from "../../reducers/Auth/authSlice";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
