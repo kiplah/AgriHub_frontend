@@ -256,7 +256,7 @@ export default function SignupPage() {
                       name="username"
                       value={formData.username}
                       onChange={handleInputChange}
-                      className="w-full text-gray-800 bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
+                      className="w-full bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
                       required
                     />
                   </div>
@@ -270,7 +270,7 @@ export default function SignupPage() {
                       type="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full text-gray-800 bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
+                      className="w-full bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
                     />
                   </div>
                   <div className="relative">
@@ -283,12 +283,12 @@ export default function SignupPage() {
                       type={showPassword ? "text" : "password"}
                       value={formData.password}
                       onChange={handleInputChange}
-                      className="w-full text-gray-800 bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
+                      className="w-full bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
                     />
                     <button
                       type="button"
                       onClick={togglePasswordVisibility}
-                      className="absolute top-4 right-3 text-white hover:text-green-700 focus:outline-none"
+                      className="absolute bottom-2 right-3 text-white hover:text-green-700 focus:outline-none"
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                       {showPassword ? (
@@ -308,7 +308,7 @@ export default function SignupPage() {
                       type={showPassword ? "text" : "password"}
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className="w-full text-gray-800 bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
+                      className="w-full bg-transparent text-white border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
                     />
                   </div>
 

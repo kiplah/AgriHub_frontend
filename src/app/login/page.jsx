@@ -189,7 +189,7 @@ function LoginContent() {
                 type="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full text-gray-800 bg-transparent border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
+                className="w-full text-white bg-transparent border-b-2 border-white shadow-4xl focus:py-2 focus:outline-none"
               />
             </div>
 
@@ -202,12 +202,12 @@ function LoginContent() {
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={handleInputChange}
-                className="w-full text-gray-800 bg-transparent border-b-2 border-white shadow-3xl focus:py-2 focus:outline-none"
+                className="w-full text-white bg-transparent border-b-2 border-white shadow-3xl focus:py-2 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
-                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none"
+                className="absolute bottom-2 right-4 text-gray-500 hover:text-gray-700 focus:outline-none"
                 aria-label={showPassword ? "Hide Password" : "Show Password"}
               >
                 {showPassword ? (
